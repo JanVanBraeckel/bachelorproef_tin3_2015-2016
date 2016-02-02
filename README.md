@@ -1,1 +1,1 @@
-# bachekorproef_tin3_2015-2016
+# bachelorproef_tin3_2015-2016
