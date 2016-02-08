@@ -3,6 +3,7 @@ Voorbeeld toekomst:
 * Fitbit bv gebruiken adhv proximity verwarming aanzetten
 
 Demonstrator:
+* 2 commerciële devices en 1 eigen gemaakt (met een Arduino)
 * Demo app die data doorstuurt naar cloud
 * Niet direct met cordova
 * Bij tijd over Arduino als gateway gebruiken of de Arduino zelf programmeren om als BLE device te werken
@@ -18,5 +19,6 @@ Ander:
 
 ##Eerstvolgende afspraak 25/02/2016, bespreken hoe hun API werkt en hoe ver ik dan al sta met theorie
 
-Volgende keer:
-* http://portal.iotopia.be/prototyping-tools/step-by-step/ doornemen
+Doornemen tot volgende keer:
+* http://portal.iotopia.be/prototyping-tools/step-by-step/
+* https://www.arduino.cc/en/Tutorial/Genuino101CurieBLEHeartRateMonitor
