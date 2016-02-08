@@ -13,6 +13,7 @@ Ander:
 * Eerste doelstelling is BLE device via smartphone gateway of vaste gateway data naar cloud sturen
 * Lijst van devices die ik momenteel heb gevonden doorsturen.
 * Planning maken tot eind mei
+* BLE klasses goed beschrijven in theorie
 
 
 ##Eerstvolgende afspraak 25/02/2016, bespreken hoe hun API werkt en hoe ver ik dan al sta met theorie
