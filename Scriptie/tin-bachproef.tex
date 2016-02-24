@@ -249,28 +249,67 @@
 \section{How low energy is achieved}
 \label{sec:lowenergy}
 
-\section{The Bluetooth Low Energy protocol}
-\label{sec:protocolbasics}
+\chapter{The Bluetooth Low Energy protocol stack}
+\label{sec:protocolstack}
 
-\section{Generic Access Protocol}
-\label{sec:gap}
+\section{Controller}
+\label{sec:stackController}
 
-\section{Generic Attribute Protocol}
-\label{sec:gatt}
+\subsection{Physical Layer}
+\label{subsec:controllerPHY}
 
-\subsection{GATT profiles}
-\label{subsec:profiles}
+\subsection{Link Layer}
+\label{subsec:controllerLL}
 
-\subsection{GATT services}
-\label{subsec:services}
+\subsection{Host Controller Interface}
+\label{subsec:controllerHCI}
 
-\subsection{Characteristics}
-\label{subsec:characteristics}
+\section{Host}
+\label{sec:stackHost}
 
-\subsection{Descriptors}
-\label{subsec:descriptors}
+\subsection{Host Controller Interface}
+\label{subsec:hostHCI}
 
-\chapter{Building your own server or using an existing one}
+\subsection{Logical Link Control and Adaption Protocol}
+\label{subsec:hostATTL2CAP}
+
+\subsection{Attribute Protocol}
+\label{subsec:hostATT}
+
+\subsection{Security Manager Protocol}
+\label{subsec:hostSMP}
+
+\subsection{Generic Access Profile}
+\label{subsec:hostGAP}
+
+\subsection{Generic Attribute Profile}
+\label{subsec:hostGATT}
+
+\section{Application}
+\label{sec:stackApplication}
+
+\subsection{Application}
+\label{subsec:applicationApp}
+
+\chapter{Generic Access Profile}
+\label{ch:gap}
+
+\chapter{Generic Attribute Profile}
+\label{ch:gatt}
+
+\section{Profiles}
+\label{sec:profiles}
+
+\section{Services}
+\label{sec:services}
+
+\section{Characteristics}
+\label{sec:characteristics}
+
+\section{Descriptors}
+\label{sec:descriptors}
+
+\chapter{Implementing a basic server}
 \label{ch:server}
 
 \chapter{Android programming}
