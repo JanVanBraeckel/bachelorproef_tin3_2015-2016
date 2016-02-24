@@ -41,7 +41,7 @@ Planning is gemaakt in increments van 2 weken
                     <li>(Kleine) draft maken over GATT en GAP</li>
                     <li>Introductie, probleemstelling, onderzoeksvragen schrijven</li>
                     <li>Info over AllThingsTalk schrijven</li>
-                    <li>Verder familiair worden met Arduino en eventueel use case bedenken voor POC</li>
+                    <li>Verder familiair worden met Arduino</li>
                     <li>Kennis maken met Android Bluetooth API</li>
                 <ul>
             </td>
