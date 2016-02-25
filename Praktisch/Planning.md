@@ -40,9 +40,8 @@ Planning is gemaakt in increments van 2 weken
                     <li>Verder onderzoek naar GATT en GAP</li>
                     <li>(Kleine) draft maken over GATT en GAP</li>
                     <li>Introductie, probleemstelling, onderzoeksvragen schrijven</li>
-                    <li>Info over AllThingsTalk schrijven</li>
-                    <li>Verder familiair worden met Arduino</li>
                     <li>Kennis maken met Android Bluetooth API</li>
+                    <li>Android applicatie (lezen van Heart rate op arduino)</li>
                 <ul>
             </td>
         </tr>
@@ -53,10 +52,10 @@ Planning is gemaakt in increments van 2 weken
                     <li>Onderzoek algemene informatie BLE</li>
                     <li>Draft GATT en GAP verder uitschrijven</li>
                     <li>Methodologie uitschrijven</li>
+                    <li>Info over AllThingsTalk schrijven</li>
                     <li>Onderzoek naar protocol stack (Application, Host, Controller)</li>
                     <li>Draft algemene informatie Bluetooth Low Energy</li>
-                    <li>Android applicatie (Bluetooth communicatie grotendeels proberen maken)</li>
-                    <li>Uitdokteren of het mogelijk data van de Flower Power te lezen</li>
+                    <li>Uitdokteren of het mogelijk is data van de Flower Power te lezen</li>
                 <ul>
             </td>
         </tr>
@@ -65,10 +64,11 @@ Planning is gemaakt in increments van 2 weken
             <td>
                 <ul>
                     <li>Algemene info BLE afwerken</li>
+                    <li>"Waarom" BLE en IOT schrijven</li>
                     <li>Draft GATT en GAP afwerken</li>
                     <li>Draft protocol stack maken</li>
-                    <li>Arduino: Use case bedenken om het wat interessanter/complexer te maken</li>
-                    <li>Android: interageren met een BLE device en opsturen naar cloud</li>
+                    <li>Android: interageren met commercieel device OF data Arduino doorsturen indien ATT SDK al in Java is</li>
+                    <li>Android: data opsturen naar cloud</li>
                 <ul>
             </td>
         </tr>
@@ -77,10 +77,8 @@ Planning is gemaakt in increments van 2 weken
             <td>
                 <ul>
                     <li>Draft protocol stack afwerken</li>
-                    <li>Android: interageren met commercieel device</li>
                     <li>Android: interageren met Flower Power indien mogelijk</li>
-                    <li>Arduino: Use case uitwerken</li>
-                    <li>Android: communiceren met Arduino volgens Use Case en opsturen naar cloud</li>
+                    <li>Android: interageren met commercieel device OF data Arduino doorsturen indien ATT SDK al in Java is</li>
                 <ul>
             </td>
         </tr>
