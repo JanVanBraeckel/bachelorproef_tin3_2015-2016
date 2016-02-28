@@ -1,44 +1,29 @@
 package com.hogent.jan.attblegateway;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.hogent.jan.attblegateway.bluetoothWrapper.BleNamesResolver;
-import com.hogent.jan.attblegateway.bluetoothWrapper.BleWrapper;
-import com.hogent.jan.attblegateway.bluetoothWrapper.BleWrapperUiCallbacks;
-import com.hogent.jan.attblegateway.recyclerview.DeviceListAdapter;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, DeviceListAdapter.DeviceClickedListener {
+public class MainActivity extends AppCompatActivity implements DeviceListFragment.DeviceListListener {
     private final String TAG = getClass().getSimpleName();
-    private static final long SCANNING_TIMEOUT = 5 * 1000;
-    private static final int ENABLE_BT_REQUEST_ID = 1;
 
-    private boolean mScanning = false;
-    private BleWrapper mBleWrapper = null;
-    private Handler mHandler = new Handler();
+    @Bind(R.id.viewPager)
+    ViewPager mViewPager;
 
-    @Bind(R.id.device_list)
-    RecyclerView mDeviceList;
-
-    @Bind(R.id.swipeRefresh)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.tabLayout)
+    TabLayout mPagerTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,179 +32,79 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         ButterKnife.bind(this);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        mDeviceList.setLayoutManager(layoutManager);
-        DeviceListAdapter adapter = new DeviceListAdapter(getApplicationContext());
-        adapter.setDeviceClickedListener(this);
-        mDeviceList.setAdapter(adapter);
+        setupViewPager();
+    }
 
-        mSwipeRefreshLayout.setOnRefreshListener(this);
+    private void setupViewPager() {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        mBleWrapper = new BleWrapper(this, new BleWrapperUiCallbacks.Null() {
-            @Override
-            public void uiDeviceFound(final BluetoothDevice device, final int rssi, final byte[] record) {
-                Log.d(TAG, "uiDeviceFound() called with: " + "device = [" + device.getName() + "], rssi = [" + rssi + "], record = [" + record + "]");
-                ((DeviceListAdapter) mDeviceList.getAdapter()).addDevice(device, rssi);
-            }
+        DeviceListFragment deviceListFragment = DeviceListFragment.newInstance();
+        deviceListFragment.setDeviceClickedListener(this);
+        adapter.addFragment(deviceListFragment, "Devices");
+        mViewPager.setAdapter(adapter);
 
-            @Override
-            public void uiDeviceConnected(BluetoothGatt gatt, BluetoothDevice device) {
-                Log.d(TAG, "uiDeviceConnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
-            }
+        mPagerTabs.setupWithViewPager(mViewPager);
+    }
 
-            @Override
-            public void uiDeviceDisconnected(BluetoothGatt gatt, BluetoothDevice device) {
-                Log.d(TAG, "uiDeviceDisconnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
-                if (gatt != null) {
-                    gatt.disconnect();
+    /**
+     * Adapter for the viewpager.
+     */
+    private static class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragments = new ArrayList<>();
+        private final List<String> mFragmentTitles = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragments.add(fragment);
+            mFragmentTitles.add(title);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragments.get(position);
+        }
+
+        public int getIndexOf(BluetoothDevice device) {
+            List<BluetoothDevice> devices = new ArrayList<>();
+            for(Fragment f : mFragments){
+                if(f instanceof DeviceDetailFragment){
+                    devices.add(((DeviceDetailFragment)f).getBleDevice());
                 }
             }
 
-            @Override
-            public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, List<BluetoothGattService> services) {
-                BluetoothGattCharacteristic bluetoothGattCharacteristic;
+            return devices.indexOf(device);
+        }
 
-                for (BluetoothGattService service : services) {
-                    String serviceName = BleNamesResolver.resolveUuid(service.getUuid().toString());
-                    Log.d(TAG, "uiAvailableServices() called with: " + "Service found = [" + serviceName + "]");
+        @Override
+        public int getCount() {
+            return mFragments.size();
+        }
 
-                    mBleWrapper.getCharacteristicsForService(service);
-                }
-            }
-
-            @Override
-            public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, List<BluetoothGattCharacteristic> chars) {
-                for (BluetoothGattCharacteristic bluetoothGattCharacteristic : chars) {
-                    String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
-                    Log.d(TAG, "uiCharacteristicForService() called with: " + "Characteristic found = [" + characteristicName + "]");
-                }
-            }
-
-            @Override
-            public void uiSuccessfulWrite(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch, String description) {
-                Log.d(TAG, "uiSuccessfulWrite() called");
-
-//                BluetoothGattCharacteristic bluetoothGattCharacteristic;
-//
-//                switch (mState) {
-//                    case ACC_ENABLE:
-//                        Log.d(TAG, "uiSuccessfulWrite(): Reading acc");
-//                        bluetoothGattCharacteristic = gatt.getService(UUID_ACC_SERV).getCharacteristic(UUID_ACC_DATA);
-//                        mBleWrapper.requestCharacteristicValue(bluetoothGattCharacteristic);
-//                        mState = mSensorState.ACC_READ;
-//                        break;
-//
-//                    case ACC_READ:
-//                        Log.d(TAG, "uiSuccessfulWrite(): state = ACC_READ");
-//                        break;
-//
-//                    default:
-//                        break;
-//                }
-            }
-
-            @Override
-            public void uiFailedWrite(BluetoothGatt gatt,
-                                      BluetoothDevice device,
-                                      BluetoothGattService service,
-                                      BluetoothGattCharacteristic ch,
-                                      String description) {
-                Log.d(TAG, "uiFailedWrite() called with: " + "description = [" + description + "]");
-            }
-
-            @Override
-            public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch, String strValue, int intValue, byte[] rawValue, String timestamp) {
-                Log.d(TAG, "uiNewValueForCharacteristic() called");
-                for (byte b : rawValue) {
-                    Log.d(TAG, "Val: " + b);
-                }
-            }
-
-            @Override
-            public void uiGotNotification(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch) {
-                String characteristic = BleNamesResolver.resolveCharacteristicName(ch.getUuid().toString());
-
-                Log.d(TAG, "uiGotNotification() called with: " + "characteristic = [" + characteristic + "]");
-            }
-        });
-
-        if (!mBleWrapper.checkBleHardwareAvailable()) {
-            Toast.makeText(this, "Device doesn't support BLE", Toast.LENGTH_LONG).show();
-            finish();
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitles.get(position);
         }
     }
 
-    @Override
-    public void onRefresh() {
-        if (!mScanning) {
-            mBleWrapper.disconnect();
-            ((DeviceListAdapter)mDeviceList.getAdapter()).clearList();
-            addScanningTimeout();
-            mBleWrapper.startScanning();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (!mBleWrapper.isBtEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, ENABLE_BT_REQUEST_ID);
-        }
-
-        mBleWrapper.initialize();
-
-        mScanning = true;
-        addScanningTimeout();
-        mBleWrapper.startScanning();
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                ((DeviceListAdapter)mDeviceList.getAdapter()).clearList();
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ENABLE_BT_REQUEST_ID) {
-            if (resultCode == MainActivity.RESULT_CANCELED) {
-                return;
-            }
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mScanning = false;
-        mBleWrapper.stopScanning();
-        mBleWrapper.disconnect();
-        mBleWrapper.close();
-    }
-
-    private void addScanningTimeout() {
-        Runnable timeout = new Runnable() {
-            @Override
-            public void run() {
-                if(mBleWrapper == null) {
-                    return;
-                }
-                mScanning = false;
-                mBleWrapper.stopScanning();
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        };
-        mHandler.postDelayed(timeout, SCANNING_TIMEOUT);
-    }
 
     @Override
     public void deviceClicked(BluetoothDevice device) {
         Log.d(TAG, "deviceClicked() called with: " + "device = [" + device.getName() + "]");
-        mBleWrapper.connect(device.getAddress());
+
+        ViewPagerAdapter adapter = (ViewPagerAdapter) mViewPager.getAdapter();
+        int index = adapter.getIndexOf(device);
+
+        if (index== -1) {
+            DeviceDetailFragment deviceDetailFragment = DeviceDetailFragment.newInstance(device);
+            adapter.addFragment(deviceDetailFragment, device.getName());
+            adapter.notifyDataSetChanged();
+            mPagerTabs.setTabsFromPagerAdapter(adapter);
+            mViewPager.setCurrentItem(adapter.getCount(), true);
+        }else{
+            mViewPager.setCurrentItem(index+1, true);
+        }
     }
 }
