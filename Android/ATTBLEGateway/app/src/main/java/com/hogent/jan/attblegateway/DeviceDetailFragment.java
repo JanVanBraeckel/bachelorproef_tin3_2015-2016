@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 
 import com.hogent.jan.attblegateway.ExpandableListView.ExpandableListAdapter;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleNamesResolver;
@@ -27,21 +28,37 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DeviceDetailFragment extends Fragment {
+public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks{
     private final String TAG = getClass().getSimpleName();
-    private static final String ARG_PARAM = "bleDevice";
+    private static final String BLE_NAME = "deviceName";
+    private static final String BLE_ADDRESS = "deviceAddress";
+    private static final String BLE_RSSI = "deviceRssi";
 
     private BleWrapper mBleWrapper = null;
     private ExpandableListAdapter mListAdapter;
-    private BluetoothDevice mBleDevice;
+
+    private String mDeviceName = "";
+    private String mDeviceAddress = "";
+    private int mDeviceRssi =0;
+
+    @Bind(R.id.deviceDetailAddress)
+    TextView mDeviceAddressView;
+
+    @Bind(R.id.deviceDetailRssi)
+    TextView mDeviceRssiView;
+
+    @Bind(R.id.deviceDetailName)
+    TextView mDeviceNameView;
 
     @Bind(R.id.deviceServices)
     ExpandableListView mExpandableListView;
 
-    public static DeviceDetailFragment newInstance(BluetoothDevice device) {
+    public static DeviceDetailFragment newInstance(String name, String address, int rssi) {
         DeviceDetailFragment fragment = new DeviceDetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_PARAM, device);
+        args.putString(BLE_NAME, name);
+        args.putString(BLE_ADDRESS, address);
+        args.putInt(BLE_RSSI, rssi);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,15 +66,101 @@ public class DeviceDetailFragment extends Fragment {
     public DeviceDetailFragment() {
     }
 
-    public BluetoothDevice getBleDevice() {
-        return mBleDevice;
+    @Override
+    public void uiDeviceFound(BluetoothDevice device, int rssi, byte[] record) {
+        //
+    }
+
+    @Override
+    public void uiDeviceConnected(BluetoothGatt gatt, BluetoothDevice device) {
+        Log.d(TAG, "uiDeviceConnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
+    }
+
+    @Override
+    public void uiDeviceDisconnected(BluetoothGatt gatt, BluetoothDevice device) {
+        Log.d(TAG, "uiDeviceDisconnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
+    }
+
+    @Override
+    public void uiNewRssiAvailable(BluetoothGatt gatt, BluetoothDevice device, final int rssi) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mDeviceRssi = rssi;
+                mDeviceRssiView.setText(rssi + " db");
+            }
+        });
+    }
+
+    @Override
+    public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, final List<BluetoothGattService> services) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListAdapter.addServices(services);
+            }
+        });
+
+        for (BluetoothGattService service : services) {
+            final String serviceName = BleNamesResolver.resolveUuid(service.getUuid().toString());
+            Log.d(TAG, "uiAvailableServices() called with: " + "Service found = [" + serviceName + "]");
+
+            mBleWrapper.getCharacteristicsForService(service);
+        }
+    }
+
+    @Override
+    public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final List<BluetoothGattCharacteristic> chars) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListAdapter.addCharacteristicsForService(service, chars);
+            }
+        });
+
+        for (BluetoothGattCharacteristic bluetoothGattCharacteristic : chars) {
+            String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
+            Log.d(TAG, "uiCharacteristicForService() called with: " + "Characteristic found = [" + characteristicName + "]");
+        }
+    }
+
+    @Override
+    public void uiCharacteristicsDetails(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic characteristic) {
+        Log.d(TAG, "uiCharacteristicsDetails() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service + "], characteristic = [" + characteristic + "]");
+    }
+
+    @Override
+    public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final BluetoothGattCharacteristic ch, final String strValue, final int intValue, final byte[] rawValue, final String timestamp) {
+        Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service + "], ch = [" + ch + "], strValue = [" + strValue + "], intValue = [" + intValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListAdapter.newValueForCharacteristic(service, ch, strValue, intValue, rawValue, timestamp);
+            }
+        });
+    }
+
+    @Override
+    public void uiSuccessfulWrite(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch, String description) {
+    }
+
+    @Override
+    public void uiFailedWrite(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch, String description) {
+
+    }
+
+    @Override
+    public void uiGotNotification(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic characteristic) {
+        Log.d(TAG, "uiGotNotification() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service + "], characteristic = [" + characteristic + "]");
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mBleDevice = getArguments().getParcelable(ARG_PARAM);
+            mDeviceName = getArguments().getString(BLE_NAME);
+            mDeviceAddress = getArguments().getString(BLE_ADDRESS);
+            mDeviceRssi = getArguments().getInt(BLE_RSSI);
         }
     }
 
@@ -65,13 +168,27 @@ public class DeviceDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mBleWrapper.initialize();
-        mBleWrapper.connect(mBleDevice.getAddress());
+        if(mBleWrapper == null){
+            mBleWrapper = new BleWrapper(getActivity(), this);
+        }
+
+        if(!mBleWrapper.initialize()){
+            getActivity().finish();
+        }
+
+        mListAdapter = new ExpandableListAdapter(getContext(), mBleWrapper);
+        mExpandableListView.setAdapter(mListAdapter);
+
+        mBleWrapper.connect(mDeviceAddress);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        mListAdapter.clearLists();
+
+        mBleWrapper.stopMonitoringRssiValue();
         mBleWrapper.disconnect();
         mBleWrapper.close();
     }
@@ -83,55 +200,9 @@ public class DeviceDetailFragment extends Fragment {
 
         ButterKnife.bind(this, v);
 
-        mBleWrapper = new BleWrapper(getActivity(), new BleWrapperUiCallbacks.Null() {
-            @Override
-            public void uiDeviceConnected(BluetoothGatt gatt, BluetoothDevice device) {
-                Log.d(TAG, "uiDeviceConnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
-            }
-
-            @Override
-            public void uiDeviceDisconnected(BluetoothGatt gatt, BluetoothDevice device) {
-                Log.d(TAG, "uiDeviceDisconnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
-                if (gatt != null) {
-                    gatt.disconnect();
-                }
-            }
-
-            @Override
-            public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, final List<BluetoothGattService> services) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListAdapter.addServices(services);
-                    }
-                });
-
-                for (BluetoothGattService service : services) {
-                    final String serviceName = BleNamesResolver.resolveUuid(service.getUuid().toString());
-                    Log.d(TAG, "uiAvailableServices() called with: " + "Service found = [" + serviceName + "]");
-
-                    mBleWrapper.getCharacteristicsForService(service);
-                }
-            }
-
-            @Override
-            public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final List<BluetoothGattCharacteristic> chars) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mListAdapter.addCharacteristicsForService(service, chars);
-                    }
-                });
-
-                for (BluetoothGattCharacteristic bluetoothGattCharacteristic : chars) {
-                    String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
-                    Log.d(TAG, "uiCharacteristicForService() called with: " + "Characteristic found = [" + characteristicName + "]");
-                }
-            }
-        });
-
-        mListAdapter = new ExpandableListAdapter(getContext());
-        mExpandableListView.setAdapter(mListAdapter);
+        mDeviceAddressView.setText(mDeviceAddress);
+        mDeviceRssiView.setText(mDeviceRssi + " db");
+        mDeviceNameView.setText(mDeviceName);
 
         return v;
     }

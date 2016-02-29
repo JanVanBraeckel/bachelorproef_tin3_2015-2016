@@ -62,7 +62,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ma
     }
 
     @Override
-    public void onBindViewHolder(MainViewHolder holder, int position) {
+    public void onBindViewHolder(MainViewHolder holder, final int position) {
         final BluetoothDevice device = mDevices.get(position);
         final int RSSI = mRSSIs.get(position);
 
@@ -77,8 +77,8 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ma
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mListener != null){
-                    mListener.deviceClicked(device);
+                if (mListener != null) {
+                    mListener.deviceClicked(device, mRSSIs.get(position));
                 }
             }
         });
@@ -95,10 +95,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ma
         return mDevices.size();
     }
 
-    public int getRSSI(int index) {
-        return mRSSIs.get(index);
-    }
-
     public BluetoothDevice getDevice(int index) {
         return mDevices.get(index);
     }
@@ -108,6 +104,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ma
     }
 
     public interface DeviceClickedListener{
-        void deviceClicked(BluetoothDevice device);
+        void deviceClicked(BluetoothDevice device, int rssi);
     }
 }

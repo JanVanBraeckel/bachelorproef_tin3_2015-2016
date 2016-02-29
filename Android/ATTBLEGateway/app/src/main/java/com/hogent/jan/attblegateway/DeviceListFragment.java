@@ -42,6 +42,7 @@ public class DeviceListFragment extends Fragment implements DeviceListAdapter.De
     private boolean mScanning = false;
     private BleWrapper mBleWrapper = null;
     private Handler mHandler = new Handler();
+    private DeviceListAdapter mDeviceListAdapter = null;
 
     @Bind(R.id.device_list)
     RecyclerView mDeviceList;
@@ -64,100 +65,12 @@ public class DeviceListFragment extends Fragment implements DeviceListAdapter.De
 
         ButterKnife.bind(this, v);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mDeviceList.setLayoutManager(layoutManager);
-        DeviceListAdapter adapter = new DeviceListAdapter(getContext());
-        adapter.setDeviceClickedListener(this);
-        mDeviceList.setAdapter(adapter);
-
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-
         mBleWrapper = new BleWrapper(getActivity(), new BleWrapperUiCallbacks.Null() {
             @Override
             public void uiDeviceFound(final BluetoothDevice device, final int rssi, final byte[] record) {
                 Log.d(TAG, "uiDeviceFound() called with: " + "device = [" + device.getName() + "], rssi = [" + rssi + "], record = [" + record + "]");
-                ((DeviceListAdapter) mDeviceList.getAdapter()).addDevice(device, rssi);
+                foundDevice(device, rssi);
             }
-//
-//            @Override
-//            public void uiDeviceConnected(BluetoothGatt gatt, BluetoothDevice device) {
-//                Log.d(TAG, "uiDeviceConnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
-//            }
-//
-            @Override
-            public void uiDeviceDisconnected(BluetoothGatt gatt, BluetoothDevice device) {
-                Log.d(TAG, "uiDeviceDisconnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
-                if (gatt != null) {
-                    gatt.disconnect();
-                }
-            }
-//
-//            @Override
-//            public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, List<BluetoothGattService> services) {
-//                BluetoothGattCharacteristic bluetoothGattCharacteristic;
-//
-//                for (BluetoothGattService service : services) {
-//                    String serviceName = BleNamesResolver.resolveUuid(service.getUuid().toString());
-//                    Log.d(TAG, "uiAvailableServices() called with: " + "Service found = [" + serviceName + "]");
-//
-//                    mBleWrapper.getCharacteristicsForService(service);
-//                }
-//            }
-//
-//            @Override
-//            public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, List<BluetoothGattCharacteristic> chars) {
-//                for (BluetoothGattCharacteristic bluetoothGattCharacteristic : chars) {
-//                    String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
-//                    Log.d(TAG, "uiCharacteristicForService() called with: " + "Characteristic found = [" + characteristicName + "]");
-//                }
-//            }
-//
-//            @Override
-//            public void uiSuccessfulWrite(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch, String description) {
-//                Log.d(TAG, "uiSuccessfulWrite() called");
-//
-////                BluetoothGattCharacteristic bluetoothGattCharacteristic;
-////
-////                switch (mState) {
-////                    case ACC_ENABLE:
-////                        Log.d(TAG, "uiSuccessfulWrite(): Reading acc");
-////                        bluetoothGattCharacteristic = gatt.getService(UUID_ACC_SERV).getCharacteristic(UUID_ACC_DATA);
-////                        mBleWrapper.requestCharacteristicValue(bluetoothGattCharacteristic);
-////                        mState = mSensorState.ACC_READ;
-////                        break;
-////
-////                    case ACC_READ:
-////                        Log.d(TAG, "uiSuccessfulWrite(): state = ACC_READ");
-////                        break;
-////
-////                    default:
-////                        break;
-////                }
-//            }
-//
-//            @Override
-//            public void uiFailedWrite(BluetoothGatt gatt,
-//                                      BluetoothDevice device,
-//                                      BluetoothGattService service,
-//                                      BluetoothGattCharacteristic ch,
-//                                      String description) {
-//                Log.d(TAG, "uiFailedWrite() called with: " + "description = [" + description + "]");
-//            }
-//
-//            @Override
-//            public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch, String strValue, int intValue, byte[] rawValue, String timestamp) {
-//                Log.d(TAG, "uiNewValueForCharacteristic() called");
-//                for (byte b : rawValue) {
-//                    Log.d(TAG, "Val: " + b);
-//                }
-//            }
-//
-//            @Override
-//            public void uiGotNotification(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch) {
-//                String characteristic = BleNamesResolver.resolveCharacteristicName(ch.getUuid().toString());
-//
-//                Log.d(TAG, "uiGotNotification() called with: " + "characteristic = [" + characteristic + "]");
-//            }
         });
 
         if (!mBleWrapper.checkBleHardwareAvailable()) {
@@ -178,6 +91,14 @@ public class DeviceListFragment extends Fragment implements DeviceListAdapter.De
         }
 
         mBleWrapper.initialize();
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mDeviceList.setLayoutManager(layoutManager);
+        mDeviceListAdapter = new DeviceListAdapter(getContext());
+        mDeviceListAdapter.setDeviceClickedListener(this);
+        mDeviceList.setAdapter(mDeviceListAdapter);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         mScanning = true;
         addScanningTimeout();
@@ -204,10 +125,19 @@ public class DeviceListFragment extends Fragment implements DeviceListAdapter.De
     public void onRefresh() {
         if (!mScanning) {
             mBleWrapper.disconnect();
-            ((DeviceListAdapter)mDeviceList.getAdapter()).clearList();
+            mDeviceListAdapter.clearList();
             addScanningTimeout();
             mBleWrapper.startScanning();
         }
+    }
+
+    private void foundDevice(final BluetoothDevice device, final int rssi){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mDeviceListAdapter.addDevice(device, rssi);
+            }
+        });
     }
 
     private void addScanningTimeout() {
@@ -226,8 +156,8 @@ public class DeviceListFragment extends Fragment implements DeviceListAdapter.De
     }
 
     @Override
-    public void deviceClicked(BluetoothDevice device) {
-        mListener.deviceClicked(device);
+    public void deviceClicked(BluetoothDevice device, int rssi) {
+        mListener.deviceClicked(device, rssi);
     }
 
     public void setDeviceClickedListener(DeviceListListener listener){
@@ -235,6 +165,6 @@ public class DeviceListFragment extends Fragment implements DeviceListAdapter.De
     }
 
     public interface DeviceListListener {
-        void deviceClicked(BluetoothDevice device);
+        void deviceClicked(BluetoothDevice device, int rssi);
     }
 }

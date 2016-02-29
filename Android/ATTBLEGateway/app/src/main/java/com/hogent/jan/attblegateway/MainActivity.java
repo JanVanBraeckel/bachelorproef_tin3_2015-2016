@@ -10,6 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.hogent.jan.attblegateway.recyclerview.DeviceListAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements DeviceListFragmen
 
         DeviceListFragment deviceListFragment = DeviceListFragment.newInstance();
         deviceListFragment.setDeviceClickedListener(this);
-        adapter.addFragment(deviceListFragment, "Devices");
+        adapter.addFragment(deviceListFragment, "Devices", "");
         mViewPager.setAdapter(adapter);
 
         mPagerTabs.setupWithViewPager(mViewPager);
@@ -52,14 +54,16 @@ public class MainActivity extends AppCompatActivity implements DeviceListFragmen
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
+        private final List<String> mDeviceAddresses = new ArrayList<>();
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public void addFragment(Fragment fragment, String title) {
+        public void addFragment(Fragment fragment, String title, String address) {
             mFragments.add(fragment);
             mFragmentTitles.add(title);
+            mDeviceAddresses.add(address);
         }
 
         @Override
@@ -67,15 +71,8 @@ public class MainActivity extends AppCompatActivity implements DeviceListFragmen
             return mFragments.get(position);
         }
 
-        public int getIndexOf(BluetoothDevice device) {
-            List<BluetoothDevice> devices = new ArrayList<>();
-            for(Fragment f : mFragments){
-                if(f instanceof DeviceDetailFragment){
-                    devices.add(((DeviceDetailFragment)f).getBleDevice());
-                }
-            }
-
-            return devices.indexOf(device);
+        public int hasTag(String deviceAddress){
+            return mDeviceAddresses.indexOf(deviceAddress);
         }
 
         @Override
@@ -91,15 +88,15 @@ public class MainActivity extends AppCompatActivity implements DeviceListFragmen
 
 
     @Override
-    public void deviceClicked(BluetoothDevice device) {
+    public void deviceClicked(BluetoothDevice device, int rssi) {
         Log.d(TAG, "deviceClicked() called with: " + "device = [" + device.getName() + "]");
 
         ViewPagerAdapter adapter = (ViewPagerAdapter) mViewPager.getAdapter();
-        int index = adapter.getIndexOf(device);
+        int index = adapter.hasTag(device.getAddress());
 
-        if (index== -1) {
-            DeviceDetailFragment deviceDetailFragment = DeviceDetailFragment.newInstance(device);
-            adapter.addFragment(deviceDetailFragment, device.getName());
+        if (index == -1) {
+            DeviceDetailFragment deviceDetailFragment = DeviceDetailFragment.newInstance(device.getName(), device.getAddress(), rssi);
+            adapter.addFragment(deviceDetailFragment, device.getName(), device.getAddress());
             adapter.notifyDataSetChanged();
             mPagerTabs.setTabsFromPagerAdapter(adapter);
             mViewPager.setCurrentItem(adapter.getCount(), true);

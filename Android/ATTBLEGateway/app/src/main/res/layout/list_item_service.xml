@@ -6,11 +6,17 @@
 
     <TextView
         android:id="@+id/deviceService"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/deviceServiceUUID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/deviceServiceType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>
