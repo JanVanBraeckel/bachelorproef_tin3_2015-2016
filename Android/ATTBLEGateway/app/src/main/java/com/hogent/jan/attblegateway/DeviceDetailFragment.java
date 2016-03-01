@@ -28,7 +28,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks{
+public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks, ExpandableListAdapter.ExpandableListAdapterListener{
     private final String TAG = getClass().getSimpleName();
     private static final String BLE_NAME = "deviceName";
     private static final String BLE_ADDRESS = "deviceAddress";
@@ -131,7 +131,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
 
     @Override
     public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final BluetoothGattCharacteristic ch, final String strValue, final int intValue, final byte[] rawValue, final String timestamp) {
-        Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service + "], ch = [" + ch + "], strValue = [" + strValue + "], intValue = [" + intValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
+        Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service.getUuid() + "], ch = [" + ch.getUuid() + "], strValue = [" + strValue + "], intValue = [" + intValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -142,6 +142,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
 
     @Override
     public void uiSuccessfulWrite(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic ch, String description) {
+
     }
 
     @Override
@@ -152,6 +153,26 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Override
     public void uiGotNotification(BluetoothGatt gatt, BluetoothDevice device, BluetoothGattService service, BluetoothGattCharacteristic characteristic) {
         Log.d(TAG, "uiGotNotification() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service + "], characteristic = [" + characteristic + "]");
+    }
+
+    @Override
+    public void requestCharacteristicValue(BluetoothGattCharacteristic characteristic) {
+        mBleWrapper.requestCharacteristicValue(characteristic);
+    }
+
+    @Override
+    public void writeDataToCharacteristic(BluetoothGattCharacteristic characteristic, byte[] data) {
+        mBleWrapper.writeDataToCharacteristic(characteristic, data);
+    }
+
+    @Override
+    public int getValueFormat(BluetoothGattCharacteristic characteristic) {
+        return mBleWrapper.getValueFormat(characteristic);
+    }
+
+    @Override
+    public void setNotificationForCharacteristic(BluetoothGattCharacteristic characteristic, boolean enabled) {
+        mBleWrapper.setNotificationForCharacteristic(characteristic, enabled);
     }
 
     @Override
@@ -176,7 +197,8 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
             getActivity().finish();
         }
 
-        mListAdapter = new ExpandableListAdapter(getContext(), mBleWrapper);
+        mListAdapter = new ExpandableListAdapter(getContext());
+        mListAdapter.setExpandableListAdapterListener(this);
         mExpandableListView.setAdapter(mListAdapter);
 
         mBleWrapper.connect(mDeviceAddress);

@@ -1,12 +1,8 @@
 package com.hogent.jan.attblegateway.ExpandableListView;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
-import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +15,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.hogent.jan.attblegateway.R;
+import com.hogent.jan.attblegateway.bluetoothWrapper.BleGattCharacteristicValues;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleNamesResolver;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleWrapper;
 
@@ -36,13 +33,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Context mContext;
     private List<BluetoothGattService> mBluetoothServices;
     private HashMap<BluetoothGattService, List<BluetoothGattCharacteristic>> mBluetoothCharacteristics;
-    private BleWrapper mBleWrapper = null;
+    private HashMap<BluetoothGattService, HashMap<BluetoothGattCharacteristic, BleGattCharacteristicValues>> mBluetoothCharacteristicValues;
+    private ExpandableListAdapterListener mListener;
 
-    public ExpandableListAdapter(Context context, BleWrapper wrapper) {
+    public ExpandableListAdapter(Context context) {
         mContext = context;
         mBluetoothCharacteristics = new HashMap<>();
         mBluetoothServices = new ArrayList<>();
-        mBleWrapper = wrapper;
+        mBluetoothCharacteristicValues = new HashMap<>();
     }
 
     public void addServices(List<BluetoothGattService> services){
@@ -59,9 +57,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if(!mBluetoothCharacteristics.containsKey(service)){
             mBluetoothCharacteristics.put(service, characteristics);
         }
+        if(!mBluetoothCharacteristicValues.containsKey(service)){
+            mBluetoothCharacteristicValues.put(service, new HashMap<BluetoothGattCharacteristic, BleGattCharacteristicValues>());
+        }
         for(BluetoothGattCharacteristic characteristic : characteristics){
             if(!mBluetoothCharacteristics.get(service).contains(characteristic)){
                 mBluetoothCharacteristics.get(service).add(characteristic);
+            }
+            if(!mBluetoothCharacteristicValues.get(service).containsKey(characteristic)){
+                mBluetoothCharacteristicValues.get(service).put(characteristic, new BleGattCharacteristicValues());
             }
         }
 
@@ -69,34 +73,25 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     public void newValueForCharacteristic(BluetoothGattService service, BluetoothGattCharacteristic characteristic, String strValue, int intValue, byte[] rawValue, String timestamp){
-        List<BluetoothGattCharacteristic> characteristics = mBluetoothCharacteristics.get(service);
-        if(characteristics != null && characteristics.contains(characteristic)){
-            int serviceIndex = mBluetoothServices.indexOf(service);
-            int characteristicIndex = characteristics.indexOf(characteristic);
-
-            View detailView = getChildView(serviceIndex, characteristicIndex,false, null, null);
-
-            EditText txtValue = ButterKnife.findById(detailView, R.id.characteristicDetailValue);
-            TextView lblStringValue = ButterKnife.findById(detailView, R.id.characteristicDetailStringValue);
-            TextView lblDecimalValue = ButterKnife.findById(detailView, R.id.characteristicDetailDecimalValue);
-            TextView lblUpdated = ButterKnife.findById(detailView, R.id.characteristicDetailLastUpdated);
-
-            lblStringValue.setText(strValue);
+        HashMap<BluetoothGattCharacteristic, BleGattCharacteristicValues> charValues = mBluetoothCharacteristicValues.get(service);
+        if(charValues != null && charValues.get(characteristic) != null){
+            String asciiValue = "";
             if(rawValue != null && rawValue.length > 0){
-                final StringBuilder builder = new StringBuilder(rawValue.length);
+                final StringBuilder stringBuilder = new StringBuilder(rawValue.length);
                 for(byte byteChar: rawValue){
-                    builder.append(String.format("%02X", byteChar));
+                    stringBuilder.append(String.format("%02X", byteChar));
                 }
-                txtValue.setText(builder.toString());
-            }else{
-                txtValue.setText("");
+                asciiValue = "0x" + stringBuilder.toString();
             }
-            lblDecimalValue.setText(String.format("%d", intValue));
-            lblUpdated.setText(timestamp);
+
+            charValues.get(characteristic).setValues(strValue, intValue, asciiValue, timestamp);
+
+            notifyDataSetChanged();
         }
     }
 
     public void clearLists(){
+        mBluetoothCharacteristicValues.clear();
         mBluetoothCharacteristics.clear();
         mBluetoothServices.clear();
         notifyDataSetChanged();
@@ -128,9 +123,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final BluetoothGattCharacteristic child = getChild(groupPosition, childPosition);
-        final String characteristicName = BleNamesResolver.resolveUuid(child.getUuid().toString());
-        final String characteristicUUID = child.getUuid().toString().toUpperCase();
+        final BluetoothGattService service = getGroup(groupPosition);
+        final BluetoothGattCharacteristic characteristic = getChild(groupPosition, childPosition);
+        final String characteristicName = BleNamesResolver.resolveUuid(characteristic.getUuid().toString());
+        final String characteristicUUID = characteristic.getUuid().toString().toUpperCase();
 
         if(convertView == null){
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_characteristic, null);
@@ -142,6 +138,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         lblCharacteristicUUID.setText(characteristicUUID);
 
         final LinearLayout detailView = ButterKnife.findById(convertView, R.id.characteristicDetail);
+
+        if(detailView.getVisibility()==View.VISIBLE){
+            final EditText txtValue = ButterKnife.findById(detailView, R.id.characteristicDetailValue);
+            TextView lblStringValue = ButterKnife.findById(detailView, R.id.characteristicDetailStringValue);
+            TextView lblDecimalValue = ButterKnife.findById(detailView, R.id.characteristicDetailDecimalValue);
+            TextView lblUpdated = ButterKnife.findById(detailView, R.id.characteristicDetailLastUpdated);
+
+            BleGattCharacteristicValues values = mBluetoothCharacteristicValues.get(service).get(characteristic);
+
+            txtValue.setText(values.getAsciiValue());
+            lblDecimalValue.setText(String.format("%d", values.getIntValue()));
+            lblStringValue.setText(values.getStrValue());
+            lblUpdated.setText(values.getTimestamp());
+        }
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,10 +172,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     btnNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if(isChecked){
-                                mBleWrapper.setNotificationForCharacteristic(child, true);
-                            }else{
-                                mBleWrapper.setNotificationForCharacteristic(child, false);
+                            if (isChecked) {
+                                mListener.setNotificationForCharacteristic(characteristic, true);
+                            } else {
+                                mListener.setNotificationForCharacteristic(characteristic, false);
                             }
                         }
                     });
@@ -176,20 +186,20 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                             String value = txtValue.getText().toString().toLowerCase(Locale.getDefault());
                             byte[] dataToWrite = parseHexStringToBytes(value);
 
-                            mBleWrapper.writeDataToCharacteristic(child, dataToWrite);
+                            mListener.writeDataToCharacteristic(characteristic, dataToWrite);
                         }
                     });
 
                     btnRead.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mBleWrapper.requestCharacteristicValue(child);
+                            mListener.requestCharacteristicValue(characteristic);
                         }
                     });
 
-                    int format = mBleWrapper.getValueFormat(child);
+                    int format = mListener.getValueFormat(characteristic);
                     lblDataType.setText(BleNamesResolver.resolveValueTypeDescription(format));
-                    int properties = child.getProperties();
+                    int properties = characteristic.getProperties();
                     String propertiesString = String.format("0x%04X [", properties);
                     if((properties & BluetoothGattCharacteristic.PROPERTY_READ) != 0){
                         propertiesString += "read ";
@@ -216,9 +226,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     btnWrite.setEnabled((properties & (BluetoothGattCharacteristic.PROPERTY_WRITE | BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) != 0);
                     txtValue.setEnabled(btnWrite.isEnabled());
 
-                    lblDecimalValue.setText("Read value");
-                    lblStringValue.setText("Read value");
-                    lblUpdated.setText("Read value");
+                    BleGattCharacteristicValues values = mBluetoothCharacteristicValues.get(service).get(characteristic);
+                    txtValue.setText(values.getAsciiValue());
+                    lblDecimalValue.setText(String.format("%d", values.getIntValue()));
+                    lblStringValue.setText(values.getStrValue());
+                    lblUpdated.setText(values.getTimestamp());
+                    detailView.setVisibility(View.GONE);
+                    detailView.setVisibility(View.VISIBLE);
                 } else {
                     detailView.setVisibility(View.GONE);
                 }
@@ -275,5 +289,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    public void setExpandableListAdapterListener(ExpandableListAdapterListener mListener) {
+        this.mListener = mListener;
+    }
+
+    public interface ExpandableListAdapterListener{
+        void requestCharacteristicValue(BluetoothGattCharacteristic characteristic);
+        void writeDataToCharacteristic(BluetoothGattCharacteristic characteristic, byte[] data);
+        int getValueFormat(BluetoothGattCharacteristic characteristic);
+        void setNotificationForCharacteristic(BluetoothGattCharacteristic characteristic, boolean enabled);
     }
 }
