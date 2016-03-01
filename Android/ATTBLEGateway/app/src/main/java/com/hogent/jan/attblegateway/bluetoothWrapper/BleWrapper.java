@@ -253,10 +253,12 @@ public class BleWrapper {
     }
 
     /* request to fetch newest value stored on the remote device for particular characteristic */
-    public void requestCharacteristicValue(BluetoothGattCharacteristic ch) {
+    public void requestCharacteristicValue(BluetoothGattService service, BluetoothGattCharacteristic ch) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             return;
         }
+
+        mBluetoothSelectedService = service;
 
         mBluetoothGatt.readCharacteristic(ch);
         // new value available will be notified in Callback Object
@@ -377,7 +379,7 @@ public class BleWrapper {
 
     /* set new value for particular characteristic */
     public void writeDataToCharacteristic(final BluetoothGattCharacteristic ch, final byte[] dataToWrite) {
-        if (mBluetoothAdapter == null || mBluetoothGatt == null || ch == null){
+        if (mBluetoothAdapter == null || mBluetoothGatt == null || ch == null) {
             return;
         }
 

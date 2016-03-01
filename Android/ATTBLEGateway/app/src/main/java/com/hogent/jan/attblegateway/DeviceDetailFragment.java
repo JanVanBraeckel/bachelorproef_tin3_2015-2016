@@ -156,8 +156,8 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     }
 
     @Override
-    public void requestCharacteristicValue(BluetoothGattCharacteristic characteristic) {
-        mBleWrapper.requestCharacteristicValue(characteristic);
+    public void requestCharacteristicValue(BluetoothGattService service, BluetoothGattCharacteristic characteristic) {
+        mBleWrapper.requestCharacteristicValue(service, characteristic);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     }
 
     @Override
-    public void setNotificationForCharacteristic(BluetoothGattCharacteristic characteristic, boolean enabled) {
+    public void setNotificationForCharacteristic(BluetoothGattService service, BluetoothGattCharacteristic characteristic, boolean enabled) {
         mBleWrapper.setNotificationForCharacteristic(characteristic, enabled);
     }
 

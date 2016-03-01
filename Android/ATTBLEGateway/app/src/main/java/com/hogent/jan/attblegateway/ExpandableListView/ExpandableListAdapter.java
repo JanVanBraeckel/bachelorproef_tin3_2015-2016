@@ -173,9 +173,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         @Override
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked) {
-                                mListener.setNotificationForCharacteristic(characteristic, true);
+                                mListener.setNotificationForCharacteristic(service, characteristic, true);
                             } else {
-                                mListener.setNotificationForCharacteristic(characteristic, false);
+                                mListener.setNotificationForCharacteristic(service, characteristic, false);
                             }
                         }
                     });
@@ -193,7 +193,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     btnRead.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.requestCharacteristicValue(characteristic);
+                            mListener.requestCharacteristicValue(service, characteristic);
                         }
                     });
 
@@ -296,9 +296,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     public interface ExpandableListAdapterListener{
-        void requestCharacteristicValue(BluetoothGattCharacteristic characteristic);
+        void requestCharacteristicValue(BluetoothGattService service, BluetoothGattCharacteristic characteristic);
         void writeDataToCharacteristic(BluetoothGattCharacteristic characteristic, byte[] data);
         int getValueFormat(BluetoothGattCharacteristic characteristic);
-        void setNotificationForCharacteristic(BluetoothGattCharacteristic characteristic, boolean enabled);
+        void setNotificationForCharacteristic(BluetoothGattService service, BluetoothGattCharacteristic characteristic, boolean enabled);
     }
 }
