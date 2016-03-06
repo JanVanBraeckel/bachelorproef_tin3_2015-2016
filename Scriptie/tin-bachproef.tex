@@ -18,7 +18,7 @@
 \usepackage{amsfonts}        % AMS math packages: extra wiskundige
 \usepackage{amsmath}         %   symbolen (o.a. getallen-
 \usepackage{amssymb}         %   verzamelingen N, R, Z, Q, etc.)
-%\usepackage[dutch]{babel}    % Taalinstellingen: woordsplitsingen,
+%\usepackage[dutch]{babel}   % Taalinstellingen: woordsplitsingen,
                              %  commando's voor speciale karakters
                              %  ("dutch" voor NL)
 \usepackage{eurosym}         % Euro-symbool €
@@ -27,6 +27,7 @@
 \usepackage[pdftex,bookmarks=true]{hyperref}
                              % PDF krijgt klikbare links & verwijzingen,
                              %  inhoudstafel
+\usepackage{epigraph}
 \usepackage{listings}        % Broncode mooi opmaken
 \usepackage{multirow}        % Tekst over verschillende cellen in tabellen
 \usepackage{rotating}        % Tabellen en figuren roteren
@@ -198,6 +199,8 @@
 
 \chapter{Introduction}
 \label{ch:introduction}
+\epigraph{If you think that the internet has changed your life, think again. The IoT is about to change it all over again!}{Brendan O'Brien}
+The Internet of Things hasn't been around for a very long time, yet it's quickly becoming very popular and almost every tech company wants to be a part of it. It gained a lot of popularity around 2011 when IPV6 was released and it was around this time Gartner also took note of this technology and put it on their annual Hype Cycle for the first time. Around the same time of the growing popularity of the Internet of Things, the Bluetooth Special Interest Group also released a new Bluetooth specification that was built for the Internet of Things. Gartner suggests that by 2020, around 20 billion `things' will be connected to the Internet of Things, a market that Bluetooth Low Energy aims to play a big role in. This thesis aims to provide an introduction to Bluetooth Low Energy and how one would go about implementing Bluetooth Low Energy in the Internet of Things. In this chapter, the problem that the thesis is trying to find an answer for is elaborated, as well as the actual questions that need answering. An introduction about `AllThingsTalk' can also be found, a company that is trying to figure out how to include Bluetooth Low Energy wearables into their Internet of Things infrastructure.
 
 % De inleiding moet de lezer alle nodige informatie verschaffen om het onderwerp te begrijpen zonder nog externe werken te moeten raadplegen \citep{Pollefliet2011}. Dit is een doorlopende tekst die gebaseerd is op al wat je over het onderwerp gelezen hebt (literatuuronderzoek).
 
@@ -205,9 +208,30 @@
 % Soms wil je de auteur niet expliciet vernoemen, dan gebruik je \texttt{$\backslash${}citep\{\}}. Hieronder een voorbeeld van elk.
 
 % \cite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\citep{Creeger2009}.
-
+\newpage{}
 \section{Problem statement and research questions}
 \label{sec:problemdefinition}
+In this section, the goal is to quickly familiarize you, the reader, with the subject this thesis is dealing about and which problems need to be solved in order to form a proper conclusion. First of all, the problem statement will be discussed where a quick sketch will be made as to why this thesis came to be. It will handle the problem AllThingsTalk is currently facing in the development of their company and why combining Bluetooth Low Energy with their Internet of Things infrastructure is the next logical step for their business. Next, we'll look at the main question AllThingsTalk wants an answer for together with some smaller questions that logically follow it.
+
+\subsection{Problem statement}
+\label{subsec:problemstatement}
+At the time of writing, there are already a lot of Bluetooth enabled products on the technology market. With the new Bluetooth Low Energy specification, Bluetooth is reaching out even further to products like socks\footnote{http://www.sensoriafitness.com/}, shoes\footnote{https://secure-nikeplus.nike.com/plus/products/basketball}, fitness bands\footnote{https://www.fitbit.com/} and more are being added to the list every day. The problem with these products is that in a lot of cases, the products only synchronize with a smartphone. Some manufacturers extend this connectivity by occasionally synchronizing the data the smartphone captures to their own proprietary cloud, where the data can be analyzed by both the company and the consumer. Most of the time, this is where the data cycle stops and it can't be further accessed by other parties, this is known as a closed loop system. In some cases, developers can still access the data with an API that communicates with the cloud service of the manufacturer, but this doesn't give any access to the raw sensor values and doesn't allow real-time data transfer.
+
+On top of this, a lot of the devices being manufactured don't use standard SIG adopted BLE services, which makes interoperability with existing applications hard, if not impossible if authentication and encryption are added into the mix.
+
+\subsection{Research questions}
+\label{subsec:researchquestions}
+There are a couple of questions that can be asked when combining Bluetooth Low Energy and the Internet of Things, and some of those questions alone could have multiple papers dedicated. For example, the matter of security will be a never ending debate, and even more concerns arise when talking about security in the Internet of Things. These security concerns will be addressed further in section \ref{sec:concerns}. Another concern is privacy, but since this is very much a gray area, it's hard to formulate a one-sided conclusion on this matter.
+
+The main goals this thesis tries to fulfill are in essence very simple, but of course there are always some other questions that arise when looking at the big picture. These questions can be categorized as following, the questions in bold being the main research questions and the ones in plain text being auxiliary questions:
+\begin{itemize}
+	\item{\textbf{Can Bluetooth Low Energy wearables be used in an Internet of Things cloud infrastructure?}}
+	\item{\textbf{Is is possible to use a smartphone as gateway to communicate with the AllThingsTalk cloud in real-time?}}
+	\item{What is Bluetooth Low Energy?}
+	\item{What is the difference between Bluetooth Low Energy and Bluetooth Classic?}
+	\item{What are the pros and cons of this technology?}
+	\item{What types of devices exist in Bluetooth Low Energy and how do they expose their data?}
+\end{itemize}
 
 \section{AllThingsTalk}
 \label{sec:allthingstalk}
@@ -315,8 +339,17 @@
 \chapter{Android programming}
 \label{ch:android}
 
-\chapter{Conclusion}
-\label{ch:conclusion}
+\chapter{Discussion}
+\label{ch:discussion}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\section{Concerns}
+\label{sec:concerns}
+
+\section{Further research}
+\label{sec:furtherresearch}
 
 % TODO: Trek een duidelijke conclusie, in de vorm van een antwoord op de
 % onderzoeksvra(a)g(en). Reflecteer kritisch over het resultaat. Zijn er
