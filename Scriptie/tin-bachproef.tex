@@ -320,6 +320,10 @@ The main goals this thesis tries to fulfill are in essence very simple, but of c
 
 \chapter{Generic Attribute Profile}
 \label{ch:gatt}
+\epigraph{You can have data without information, but you cannot have information without data.}{Daniel Keys Moran}
+At the core of Bluetooth Low Energy communication, the Generic Attribute Profile or GATT is something a client will use in every data request or data push once a dedicated connection has been set up. It defines the way data is transferred in Bluetooth Low Energy and it uses the Attribute protocol, which is the protocol that stores Services, Characteristics, Descriptors and their respective values. In this chapter the general Attribute Profile and Protocol will be discussed, as well as the different data structures that come in to play. An example of an Attribute server will also be given using a standard SIG-approved Profile, as well as why and how one would implement their own Profile, either because the SIG-approved Profiles don't fit the use case or because the manufacturer wants to make the used technology more private.
+
+\newpage{}
 
 \section{Profiles}
 \label{sec:profiles}
