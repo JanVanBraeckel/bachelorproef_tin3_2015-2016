@@ -16,7 +16,9 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.hogent.jan.attblegateway.ExpandableListView.ExpandableListAdapter;
+import com.hogent.jan.attblegateway.bluetoothWrapper.BleCharacteristic;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleNamesResolver;
+import com.hogent.jan.attblegateway.bluetoothWrapper.BleService;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleWrapper;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleWrapperUiCallbacks;
 import com.hogent.jan.attblegateway.recyclerview.DeviceListAdapter;
@@ -94,10 +96,14 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
 
     @Override
     public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, final List<BluetoothGattService> services) {
+        final List<BleService> bleServices = new ArrayList<>();
+        for(BluetoothGattService s : services){
+            bleServices.add(new BleService(s));
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListAdapter.addServices(services);
+                mListAdapter.addServices(bleServices);
             }
         });
 
@@ -111,10 +117,14 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
 
     @Override
     public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final List<BluetoothGattCharacteristic> chars) {
+        final List<BleCharacteristic> characteristics = new ArrayList<>();
+        for(BluetoothGattCharacteristic ch : chars){
+            characteristics.add(new BleCharacteristic(ch));
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListAdapter.addCharacteristicsForService(service, chars);
+                mListAdapter.addCharacteristicsForService(service, characteristics);
             }
         });
 
