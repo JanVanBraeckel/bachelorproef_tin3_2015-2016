@@ -94,7 +94,7 @@
 \newcommand{\titleEN}{Bluetooth Low Energy wearables in an Internet of Things cloud infrastructure using a smartphone as gateway}
 
 % Datum van indienen
-\newcommand{\datum}{29 mei 2015}
+\newcommand{\datum}{27 mei 2015}
 
 % Faculteit
 \newcommand{\faculteit}{Faculteit `Bedrijf en Organisatie'}
@@ -199,8 +199,8 @@
 
 \chapter{Introduction}
 \label{ch:introduction}
-\epigraph{If you think that the internet has changed your life, think again. The IoT is about to change it all over again!}{Brendan O'Brien}
-The Internet of Things hasn't been around for a very long time, yet it's quickly becoming very popular and almost every tech company wants to be a part of it. It gained a lot of popularity around 2011 when IPV6 was released and it was around this time Gartner also took note of this technology and put it on their annual Hype Cycle for the first time. Around the same time of the growing popularity of the Internet of Things, the Bluetooth Special Interest Group also released a new Bluetooth specification that was built for the Internet of Things. Gartner suggests that by 2020, around 20 billion `things' will be connected to the Internet of Things, a market that Bluetooth Low Energy aims to play a big role in. This thesis aims to provide an introduction to Bluetooth Low Energy and how one would go about implementing Bluetooth Low Energy in the Internet of Things. In this chapter, the problem that the thesis is trying to find an answer for is elaborated, as well as the actual questions that need answering. An introduction about `AllThingsTalk' can also be found, a company that is trying to figure out how to include Bluetooth Low Energy wearables into their Internet of Things infrastructure.
+\epigraph{``If you think that the internet has changed your life, think again. The IoT is about to change it all over again!''}{Brendan O'Brien}
+The Internet of Things hasn't been around for a very long time, yet it's quickly becoming very popular and almost every tech company wants to be a part of it. It gained a lot of popularity around 2011 when IPV6 was released and it was around this time Gartner also took note of this trend and put it on their annual Hype Cycle for the first time. Around the same time of the growing popularity of the Internet of Things, the Bluetooth Special Interest Group released a new Bluetooth specification that was built for the Internet of Things: Bluetooth Low Energy. Gartner suggests that by 2020, around 20 billion `things' will be connected to the Internet of Things, a market that Bluetooth Low Energy wants to play a big role in. This thesis aims to provide an introduction to Bluetooth Low Energy and how one would go about connecting Bluetooth Low Energy to the Internet of Things. In this chapter the problem that the thesis is trying to find an answer for is elaborated, as well as the actual questions that need answering. An introduction about `AllThingsTalk' can also be found, a company that is trying to figure out how to connect Bluetooth Low Energy wearables with their Internet of Things infrastructure.
 
 % De inleiding moet de lezer alle nodige informatie verschaffen om het onderwerp te begrijpen zonder nog externe werken te moeten raadplegen \citep{Pollefliet2011}. Dit is een doorlopende tekst die gebaseerd is op al wat je over het onderwerp gelezen hebt (literatuuronderzoek).
 
@@ -211,7 +211,7 @@ The Internet of Things hasn't been around for a very long time, yet it's quickly
 \newpage{}
 \section{Problem statement and research questions}
 \label{sec:problemdefinition}
-In this section, the goal is to quickly familiarize you, the reader, with the subject this thesis is dealing about and which problems need to be solved in order to form a proper conclusion. First of all, the problem statement will be discussed where a quick sketch will be made as to why this thesis came to be. It will handle the problem AllThingsTalk is currently facing in the development of their company and why combining Bluetooth Low Energy with their Internet of Things infrastructure is the next logical step for their business. Next, we'll look at the main question AllThingsTalk wants an answer for together with some smaller questions that logically follow it.
+In this section, the goal is to quickly familiarize the reader with the subject this thesis is dealing about and which problems need to be solved in order to form a proper conclusion. First of all, the problem statement will be discussed where a quick sketch will be made as to why this thesis came to be. It will handle a subject that AllThingsTalk is very keen to discover for the development of their company and why combining Bluetooth Low Energy with their Internet of Things infrastructure is the next logical step for their business. Next, we'll look at the main question AllThingsTalk wants an answer for together with some smaller questions that logically follow it.
 
 \subsection{Problem statement}
 \label{subsec:problemstatement}
@@ -221,7 +221,7 @@ On top of this, a lot of the devices being manufactured don't use standard SIG a
 
 \subsection{Research questions}
 \label{subsec:researchquestions}
-There are a couple of questions that can be asked when combining Bluetooth Low Energy and the Internet of Things, and some of those questions alone could have multiple papers dedicated. For example, the matter of security will be a never ending debate, and even more concerns arise when talking about security in the Internet of Things. These security concerns will be addressed further in section \ref{sec:concerns}. Another concern is privacy, but since this is very much a gray area, it's hard to formulate a one-sided conclusion on this matter.
+There are a couple of questions that can be asked when combining Bluetooth Low Energy and the Internet of Things, and some of those questions alone could have multiple papers dedicated to them. For example, the matter of security will be a never ending debate, and even more concerns arise when talking about security in the Internet of Things. Another concern is privacy, but since this is very much a gray area, it's hard to formulate a one-sided conclusion on this matter. Some of these concerns will be addressed further in section \ref{sec:concerns}.
 
 The main goals this thesis tries to fulfill are in essence very simple, but of course there are always some other questions that arise when looking at the big picture. These questions can be categorized as following, the questions in bold being the main research questions and the ones in plain text being auxiliary questions:
 \begin{itemize}
@@ -235,6 +235,25 @@ The main goals this thesis tries to fulfill are in essence very simple, but of c
 
 \section{AllThingsTalk}
 \label{sec:allthingstalk}
+As you've probably already noticed, the company AllThingsTalk has been referenced a couple of times in the previous section. The reason for this is that this thesis is affiliated with the company and is being written for them. The company helped shape the vision of the thesis and offered some very interesting insights and ideas for subjects to write about, subjects which were very interesting for their own use.
+
+AllThingsTalk was founded in July 2013 and their main objective is to `Make IoT ideas happen'. The company is already counting thirteen employees in two different countries, the headquarters being located in Ghent, Belgium. The office in Belgium counts seven people and is heavily focused on research \& development engineering, project management and sales \& marketing. The branch office is located in Belgrade, Serbia with the other six people, and their main focus is platform software development.
+
+\subsection{History}
+\label{subsec:atthistory}
+AllThingsTalk has come a long way since the start of the company. They've received multiple Research \& Innovation grants from the government, the first being in September 2013 for building an open IoT platform: the AllThingsTalk Cloud. The second grant was received in May 2014, where the goal was to implement pattern recognition in their platform in order to help elderly people stay in their homes for a longer time. A third grant was acquired in February 2015, which was responsible for adding machine learning components to the platform.
+
+Furthermore, they've hit some other major milestones throughout the years. In November 2014 they launched the first set of Rapid Development Kits for Internet of Things, where they added the Intel Rapid Development Kit in April 2015 and the LoRa Rapid Development Kit in November 2015. Other milestones include Internet of Things hackathons, the launch of IOTOPIA.be - a platform to introduce children in secondary schools to Internet of Things - and a LoRa partnership with Proximus, one of the largest telecommunications companies in Belgium.
+
+\subsection{Products and services}
+\label{subsec:attproductsservices}
+The three main products and services AllThingsTalk offer are guidance, tools and cloud. 
+
+For guidance, they offer IoT innovation workshops and private hackathons. This means that AllThingstalk organizes workshops for companies tailored to their needs, as well as hackathons which involve ideation, prototyping and more.
+
+The second product is tools. AllThingsTalk offers a range of development kits that companies can purchase to accelerate their Internet of Things research. This includes kits like LoRa, Arduino Raspberry Pi, Intel Edison and Windows 10 IoT. `Hackathon in a Box' is also available, which helps companies to organize their own Internet of Things hackathon on their own.
+
+Last but not least is the AllThingsTalk cloud, an Internet of Things prototyping platform which enables companies to connect their devices rapidly to the cloud, instead of hosting their own complicated infrastructure. Not only can this be used to prototype, but the platform is already being used in some very exciting projects like helping the elderly live in their home longer and an ongoing project which provides predictive maintenance in industries with machinery.
 
 % TODO: Wees zo concreet mogelijk bij het formuleren van je
 % onderzoeksvra(a)g(en). Een onderzoeksvraag is trouwens iets waar nog
@@ -254,9 +273,13 @@ The main goals this thesis tries to fulfill are in essence very simple, but of c
 % eigen onderzoek. Elke fase in je onderzoek kan een eigen hoofdstuk krijgen. Kies telkens een gepaste titel. ``Corpus'' is *GEEN* gepaste titel
 \chapter{Bluetooth Low Energy}
 \label{ch:ble}
+Bluetooth has been around for a long time, and with the release of technologies like NFC it seemed like Bluetooth wasn't going to last for much longer. However, Bluetooth Low Energy has breathed new life into Bluetooth and it's now more popular than ever. Originally known as Wibree by Nokia, it was later merged into the Bluetooth standard after much consideration. This technology was built from the ground up to be as energy efficient as possible and will power the Internet of Things for years to come. Exciting updates are also on the way like mesh networking, allowing different nodes in a network to relay data to one another. In this chapter we'll be looking at what Bluetooth Low Energy actually is, what the key differences are between Bluetooth BR/EDR and Bluetooth Low Energy. Also worth investigating are the limitations of Bluetooth Low Energy and how this technology achieves low energy like no other.
 
 \section{What is Bluetooth Low Energy}
 \label{sec:whatis}
+In essence, Bluetooth Low Energy is the first open standard that consumes extremely low power. It has been built from scratch and has more things not in common than it does with Bluetooth, so the name can be a little bit confusing. Every component in this specification has been designed to consume as little power as possible, that's why this technology can also be called a `Coin cell' technology. This because a Bluetooth Low Energy enabled device can (theoretically, with normal usage) achieve battery life of around eight months on a coin cell battery. A great example of this are beacons, which can achieve a very long battery life if configured correctly. If fitted with a bigger battery, it can last for over two years. More information about the battery usage and how this low energy is achieved can be found in section \ref{sec:lowenergy}.
+
+However, you might be thinking: if Bluetooth Low Energy is so great, why isn't it replacing other wireless technologies? The main reason for this is because it's very slow and has very little range. A couple of other limitations are present, but these will be more closely looked at in subsecion \ref{subsec:limitations}. Bluetooth Low Energy's main use is intended for Personal Area Networks, with a gateway in range that can relay data to a cloud service in order to connect various devices to the internet.
 
 \section{Key differences between classic Bluetooth}
 \label{sec:differencesclassic}
@@ -266,6 +289,9 @@ The main goals this thesis tries to fulfill are in essence very simple, but of c
 
 \subsection{Limitations of Bluetooth Low Energy}
 \label{subsec:limitations}
+Bluetooth Low Energy doesn't bring all good news, but there are also a few key limitations to the technology, as with everything in life. Because the technology uses very little power, it's fairly easy to understand that the transmit power and transfer speeds aren't anywhere near other wireless technologies. In theory, Bluetooth Low Energy can achieve ranges of up to 65 meters and upcoming updates to the specification prove that this range will be increased even more. However, most manufacturers won't want their peripheral to transmit at such high range, because this will cause increased battery usage in turn. In practice, this range is of course much lower, as walls and even humans wreak havoc on the transmission of data.
+
+Another limitation is the transfer speed. Again, in theory, Bluetooth Low Energy can have a (full packet) transfer speed of up to 2 Mbps. If you take into account the actual data contained in said packet and add up all of the overhead that goes into transferring a packet, 100 kbps is a much more realistic representation.
 
 \section{Bluetooth configurations}
 \label{sec:bleconfigurations}
@@ -320,7 +346,7 @@ The main goals this thesis tries to fulfill are in essence very simple, but of c
 
 \chapter{Generic Attribute Profile}
 \label{ch:gatt}
-\epigraph{You can have data without information, but you cannot have information without data.}{Daniel Keys Moran}
+\epigraph{``You can have data without information, but you cannot have information without data.''}{Daniel Keys Moran}
 At the core of Bluetooth Low Energy communication, the Generic Attribute Profile or GATT is something a client will use in every data request or data push once a dedicated connection has been set up. It defines the way data is transferred in Bluetooth Low Energy and it uses the Attribute protocol, which is the protocol that stores Services, Characteristics, Descriptors and their respective values. In this chapter the general Attribute Profile and Protocol will be discussed, as well as the different data structures that come in to play. An example of an Attribute server will also be given using a standard SIG-approved Profile, as well as why and how one would implement their own Profile, either because the SIG-approved Profiles don't fit the use case or because the manufacturer wants to make the used technology more private.
 
 \newpage{}
@@ -352,8 +378,8 @@ At the core of Bluetooth Low Energy communication, the Generic Attribute Profile
 \section{Concerns}
 \label{sec:concerns}
 
-\section{Further research}
-\label{sec:furtherresearch}
+\section{Future work}
+\label{sec:futurework}
 
 % TODO: Trek een duidelijke conclusie, in de vorm van een antwoord op de
 % onderzoeksvra(a)g(en). Reflecteer kritisch over het resultaat. Zijn er
