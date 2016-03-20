@@ -286,7 +286,7 @@ However, you might be thinking: if Bluetooth Low Energy is so great, why isn't i
 
 \section{Key differences between classic Bluetooth}
 \label{sec:differencesclassic}
-A lot of authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace wireless headphones in the slightest where a continuous data transfer is required. In the next two subsections we'll look at why Bluetooth Low Energy is completely different from Bluetooth and should be seen as a new technology in its whole instead of an enhancement to the existing Bluetooth. The key limitations of the Bluetooth Low Energy specification are also addressed further in subsection \ref{subsec:limitations}.
+A lot of authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace other wireless technologies in the slightest where a continuous flow of data is required. In the next two subsections we'll look at why Bluetooth Low Energy is completely different from Bluetooth and should be seen as a new technology in its whole instead of an enhancement to the existing Bluetooth. The key limitations of the Bluetooth Low Energy specification are also addressed further in subsection \ref{subsec:limitations}.
 
 \subsection{A new technology emerges}
 \label{subsec:newtechnology}
@@ -297,16 +297,38 @@ Bluetooth Low Energy doesn't bring all good news, but there are also a few key l
 
 Another limitation is the transfer speed. Again, in theory, Bluetooth Low Energy can have a (full packet) transfer speed of up to 1 Mbps\footnote{1 Mbps equals to 100 kilobytes per second.}. If you take into account the actual data contained in said packet and add up all of the overhead that goes into transferring a packet, 5 to 10 KB per second is a much more realistic representation. Knowing this, it's safe to assume that Bluetooth Low Energy won't be replacing WiFi any time soon.
 
-A more concerning limitation is that Bluetooth Low Energy operates in the 2.4 GHz ISM frequency band, the same band that WiFi uses. They've chosen this band because the 2.4 GHz ISM band doesn't require any licensing cost, contributing to the very low chip cost of Bluetooth Low Energy devices. Luckily, Bluetooth Low Energy features an excellent algorithm to avoid major interference from WiFi, as it will avoid any channel that is being heavily used by other technologies.
 
 \section{Bluetooth configurations}
 \label{sec:bleconfigurations}
+Bluetooth Low Energy is known by a variety of names on the market and while some of them are used to describe the same technology, in a few there's some differences to be found. `Bluetooth Low Energy' is mostly used as a catch-all name and can consist of a few different configurations. Some people assume `classic' or Bluetooth BR/EDR is also Bluetooth Low Energy, but this assumption couldn't be more wrong. If you have a product that specifies that you must have Bluetooth Version 4.0 or later, you're probably dealing with a Bluetooth Low Energy product.
+
+Other names that can commonly be found are Bluetooth Smart (single-mode) and Bluetooth Smart Ready (dual-mode), these are both specifications of Bluetooth Low Energy but have one key difference between each other: backwards compatibility. Bluetooth Smart has been designed to only allow interoperability between itself and Bluetooth Smart Ready products. You'll usually see this configuration in wearable devices that connect to a smart phone, in this case the wearable is a Bluetooth Smart product and the smartphone is a Bluetooth Smart Ready product. Bluetooth Smart Ready on the other hand has been designed to allow communication with Bluetooth, Bluetooth Smart Ready and Bluetooth Smart products. Bluetooth Smart Ready is commonly present in the most recent smartphones, which will allow communication with Bluetooth products like headphones but also Bluetooth Smart products like a smart band. A more comprehensible and orderly overview of these technologies can be found in table \ref{table:configurations}.
+
+\begin{table}[]
+\centering
+\caption{Compatibility table of Bluetooth specifications}
+\label{table:configurations}
+\begin{tabular}{|l|l|l|}
+\hline
+\textit{\textbf{Bluetooth version}} & \textit{\textbf{Supports BR/EDR}} & \textit{\textbf{Supports BLE}} \\ \hline
+\textbf{Pre-v4.0}                   & v                                 & x                              \\ \hline
+\textbf{4.x Bluetooth Smart}        & x                                 & v                              \\ \hline
+\textbf{4.x Bluetooth Smart Ready}  & v                                 & v                              \\ \hline
+\end{tabular}
+\end{table}
 
 \section{How low energy is achieved}
 \label{sec:lowenergy}
+There are a couple of techniques Bluetooth Low Energy uses to achieve low energy consumption. The fact alone that it can run off a 3 volt CR2032 coin cell battery and still retain 8 months of battery life proves that it is indeed a \textit{true} low energy technology. There are a couple of decisions that made it possible to achieve this low amount of energy consumption, some being the following:
+
+\begin{itemize}
+\item{\textbf{Use the radio as little as possible.} Keeping the radio on any wireless technology active requires quite a bit of power, which is also the case with Bluetooth Low Energy. By using the radio as little as possible, Bluetooth Low Energy can significantly increase its battery life. At a set interval, devices will broadcast advertising packets on the three advertising channels, which are explained more in chapter \ref{ch:gap}. After it advertises, it must listen briefly to any connection requests that follow it, in between these events the radio is simply turned off. The radio and the protocol stack, explained more in depth in chapter \ref{ch:protocolstack}, have also been designed to be as fast as possible. An advertising event, connection event, reading a single value of data and acknowledging the event can take as little as 3 milliseconds, which is vital in not only keeping the energy consumption to a minimum, but it also helps passively cool the radio.}
+
+\item{\textbf{Keep packets very small.} Restricting the packet length to a maximum of 47 bytes allows very rapid packet transfers, which in turn contributes to keeping the radio off as much as possible. A maximum size packet of 47 bytes can be transferred in as little as 0.3 milliseconds. Keeping packets small also lowers the complexity of the transmitter and receiver, resulting in much lower power consumption than technologies that allow large packets.}
+\end{itemize}
 
 \chapter{The Bluetooth Low Energy protocol stack}
-\label{sec:protocolstack}
+\label{ch:protocolstack}
 
 \section{Controller}
 \label{sec:stackController}
@@ -383,6 +405,9 @@ At the core of Bluetooth Low Energy communication, the Generic Attribute Profile
 
 \section{Concerns}
 \label{sec:concerns}
+
+A more concerning limitation is that Bluetooth Low Energy operates in the 2.4 GHz ISM frequency band, the same band that WiFi uses. They've chosen this band because the 2.4 GHz ISM band doesn't require any licensing cost, contributing to the very low chip cost of Bluetooth Low Energy devices. Luckily, Bluetooth Low Energy features an excellent algorithm to avoid major interference from WiFi, as it will avoid any channel that is being heavily used by other technologies.
+
 
 \section{Future work}
 \label{sec:futurework}
