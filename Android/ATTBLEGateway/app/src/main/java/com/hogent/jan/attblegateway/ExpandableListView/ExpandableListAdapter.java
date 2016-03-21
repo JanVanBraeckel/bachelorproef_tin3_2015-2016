@@ -1,8 +1,11 @@
 package com.hogent.jan.attblegateway.ExpandableListView;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ import com.hogent.jan.attblegateway.bluetoothWrapper.BleService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import butterknife.ButterKnife;
 
@@ -116,13 +120,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         final LinearLayout detailView = ButterKnife.findById(convertView, R.id.characteristicDetail);
 
         if (detailView.getVisibility() == View.VISIBLE) {
-            final EditText txtValue = ButterKnife.findById(detailView, R.id.characteristicDetailValue);
+            final TextView lblValue = ButterKnife.findById(detailView, R.id.characteristicDetailValue);
             TextView lblStringValue = ButterKnife.findById(detailView, R.id.characteristicDetailStringValue);
             TextView lblDecimalValue = ButterKnife.findById(detailView, R.id.characteristicDetailDecimalValue);
             TextView lblUpdated = ButterKnife.findById(detailView, R.id.characteristicDetailLastUpdated);
 
             BleCharacteristic ch = mBluetoothServices.get(groupPosition).getBleCharacteristics().get(childPosition);
-            txtValue.setText(ch.getAsciiValue());
+            lblValue.setText(ch.getAsciiValue());
             lblDecimalValue.setText(String.format("%d", ch.getIntValue()));
             lblStringValue.setText(ch.getStrValue());
             lblUpdated.setText(ch.getTimestamp());
@@ -139,7 +143,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     ToggleButton btnNotification = ButterKnife.findById(detailView, R.id.characteristicDetailNotificationToggle);
                     Button btnRead = ButterKnife.findById(detailView, R.id.characteristicDetailRead);
                     Button btnWrite = ButterKnife.findById(detailView, R.id.characteristicDetailWrite);
-                    final EditText txtValue = ButterKnife.findById(detailView, R.id.characteristicDetailValue);
+                    final TextView lblValue = ButterKnife.findById(detailView, R.id.characteristicDetailValue);
                     TextView lblStringValue = ButterKnife.findById(detailView, R.id.characteristicDetailStringValue);
                     TextView lblDecimalValue = ButterKnife.findById(detailView, R.id.characteristicDetailDecimalValue);
                     TextView lblUpdated = ButterKnife.findById(detailView, R.id.characteristicDetailLastUpdated);
@@ -158,10 +162,31 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     btnWrite.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            String value = txtValue.getText().toString().toLowerCase(Locale.getDefault());
-                            byte[] dataToWrite = parseHexStringToBytes(value);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setTitle("Write hex value");
 
-                            mListener.writeDataToCharacteristic(characteristic, dataToWrite);
+                            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                            builder.setView(inflater.inflate(R.layout.alertdialog_input, null))
+                                    .setPositiveButton("Write", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Dialog f = (Dialog) dialog;
+                                            EditText input = ButterKnife.findById(f, R.id.txtWriteValue);
+                                            if(input.getText() != null && !input.getText().toString().equals("")){
+                                                String value = input.getText().toString().toLowerCase(Locale.getDefault());
+                                                byte[] dataToWrite = parseHexStringToBytes(value);
+                                                mListener.writeDataToCharacteristic(characteristic, dataToWrite);
+                                            }
+                                        }
+                                    })
+                                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                            builder.show();
                         }
                     });
 
@@ -199,11 +224,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     btnNotification.setEnabled((properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0);
                     btnRead.setEnabled((properties & BluetoothGattCharacteristic.PROPERTY_READ) != 0);
                     btnWrite.setEnabled((properties & (BluetoothGattCharacteristic.PROPERTY_WRITE | BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) != 0);
-                    txtValue.setEnabled(btnWrite.isEnabled());
-
 
                     BleCharacteristic ch = mBluetoothServices.get(groupPosition).getBleCharacteristics().get(childPosition);
-                    txtValue.setText(ch.getAsciiValue());
+                    lblValue.setText(ch.getAsciiValue());
                     lblDecimalValue.setText(String.format("%d", ch.getIntValue()));
                     lblStringValue.setText(ch.getStrValue());
                     lblUpdated.setText(ch.getTimestamp());
