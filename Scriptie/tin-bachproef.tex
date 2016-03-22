@@ -261,6 +261,26 @@ Last but not least is the AllThingsTalk cloud, an Internet of Things prototyping
 
 \chapter{Methodology}
 \label{ch:methodology}
+This chapter aims to explain what approaches and methods were used in the making of this thesis. It explains what methods were used for the two major parts of this thesis, being the research \& literature study and the Proof of Concept.
+
+\section{Research and literature study}
+\label{sec:researchlit}
+Before starting the research, the most important question was `what does AllThingsTalk already know?'. Of course, being a company revolving around Internet of Things, it wouldn't be much use to dedicate a large section of this paper to it. However, some research had to be done about Internet of Things in order to understand some core concepts and technologies that are  used like transfer protocols such as MQTT and AMQP. A more abstract understanding was also needed, being how the Internet of Things works, what it's used for, why it's important and some more. This information is of course easily found online and wasn't of much use to include in this thesis.
+
+That being said, the core subject of the research and literature study is about Bluetooth Low Energy. The research about this technology was done like you would research any other subject. Initially, the plan was to rely heavily on the official documentation of Bluetooth, but since the complete Bluetooth specification is over 2000 pages in length, a more practical approach was to purchase books that explain Bluetooth Low Energy, two of them being REFERENTIE BOEK 1 and REFERENTIE BOEK 2.
+
+There are also training videos to be found on the Bluetooth website as well as various other short introductions to the technology all over the web, which provide a basic and quick understanding about the technology.
+
+\section{Proof of Concept}
+\label{sec:poc}
+You don't get to know something without actually trying it out, which was one of the biggest focuses of the Proof of Concept. The actual goal of the Proof of Concept was more to provide the Bluetooth Low Energy layer than to connect to the Internet, as AllThingsTalk provides easy-to-use libraries in various language to connect to their platform.
+
+In order to help speed up the learning process and quickly allow me to prototype and try out the technology, various devices were provided which offer a range of Bluetooth Low Energy profiles, services and characteristics, these terms are explained further in chapter \ref{ch:gatt}. These devices will shortly be introduced in chapter \ref{ch:android}.
+
+The first goal of the Proof of Concept was to connect to a Bluetooth Low Energy device and read data on a smartphone. Various examples and repositories with source code provided some interesting insights as to how this API worked. Bluetooth also offers some starter kits to kickstart any project that wants to use Bluetooth Low Energy, including a very comprehensive and easy to use wrapper around the Android Bluetooth API.
+
+Further goals of course include writing data and coupling the Bluetooth layer to the network layer, automatic service discovery and mapping, automatic generation of assets on the online platform and more. The most important concepts on how to do this are elaborated in chapter \ref{ch:android} and the accomplishments are listed in the conclusion, section \ref{sec:conclusion}.
+
 
 % TODO: Hoe ben je te werk gegaan? Verdeel je onderzoek in grote fasen, en
 % licht in elke fase toe welke stappen je gevolgd hebt. Verantwoord waarom je
@@ -286,10 +306,11 @@ However, you might be thinking: if Bluetooth Low Energy is so great, why isn't i
 
 \section{Key differences between classic Bluetooth}
 \label{sec:differencesclassic}
-A lot of authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace other wireless technologies in the slightest where a continuous flow of data is required. In the next two subsections we'll look at why Bluetooth Low Energy is completely different from Bluetooth and should be seen as a new technology in its whole instead of an enhancement to the existing Bluetooth. The key limitations of the Bluetooth Low Energy specification are also addressed further in subsection \ref{subsec:limitations}.
+As the diligent reader probably already noticed, it seems that Bluetooth and Bluetooth Low Energy are worlds apart from one another. This is in fact very correct so it's hard to just list some differences and be done with it. In the next two subsections we'll look at why Bluetooth Low Energy is completely different from Bluetooth and should be seen as a new technology in its whole instead of an enhancement to the existing Bluetooth. The key limitations of the Bluetooth Low Energy specification are also addressed further in subsection \ref{subsec:limitations}.
 
 \subsection{A new technology emerges}
 \label{subsec:newtechnology}
+A lot of authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace other wireless technologies in the slightest where a continuous flow of data is required. They've also both been built around completely different core principles and have been designed to fulfill these requirements as best as possible.
 
 \subsection{Limitations of Bluetooth Low Energy}
 \label{subsec:limitations}
