@@ -1,6 +1,7 @@
 package com.hogent.jan.attblegateway;
 
 import android.bluetooth.BluetoothDevice;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,10 +11,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.hogent.jan.attblegateway.ATTBLE.AttIoT;
 import com.hogent.jan.attblegateway.recyclerview.DeviceListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

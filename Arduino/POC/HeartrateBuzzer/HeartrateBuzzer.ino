@@ -66,6 +66,7 @@ void loop() {
       }
       
       if(buzzerChar.written()){
+        Serial.println("Written to " + buzzerChar.value());
         if(buzzerChar.value()){
           Serial.println("Buzzer on");
           digitalWrite(5, HIGH);

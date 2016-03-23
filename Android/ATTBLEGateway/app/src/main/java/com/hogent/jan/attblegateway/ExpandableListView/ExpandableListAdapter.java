@@ -175,7 +175,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                             EditText input = ButterKnife.findById(f, R.id.txtWriteValue);
                                             if(input.getText() != null && !input.getText().toString().equals("")){
                                                 String value = input.getText().toString().toLowerCase(Locale.getDefault());
-                                                byte[] dataToWrite = parseHexStringToBytes(value);
+                                                byte[] dataToWrite = parseHexStringToBytes("0x" + value);
                                                 mListener.writeDataToCharacteristic(characteristic, dataToWrite);
                                             }
                                         }

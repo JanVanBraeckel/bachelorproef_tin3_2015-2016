@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.hogent.jan.attblegateway.ATTBLE.AttIoT;
 import com.hogent.jan.attblegateway.ExpandableListView.ExpandableListAdapter;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleCharacteristic;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleNamesResolver;
@@ -26,16 +28,21 @@ import com.hogent.jan.attblegateway.recyclerview.DeviceListAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks, ExpandableListAdapter.ExpandableListAdapterListener{
+public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks, ExpandableListAdapter.ExpandableListAdapterListener, AttIoT.AttIoTStateChangedListener{
     private final String TAG = getClass().getSimpleName();
+
+    private AttIoT att;
+
     private static final String BLE_NAME = "deviceName";
     private static final String BLE_ADDRESS = "deviceAddress";
     private static final String BLE_RSSI = "deviceRssi";
 
+    private BluetoothGattCharacteristic buzzer;
     private BleWrapper mBleWrapper = null;
     private ExpandableListAdapter mListAdapter;
 
@@ -129,6 +136,10 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
         });
 
         for (BluetoothGattCharacteristic bluetoothGattCharacteristic : chars) {
+            if(bluetoothGattCharacteristic.getUuid().toString().toUpperCase().equals("19B10001-E8F2-537E-4F6C-D104768A1214")){
+                buzzer = bluetoothGattCharacteristic;
+            }
+
             String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
             Log.d(TAG, "uiCharacteristicForService() called with: " + "Characteristic found = [" + characteristicName + "]");
         }
@@ -142,6 +153,10 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Override
     public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final BluetoothGattCharacteristic ch, final String strValue, final int intValue, final byte[] rawValue, final String timestamp) {
         Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service.getUuid() + "], ch = [" + ch.getUuid() + "], strValue = [" + strValue + "], intValue = [" + intValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
+        if(ch.getUuid().toString().equals("00002a37-0000-1000-8000-00805f9b34fb")){
+            att.publish(String.valueOf(intValue), "56f2e44ea66fe610844ea97c");
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -193,6 +208,9 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
             mDeviceAddress = getArguments().getString(BLE_ADDRESS);
             mDeviceRssi = getArguments().getInt(BLE_RSSI);
         }
+
+        att = new AttIoT();
+        att.setAttIoTStateChangedListener(this);
     }
 
     @Override
@@ -237,5 +255,30 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
         mDeviceNameView.setText(mDeviceName);
 
         return v;
+    }
+
+    @Override
+    public void callback(String topic, String message) {
+        BluetoothGattCharacteristic characteristic =  new BluetoothGattCharacteristic(UUID.fromString("19B10001-E8F2-537E-4F6C-D104768A1214"), 10, 0);
+
+        if(message.toLowerCase().equals("true")){
+            writeDataToCharacteristic(buzzer, parseHexStringToBytes("0x01"));
+        }else{
+            writeDataToCharacteristic(buzzer, parseHexStringToBytes("0x00"));
+        }
+    }
+
+    public byte[] parseHexStringToBytes(final String hex) {
+        String tmp = hex.substring(2).replaceAll("[^[0-9][a-f]]", "");
+        byte[] bytes = new byte[tmp.length() / 2]; // every two letters in the string are one byte finally
+
+        String part = "";
+
+        for (int i = 0; i < bytes.length; ++i) {
+            part = "0x" + tmp.substring(i * 2, i * 2 + 2);
+            bytes[i] = Long.decode(part).byteValue();
+        }
+
+        return bytes;
     }
 }
