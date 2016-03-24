@@ -72,6 +72,49 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    public void callback(String service, String characteristic, String message) {
+        for(BleService s : mBluetoothServices){
+            if(s.getBleService().getUuid().toString().replace("-", "").equals(service)){
+                for(BleCharacteristic ch : s.getBleCharacteristics()){
+                    if(ch.getBleCharacteristic().getUuid().toString().replace("-", "").equals(characteristic)){
+                        BluetoothGattService serv = s.getBleService();
+                        BluetoothGattCharacteristic charact = ch.getBleCharacteristic();
+                        String type = BleNamesResolver.resolveCharacteristicType(charact.getUuid().toString());
+
+                        switch (type) {
+                            case "integer":
+                                try {
+                                    int val = Integer.valueOf(message);
+                                    byte[] byteArray = new byte[]{
+                                            (byte) (val >>> 24),
+                                            (byte) (val >>> 16),
+                                            (byte) (val >>> 8),
+                                            (byte) val
+                                    };
+                                    mListener.writeDataToCharacteristic(serv, charact, byteArray, message);
+                                } catch (Exception ignored) {
+                                }
+                                break;
+                            case "boolean":
+                                try {
+                                    if (Boolean.parseBoolean(message)) {
+                                        mListener.writeDataToCharacteristic(serv, charact, parseHexStringToBytes("0x01"), message);
+                                    } else {
+                                        mListener.writeDataToCharacteristic(serv, charact, parseHexStringToBytes("0x00"), message);
+                                    }
+                                } catch (Exception ignored) {
+                                }
+                                break;
+                            default:
+                                mListener.writeDataToCharacteristic(serv, charact, parseHexStringToBytes(String.format("0x%08X", message)), message);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void clearLists() {
         mBluetoothServices.clear();
         notifyDataSetChanged();
@@ -153,6 +196,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                             if (isChecked) {
                                 mListener.setNotificationForCharacteristic(service, characteristic, true);
+                                mListener.requestCharacteristicValue(service, characteristic);
                             } else {
                                 mListener.setNotificationForCharacteristic(service, characteristic, false);
                             }
@@ -176,7 +220,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                             if(input.getText() != null && !input.getText().toString().equals("")){
                                                 String value = input.getText().toString().toLowerCase(Locale.getDefault());
                                                 byte[] dataToWrite = parseHexStringToBytes("0x" + value);
-                                                mListener.writeDataToCharacteristic(characteristic, dataToWrite);
+                                                mListener.writeDataToCharacteristic(service, characteristic, dataToWrite, value);
                                             }
                                         }
                                     })
@@ -297,7 +341,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public interface ExpandableListAdapterListener {
         void requestCharacteristicValue(BluetoothGattService service, BluetoothGattCharacteristic characteristic);
 
-        void writeDataToCharacteristic(BluetoothGattCharacteristic characteristic, byte[] data);
+        void writeDataToCharacteristic(BluetoothGattService service, BluetoothGattCharacteristic characteristic, byte[] data, String originalValue);
 
         int getValueFormat(BluetoothGattCharacteristic characteristic);
 

@@ -33,7 +33,7 @@ import java.util.UUID;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks, ExpandableListAdapter.ExpandableListAdapterListener, AttIoT.AttIoTStateChangedListener{
+public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks, ExpandableListAdapter.ExpandableListAdapterListener, AttIoT.AttIoTStateChangedListener {
     private final String TAG = getClass().getSimpleName();
 
     private AttIoT att;
@@ -42,13 +42,12 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     private static final String BLE_ADDRESS = "deviceAddress";
     private static final String BLE_RSSI = "deviceRssi";
 
-    private BluetoothGattCharacteristic buzzer;
     private BleWrapper mBleWrapper = null;
     private ExpandableListAdapter mListAdapter;
 
     private String mDeviceName = "";
     private String mDeviceAddress = "";
-    private int mDeviceRssi =0;
+    private int mDeviceRssi = 0;
 
     @Bind(R.id.deviceDetailAddress)
     TextView mDeviceAddressView;
@@ -104,7 +103,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Override
     public void uiAvailableServices(BluetoothGatt gatt, BluetoothDevice device, final List<BluetoothGattService> services) {
         final List<BleService> bleServices = new ArrayList<>();
-        for(BluetoothGattService s : services){
+        for (BluetoothGattService s : services) {
             bleServices.add(new BleService(s));
         }
         getActivity().runOnUiThread(new Runnable() {
@@ -125,7 +124,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Override
     public void uiCharacteristicForService(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final List<BluetoothGattCharacteristic> chars) {
         final List<BleCharacteristic> characteristics = new ArrayList<>();
-        for(BluetoothGattCharacteristic ch : chars){
+        for (BluetoothGattCharacteristic ch : chars) {
             characteristics.add(new BleCharacteristic(ch));
         }
         getActivity().runOnUiThread(new Runnable() {
@@ -136,15 +135,23 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
         });
 
         for (BluetoothGattCharacteristic bluetoothGattCharacteristic : chars) {
-            if(bluetoothGattCharacteristic.getUuid().toString().toUpperCase().equals("19B10001-E8F2-537E-4F6C-D104768A1214")){
-                buzzer = bluetoothGattCharacteristic;
+            int properties = bluetoothGattCharacteristic.getProperties();
+            if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0) {
+                att.addAsset(service.getUuid().toString().replace("-", "") + "_" + bluetoothGattCharacteristic.getUuid().toString().replace("-", ""),
+                        BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString()),
+                        "",
+                        true,
+                        BleNamesResolver.resolveCharacteristicType(bluetoothGattCharacteristic.getUuid().toString()));
+            } else if ((properties & BluetoothGattCharacteristic.PROPERTY_READ) != 0
+                    || (properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0
+                    || (properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0) {
+                att.addAsset(service.getUuid().toString().replace("-", "") + "_" + bluetoothGattCharacteristic.getUuid().toString().replace("-", ""),
+                        BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString()),
+                        "",
+                        false,
+                        BleNamesResolver.resolveCharacteristicType(bluetoothGattCharacteristic.getUuid().toString()));
             }
-
-            if(bluetoothGattCharacteristic.getUuid().toString().equals("00002a37-0000-1000-8000-00805f9b34fb")) {
-                att.addAsset("00002a3700001000800000805f9b34fb", BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString()), "", false, "integer");
-            }
-
-                String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
+            String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
             Log.d(TAG, "uiCharacteristicForService() called with: " + "Characteristic found = [" + characteristicName + "]");
         }
     }
@@ -157,8 +164,24 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Override
     public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final BluetoothGattCharacteristic ch, final String strValue, final int intValue, final byte[] rawValue, final String timestamp) {
         Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service.getUuid() + "], ch = [" + ch.getUuid() + "], strValue = [" + strValue + "], intValue = [" + intValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
-        if(ch.getUuid().toString().equals("00002a37-0000-1000-8000-00805f9b34fb")){
-            att.publish(String.valueOf(intValue), "00002a3700001000800000805f9b34fb");
+
+        String type = BleNamesResolver.resolveCharacteristicType(ch.getUuid().toString());
+
+        if (type.equals("integer")) {
+            att.publish(String.valueOf(intValue),
+                    service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
+        } else if (type.equals("boolean")) {
+            if (intValue != 0) {
+                att.publish("true",
+                        service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
+            } else {
+                att.publish("false",
+                        service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
+            }
+        } else {
+            att.publish(strValue,
+                    service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
+
         }
 
         getActivity().runOnUiThread(new Runnable() {
@@ -190,8 +213,43 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     }
 
     @Override
-    public void writeDataToCharacteristic(BluetoothGattCharacteristic characteristic, byte[] data) {
+    public void writeDataToCharacteristic(BluetoothGattService service, BluetoothGattCharacteristic characteristic, byte[] data, String originalValue) {
         mBleWrapper.writeDataToCharacteristic(characteristic, data);
+
+        String type = BleNamesResolver.resolveCharacteristicType(characteristic.getUuid().toString());
+
+        switch (type) {
+            case "integer":
+                att.publish(String.valueOf(originalValue),
+                        service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                break;
+            case "boolean":
+                try {
+                    if (Integer.parseInt(originalValue) != 0) {
+                        att.publish("true",
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                    } else {
+                        att.publish("false",
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                    }
+                } catch (Exception ignored) {
+                }
+                try {
+                    if (Boolean.parseBoolean(originalValue)) {
+                        att.publish("true",
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                    } else {
+                        att.publish("false",
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                    }
+                } catch (Exception ignored) {
+                }
+                break;
+            default:
+                att.publish(originalValue,
+                        service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                break;
+        }
     }
 
     @Override
@@ -221,11 +279,11 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     public void onResume() {
         super.onResume();
 
-        if(mBleWrapper == null){
+        if (mBleWrapper == null) {
             mBleWrapper = new BleWrapper(getActivity(), this);
         }
 
-        if(!mBleWrapper.initialize()){
+        if (!mBleWrapper.initialize()) {
             getActivity().finish();
         }
 
@@ -263,28 +321,12 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
 
     @Override
     public void callback(String topic, String message) {
-        BluetoothGattCharacteristic characteristic =  new BluetoothGattCharacteristic(UUID.fromString("19B10001-E8F2-537E-4F6C-D104768A1214"), 10, 0);
+        String[] split = topic.split("/");
+        String serviceChar = split[split.length - 2];
 
-        System.out.println(topic + ":" + message);
+        String service = serviceChar.split("_")[0];
+        String characteristic = serviceChar.split("_")[1];
 
-        if(message.toLowerCase().equals("true")){
-            writeDataToCharacteristic(buzzer, parseHexStringToBytes("0x01"));
-        }else{
-            writeDataToCharacteristic(buzzer, parseHexStringToBytes("0x00"));
-        }
-    }
-
-    public byte[] parseHexStringToBytes(final String hex) {
-        String tmp = hex.substring(2).replaceAll("[^[0-9][a-f]]", "");
-        byte[] bytes = new byte[tmp.length() / 2]; // every two letters in the string are one byte finally
-
-        String part = "";
-
-        for (int i = 0; i < bytes.length; ++i) {
-            part = "0x" + tmp.substring(i * 2, i * 2 + 2);
-            bytes[i] = Long.decode(part).byteValue();
-        }
-
-        return bytes;
+        mListAdapter.callback(service, characteristic, message);
     }
 }

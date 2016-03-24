@@ -34,10 +34,6 @@ public class BleCharacteristic {
         return mBleDescriptors;
     }
 
-    public BluetoothGattCharacteristic getmBleCharacteristic() {
-        return mBleCharacteristic;
-    }
-
     public int getIntValue() {
         return mIntValue;
     }

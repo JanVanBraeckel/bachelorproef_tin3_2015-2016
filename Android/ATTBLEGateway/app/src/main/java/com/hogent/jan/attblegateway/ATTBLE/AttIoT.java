@@ -14,7 +14,7 @@ public class AttIoT {
     // Enter your device credentials here
     private static final String clientId = "JanVanBraeckel";
     private static final String clientKey = "5kcjpk1vcev";
-    private static final String deviceId = "UE9KPnHCR0DTn8KWStSWDa7";
+    private static final String deviceId = "LuytgMoeqp6NZ7QN4EG5Qu8";
 
     private AttIoTStateChangedListener listener;
     private HttpHandler http;
@@ -46,7 +46,7 @@ public class AttIoT {
      ****/
     public void callback(String topic, String message) {
         // Extend this callback for personal use
-        System.out.println(message);
+        System.out.println(topic + ":" + message);
         listener.callback(topic, message);
     }
 

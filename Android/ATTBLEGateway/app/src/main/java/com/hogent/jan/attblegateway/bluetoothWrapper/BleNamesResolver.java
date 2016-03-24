@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class BleNamesResolver {
     private static HashMap<String, String> mServices = new HashMap<String, String>();
     private static HashMap<String, String> mCharacteristics = new HashMap<String, String>();
+    private static HashMap<String, String> mCharacteristicTypes = new HashMap<>();
     private static SparseArray<String> mValueFormats = new SparseArray<String>();
     private static SparseArray<String> mAppearance = new SparseArray<String>();
     private static SparseArray<String> mHeartRateSensorLocation = new SparseArray<String>();
@@ -25,6 +26,12 @@ public class BleNamesResolver {
     static public String resolveValueTypeDescription(final int format) {
         Integer tmp = Integer.valueOf(format);
         return mValueFormats.get(tmp, "Unknown Format");
+    }
+
+
+    static public String resolveCharacteristicType(final String uuid) {
+        String result = mCharacteristicTypes.get(uuid);
+        return result == null ? "string" : result;
     }
 
     static public String resolveCharacteristicName(final String uuid) {
@@ -91,6 +98,8 @@ public class BleNamesResolver {
         mServices.put("00001814-0000-1000-8000-00805f9b34fb", "Running Speed and Cadence");
         mServices.put("00001813-0000-1000-8000-00805f9b34fb", "Scan Parameters");
         mServices.put("00001804-0000-1000-8000-00805f9b34fb", "Tx Power");
+        /*Custom services*/
+        mServices.put("19b10000-e8f2-537e-4f6c-d104768a1214", "Buzzer Service");
 
         mCharacteristics.put("00002a43-0000-1000-8000-00805f9b34fb", "Alert Category ID");
         mCharacteristics.put("00002a42-0000-1000-8000-00805f9b34fb", "Alert Category ID Bit Mask");
@@ -173,6 +182,11 @@ public class BleNamesResolver {
         mCharacteristics.put("00002a0e-0000-1000-8000-00805f9b34fb", "Time Zone");
         mCharacteristics.put("00002a07-0000-1000-8000-00805f9b34fb", "Tx Power Level");
         mCharacteristics.put("00002a45-0000-1000-8000-00805f9b34fb", "Unread Alert Status");
+        /*Custom Characteristics*/
+        mCharacteristics.put("19b10001-e8f2-537e-4f6c-d104768a1214", "Buzzer Control");
+
+        mCharacteristicTypes.put("00002a37-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("19b10001-e8f2-537e-4f6c-d104768a1214", "boolean");
 
         mValueFormats.put(Integer.valueOf(52), "32bit float");
         mValueFormats.put(Integer.valueOf(50), "16bit float");
