@@ -140,7 +140,11 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
                 buzzer = bluetoothGattCharacteristic;
             }
 
-            String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
+            if(bluetoothGattCharacteristic.getUuid().toString().equals("00002a37-0000-1000-8000-00805f9b34fb")) {
+                att.addAsset("00002a3700001000800000805f9b34fb", BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString()), "", false, "integer");
+            }
+
+                String characteristicName = BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString());
             Log.d(TAG, "uiCharacteristicForService() called with: " + "Characteristic found = [" + characteristicName + "]");
         }
     }
@@ -154,7 +158,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final BluetoothGattCharacteristic ch, final String strValue, final int intValue, final byte[] rawValue, final String timestamp) {
         Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service.getUuid() + "], ch = [" + ch.getUuid() + "], strValue = [" + strValue + "], intValue = [" + intValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
         if(ch.getUuid().toString().equals("00002a37-0000-1000-8000-00805f9b34fb")){
-            att.publish(String.valueOf(intValue), "56f2e44ea66fe610844ea97c");
+            att.publish(String.valueOf(intValue), "00002a3700001000800000805f9b34fb");
         }
 
         getActivity().runOnUiThread(new Runnable() {
@@ -260,6 +264,8 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Override
     public void callback(String topic, String message) {
         BluetoothGattCharacteristic characteristic =  new BluetoothGattCharacteristic(UUID.fromString("19B10001-E8F2-537E-4F6C-D104768A1214"), 10, 0);
+
+        System.out.println(topic + ":" + message);
 
         if(message.toLowerCase().equals("true")){
             writeDataToCharacteristic(buzzer, parseHexStringToBytes("0x01"));

@@ -90,7 +90,7 @@ public class MqttHandler implements MqttCallback {
      * @param pubMsg to publish
      ****/
     public void publishAMessage(String pubMsg, String assetId) {
-        String topic = "client/" + att.getClientId() + "/out/asset/" + assetId + "/state";
+        String topic = "client/" + att.getClientId() + "/out/device/" + att.getDeviceId() + "/asset/" + assetId + "/state";
         System.out.println(topic);
 
         MqttDeliveryToken token;
