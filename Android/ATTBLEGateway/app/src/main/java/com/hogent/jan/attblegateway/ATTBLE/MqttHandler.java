@@ -36,10 +36,6 @@ public class MqttHandler implements MqttCallback {
         this.password = att.getClientKey();
         this.brokerUrl = Broker.getBrokerUrl();
 
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(tmpDir);
-        //MemoryPersistence dataStore = new MemoryPersistence();
-
         try {
             // Construct the connection options object that contains connection parameters
             this.conOpt = new MqttConnectOptions();
