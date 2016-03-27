@@ -16,9 +16,14 @@ import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.v4.content.res.TypedArrayUtils;
+import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.util.Log;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -307,7 +312,47 @@ public class BleWrapper {
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
             intValue = rawValue[0];
             strValue = "" + intValue + "% battery level";
-        } else {
+        }
+        // flower power calculations
+        else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILTEMP) ||
+                uuid.equals(BleDefinedUUIDs.Characteristic.AIRTEMP)){
+
+            ByteBuffer bb = ByteBuffer.wrap(rawValue);
+            bb.order(ByteOrder.LITTLE_ENDIAN);
+
+            short value = bb.getShort();
+            intValue = (int) (0.00000003044 * Math.pow(value, 3.0) - 0.00008038 * Math.pow(value, 2.0) + value * 0.1149 - 30.449999999999999);
+
+            strValue = intValue + " °C";
+        }
+        else if(uuid.equals(BleDefinedUUIDs.Characteristic.LIGHT)){
+            ByteBuffer bb = ByteBuffer.wrap(rawValue);
+            bb.order(ByteOrder.LITTLE_ENDIAN);
+
+            short value = bb.getShort();
+            intValue = (int) (0.08640000000000001 * (192773.17000000001 * Math.pow(value, -1.0606619)));
+
+            strValue = String.valueOf(intValue);
+        }
+        else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILEC)){
+            ByteBuffer bb = ByteBuffer.wrap(rawValue);
+            bb.order(ByteOrder.LITTLE_ENDIAN);
+
+            short value = bb.getShort();
+            intValue = (int) value;
+
+            strValue = String.valueOf(intValue);
+        }else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILVWC)){
+            ByteBuffer bb = ByteBuffer.wrap(rawValue);
+            bb.order(ByteOrder.LITTLE_ENDIAN);
+
+            short value = bb.getShort();
+            double moisture = 11.4293 + (0.0000000010698 * Math.pow(value, 4.0) - 0.00000152538 * Math.pow(value, 3.0) +  0.000866976 * Math.pow(value, 2.0) - 0.169422 * value);
+            intValue = (int) (100.0 * (0.0000045 * Math.pow(moisture, 3.0) - 0.00055 * Math.pow(moisture, 2.0) + 0.0292 * moisture - 0.053));
+
+            strValue = String.valueOf(intValue);
+        }
+        else {
             // not known type of characteristic, so we need to handle this in "general" way
             // get first four bytes and transform it to integer
             intValue = 0;
@@ -327,7 +372,9 @@ public class BleWrapper {
             if (rawValue.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(rawValue.length);
                 for (byte byteChar : rawValue) {
-                    stringBuilder.append(String.format("%c", byteChar));
+                    try{
+                        stringBuilder.append(String.format("%c", byteChar));
+                    }catch (Exception ignored){}
                 }
                 strValue = stringBuilder.toString();
             }
@@ -409,7 +456,6 @@ public class BleWrapper {
             mBluetoothGatt.writeDescriptor(descriptor);
         }
     }
-
 
     private ScanCallback mDeviceFoundCallback = new ScanCallback() {
         public void onScanResult(int callbackType, ScanResult result) {

@@ -207,6 +207,7 @@ public class BleNamesResolver {
         mCharacteristics.put("39e1fb01-84a8-11e2-afba-0002a5d5c51b", "Tx buffer");
         mCharacteristics.put("39e1fb02-84a8-11e2-afba-0002a5d5c51b", "Tx Status");
         mCharacteristics.put("39e1fb03-84a8-11e2-afba-0002a5d5c51b", "Rx Status");
+        mCharacteristics.put("39e1fb04-84a8-11e2-afba-0002a5d5c51b", "Rx buffer");
         mCharacteristics.put("39e1fc01-84a8-11e2-afba-0002a5d5c51b", "Nb entries");
         mCharacteristics.put("39e1fc02-84a8-11e2-afba-0002a5d5c51b", "Last entry index");
         mCharacteristics.put("39e1fc03-84a8-11e2-afba-0002a5d5c51b", "Transfer Start Index");

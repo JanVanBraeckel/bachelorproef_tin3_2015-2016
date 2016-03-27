@@ -19,6 +19,11 @@ public class BleDefinedUUIDs {
         final static public UUID APPEARANCE               = UUID.fromString("00002a01-0000-1000-8000-00805f9b34fb");
         final static public UUID BODY_SENSOR_LOCATION     = UUID.fromString("00002a38-0000-1000-8000-00805f9b34fb");
         final static public UUID BATTERY_LEVEL            = UUID.fromString("00002a19-0000-1000-8000-00805f9b34fb");
+        final static public UUID SOILEC                   = UUID.fromString("39e1fa02-84a8-11e2-afba-0002a5d5c51b");
+        final static public UUID SOILTEMP                 = UUID.fromString("39e1fa03-84a8-11e2-afba-0002a5d5c51b");
+        final static public UUID AIRTEMP                  = UUID.fromString("39e1fa04-84a8-11e2-afba-0002a5d5c51b");
+        final static public UUID SOILVWC                  = UUID.fromString("39e1fa05-84a8-11e2-afba-0002a5d5c51b");
+        final static public UUID LIGHT                    = UUID.fromString("39e1fa01-84a8-11e2-afba-0002a5d5c51b");
     }
 
     public static class Descriptor {
