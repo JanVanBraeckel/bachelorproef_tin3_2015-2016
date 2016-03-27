@@ -1,6 +1,7 @@
-package att.iot.client.Model;
+package com.hogent.jan.attblegateway.ATTBLE.Model;
 
-import javax.management.NotificationBroadcasterSupport;
+
+import android.text.TextUtils;
 
 /**
  * Contains the data that defines a management command.
@@ -92,7 +93,7 @@ public class TopicPath {
             try {
                 res[i - offset] = parts[i];
             } catch (Exception ignored) {
-                throw new UnsupportedOperationException(String.format("Failed to convert asset id to int[], problem with: %s in %s", parts[i], String.join("_", parts)/* for android TextUtils.join("_", parts) */));
+                throw new UnsupportedOperationException(String.format("Failed to convert asset id to int[], problem with: %s in %s", parts[i], TextUtils.join("_", parts)));
             }
         }
 
@@ -217,7 +218,7 @@ public class TopicPath {
             try {
                 assetId[i - offset] = parts[i];
             } catch (Exception ignored) {
-                throw new UnsupportedOperationException(String.format("Can't convert string to asset id: %s", String.join("_", parts)/*for android TextUtils.join("_", parts)*/));
+                throw new UnsupportedOperationException(String.format("Can't convert string to asset id: %s", TextUtils.join("_", parts)));
             }
         }
     }

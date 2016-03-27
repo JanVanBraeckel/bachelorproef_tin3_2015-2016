@@ -1,11 +1,9 @@
 package com.hogent.jan.attblegateway;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,31 +14,30 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.hogent.jan.attblegateway.ATTBLE.AttIoT;
+import com.hogent.jan.attblegateway.ATTBLE.DeviceUICallbacks;
+import com.hogent.jan.attblegateway.ATTBLE.IoTGateway;
+import com.hogent.jan.attblegateway.ATTBLE.Model.ActuatorData;
+import com.hogent.jan.attblegateway.ATTBLE.Model.AssetManagementCommandData;
 import com.hogent.jan.attblegateway.ExpandableListView.ExpandableListAdapter;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleCharacteristic;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleNamesResolver;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleService;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleWrapper;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleWrapperUiCallbacks;
-import com.hogent.jan.attblegateway.recyclerview.DeviceListAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks, ExpandableListAdapter.ExpandableListAdapterListener, AttIoT.AttIoTStateChangedListener {
+public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallbacks, ExpandableListAdapter.ExpandableListAdapterListener, DeviceUICallbacks {
     private final String TAG = getClass().getSimpleName();
-
-    private AttIoT att;
 
     private static final String BLE_NAME = "deviceName";
     private static final String BLE_ADDRESS = "deviceAddress";
     private static final String BLE_RSSI = "deviceRssi";
+    private IoTGateway iotGateway;
 
     private BleWrapper mBleWrapper = null;
     private ExpandableListAdapter mListAdapter;
@@ -61,17 +58,22 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Bind(R.id.deviceServices)
     ExpandableListView mExpandableListView;
 
-    public static DeviceDetailFragment newInstance(String name, String address, int rssi) {
-        DeviceDetailFragment fragment = new DeviceDetailFragment();
+    public static DeviceDetailFragment newInstance(String name, String address, int rssi, IoTGateway iotGateway) {
+        DeviceDetailFragment fragment = new DeviceDetailFragment(iotGateway);
         Bundle args = new Bundle();
         args.putString(BLE_NAME, name);
         args.putString(BLE_ADDRESS, address);
         args.putInt(BLE_RSSI, rssi);
         fragment.setArguments(args);
+
         return fragment;
     }
 
     public DeviceDetailFragment() {
+    }
+
+    public DeviceDetailFragment(IoTGateway iotGateway) {
+        this.iotGateway = iotGateway;
     }
 
     @Override
@@ -87,6 +89,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     @Override
     public void uiDeviceDisconnected(BluetoothGatt gatt, BluetoothDevice device) {
         Log.d(TAG, "uiDeviceDisconnected() called with: " + "state = [" + mBleWrapper.getAdapter().getState() + "]");
+        mBleWrapper.connect(device.getAddress());
     }
 
     @Override
@@ -137,7 +140,8 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
         for (BluetoothGattCharacteristic bluetoothGattCharacteristic : chars) {
             int properties = bluetoothGattCharacteristic.getProperties();
             if ((properties & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0) {
-                att.addAsset(service.getUuid().toString().replace("-", "") + "_" + bluetoothGattCharacteristic.getUuid().toString().replace("-", ""),
+                iotGateway.addAsset(mDeviceAddress.replace(":", ""),
+                        service.getUuid().toString().replace("-", "") + "_" + bluetoothGattCharacteristic.getUuid().toString().replace("-", ""),
                         BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString()),
                         "",
                         true,
@@ -145,7 +149,8 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
             } else if ((properties & BluetoothGattCharacteristic.PROPERTY_READ) != 0
                     || (properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0
                     || (properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0) {
-                att.addAsset(service.getUuid().toString().replace("-", "") + "_" + bluetoothGattCharacteristic.getUuid().toString().replace("-", ""),
+                iotGateway.addAsset(mDeviceAddress.replace(":", ""),
+                        service.getUuid().toString().replace("-", "") + "_" + bluetoothGattCharacteristic.getUuid().toString().replace("-", ""),
                         BleNamesResolver.resolveCharacteristicName(bluetoothGattCharacteristic.getUuid().toString()),
                         "",
                         false,
@@ -167,21 +172,28 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
 
         String type = BleNamesResolver.resolveCharacteristicType(ch.getUuid().toString());
 
-        if (type.equals("integer")) {
-            att.publish(String.valueOf(intValue),
-                    service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
-        } else if (type.equals("boolean")) {
-            if (intValue != 0) {
-                att.publish("true",
-                        service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
-            } else {
-                att.publish("false",
-                        service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
-            }
-        } else {
-            att.publish(strValue,
-                    service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""));
-
+        switch (type) {
+            case "integer":
+                iotGateway.send(mDeviceAddress.replace(":", ""),
+                        service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""),
+                        String.valueOf(intValue));
+                break;
+            case "boolean":
+                if (intValue != 0) {
+                    iotGateway.send(mDeviceAddress.replace(":", ""),
+                            service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""),
+                            "true");
+                } else {
+                    iotGateway.send(mDeviceAddress.replace(":", ""),
+                            service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""),
+                            "false");
+                }
+                break;
+            default:
+                iotGateway.send(mDeviceAddress.replace(":", ""),
+                        service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""),
+                        strValue);
+                break;
         }
 
         getActivity().runOnUiThread(new Runnable() {
@@ -220,34 +232,40 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
 
         switch (type) {
             case "integer":
-                att.publish(String.valueOf(originalValue),
-                        service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                iotGateway.send(mDeviceAddress.replace(":", ""),
+                        service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""),
+                        String.valueOf(originalValue));
                 break;
             case "boolean":
                 try {
                     if (Integer.parseInt(originalValue) != 0) {
-                        att.publish("true",
-                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                        iotGateway.send(mDeviceAddress.replace(":", ""),
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""),
+                                "true");
                     } else {
-                        att.publish("false",
-                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                        iotGateway.send(mDeviceAddress.replace(":", ""),
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""),
+                                "false");
                     }
                 } catch (Exception ignored) {
                 }
                 try {
                     if (Boolean.parseBoolean(originalValue)) {
-                        att.publish("true",
-                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                        iotGateway.send(mDeviceAddress.replace(":", ""),
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""),
+                                "true");
                     } else {
-                        att.publish("false",
-                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                        iotGateway.send(mDeviceAddress.replace(":", ""),
+                                service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""),
+                                "false");
                     }
                 } catch (Exception ignored) {
                 }
                 break;
             default:
-                att.publish(originalValue,
-                        service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""));
+                iotGateway.send(mDeviceAddress.replace(":", ""),
+                        service.getUuid().toString().replace("-", "") + "_" + characteristic.getUuid().toString().replace("-", ""),
+                        originalValue);
                 break;
         }
     }
@@ -269,10 +287,16 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
             mDeviceName = getArguments().getString(BLE_NAME);
             mDeviceAddress = getArguments().getString(BLE_ADDRESS);
             mDeviceRssi = getArguments().getInt(BLE_RSSI);
+
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    iotGateway.addDevice(mDeviceAddress.replace(":", ""), mDeviceName, "A BLE device", true);
+                }
+            });
         }
 
-        att = new AttIoT();
-        att.setAttIoTStateChangedListener(this);
+        iotGateway.addObserver(this);
     }
 
     @Override
@@ -320,13 +344,32 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     }
 
     @Override
-    public void callback(String topic, String message) {
-        String[] split = topic.split("/");
-        String serviceChar = split[split.length - 2];
+    public void onActuatorValue(IoTGateway caller, ActuatorData data) {
+        System.out.println("main.onActuatorValue");
+        System.out.println("caller = [" + caller.getDeviceId() + "], data = [" + data + "], asset = [" + data.getAsset() + "]");
+        mListAdapter.onActuatorValue(data.getAsset().split("_")[0], data.getAsset().split("_")[1], data.toString());
+    }
 
-        String service = serviceChar.split("_")[0];
-        String characteristic = serviceChar.split("_")[1];
+    @Override
+    public void onAssetManagementCommand(IoTGateway caller, AssetManagementCommandData data) {
+        System.out.println("main.onAssetManagementCommand");
+        System.out.println("caller = [" + caller.getDeviceId() + "], data = [" + data + "], asset = [" + data.getAsset() + "]");
+    }
 
-        mListAdapter.callback(service, characteristic, message);
+    @Override
+    public void onDeviceManagementCommand(IoTGateway caller, String command) {
+        System.out.println("main.onDeviceManagementCommand");
+        System.out.println("caller = [" + caller.getDeviceId() + "], command = [" + command + "]");
+    }
+
+    @Override
+    public void onConnectionReset(IoTGateway caller) {
+        System.out.println("main.onConnectionReset");
+        System.out.println("caller = [" + caller + "]");
+    }
+
+    @Override
+    public String getDeviceId() {
+        return mDeviceAddress.replace(":", "");
     }
 }

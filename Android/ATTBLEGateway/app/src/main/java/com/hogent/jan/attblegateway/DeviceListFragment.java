@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
  */
 public class DeviceListFragment extends Fragment implements DeviceListAdapter.DeviceClickedListener, SwipeRefreshLayout.OnRefreshListener{
     private final String TAG = getClass().getSimpleName();
-    private static final long SCANNING_TIMEOUT = 5 * 1000;
+    private static final long SCANNING_TIMEOUT = 10 * 1000;
     private static final int ENABLE_BT_REQUEST_ID = 1;
 
     private DeviceListListener mListener;

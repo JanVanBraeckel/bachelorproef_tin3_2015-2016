@@ -1,12 +1,21 @@
-package att.iot.client;
+package com.hogent.jan.attblegateway.ATTBLE;
 
-import att.iot.client.Model.*;
+import android.os.Environment;
+
+import com.hogent.jan.attblegateway.ATTBLE.Model.ActuatorData;
+import com.hogent.jan.attblegateway.ATTBLE.Model.AssetManagementCommandData;
+import com.hogent.jan.attblegateway.ATTBLE.Model.JsonActuatorData;
+import com.hogent.jan.attblegateway.ATTBLE.Model.StringActuatorData;
+import com.hogent.jan.attblegateway.ATTBLE.Model.TopicPath;
+
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -29,18 +38,27 @@ public class IoTGateway implements MqttCallback {
     private String brokerUri;
     private String apiUri;
     private MqttConnectOptions conOpt;
-    private DeviceUICallbacks callbacks;
+    private List<DeviceUICallbacks> observers;
 
     public IoTGateway(String clientId, String clientKey, String apiUri, String brokerUri) {
         this.clientId = clientId;
         this.clientKey = clientKey;
         this.apiUri = apiUri == null ? "https://api.smartliving.io/" : apiUri;
         this.brokerUri = brokerUri == null ? "tcp://broker.smartliving.io:1883" : brokerUri;
+        observers = new ArrayList<>();
     }
 
     private void init() {
         initMqtt();
         subscribeToTopics();
+    }
+
+    public String getGatewayId() {
+        return gatewayId;
+    }
+
+    public void setGatewayId(String gatewayId) {
+        this.gatewayId = gatewayId;
     }
 
     public String getDeviceId() {
@@ -62,8 +80,8 @@ public class IoTGateway implements MqttCallback {
         }
     }
 
-    public void setUICallbacks(DeviceUICallbacks callbacks) {
-        this.callbacks = callbacks;
+    public void addObserver(DeviceUICallbacks observer) {
+        observers.add(observer);
     }
 
     private void initMqtt() {
@@ -72,8 +90,8 @@ public class IoTGateway implements MqttCallback {
             this.conOpt = new MqttConnectOptions();
             this.conOpt.setCleanSession(true);
 
-            String tmpDir = System.getProperty("java.io.tmpdir");
-            MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(tmpDir);
+//            String tmpDir = System.getProperty("java.io.tmpdir");
+//            MqttDefaultFilePersistence dataStore = new MqttDefaultFilePersistence(tmpDir);
 
             String clientId = UUID.randomUUID().toString().substring(0, 22);
             String mqttUsername = this.clientId + ":" + this.clientId;
@@ -83,11 +101,10 @@ public class IoTGateway implements MqttCallback {
             conOpt.setUserName(mqttUsername);
 
             // Construct an MQTT blocking mode client
-            //client = new MqttClient(this.brokerUrl, att.getClientId(), dataStore);
-            mqtt = new MqttClient(this.brokerUri, clientId, dataStore);
+            //mqtt = new MqttClient(this.brokerUri, clientId, dataStore);
 
             /* for android, will require storage permission */
-            //mqtt = new MqttClient(this.brokerUri, clientId, new MqttDefaultFilePersistence(Environment.getExternalStorageDirectory().getAbsolutePath()));
+            mqtt = new MqttClient(this.brokerUri, clientId, new MqttDefaultFilePersistence(Environment.getExternalStorageDirectory().getAbsolutePath()));
 
             // Set this wrapper as the callback handler
             mqtt.setCallback(this);
@@ -114,8 +131,10 @@ public class IoTGateway implements MqttCallback {
     }
 
     private void connectionReset() {
-        if (callbacks != null) {
-            callbacks.onConnectionReset(this);
+        if (observers != null) {
+            for (DeviceUICallbacks observer : observers) {
+                observer.onConnectionReset(this);
+            }
         }
         subscribeToTopics();
     }
@@ -140,31 +159,43 @@ public class IoTGateway implements MqttCallback {
 
     private void onManagementCommand(TopicPath path, MqttMessage message) {
         if (path.getAssetId() != null) {
-            if (callbacks != null) {
-                AssetManagementCommandData data = new AssetManagementCommandData();
-                data.setAsset(path.getAssetId()[0]);
-                data.setCommand(message.toString());
-                //assetManagementCommand(this, data);
-                callbacks.onAssetManagementCommand(this, data);
+            if (observers != null) {
+                for (DeviceUICallbacks observer : observers) {
+                    if (observer.getDeviceId().equals(path.getDeviceId())) {
+                        AssetManagementCommandData data = new AssetManagementCommandData();
+                        data.setAsset(path.getAssetId()[0]);
+                        data.setCommand(message.toString());
+                        observer.onAssetManagementCommand(this, data);
+                    }
+                }
             }
-        } else if (callbacks != null) {
-            String command = message.toString();
-            callbacks.onDeviceManagementCommand(this, command);
+        } else if (observers != null) {
+            for (DeviceUICallbacks observer : observers) {
+                if (observer.getDeviceId().equals(path.getDeviceId())) {
+                    String command = message.toString();
+                    observer.onDeviceManagementCommand(this, command);
+                }
+            }
         }
     }
 
     private void onActuatorValue(TopicPath path, MqttMessage message) {
-        if (callbacks != null) {
-            String val = message.toString();
-            ActuatorData data = null;
-            if (val.charAt(0) == '{') {
-                data = new JsonActuatorData();
-            } else {
-                data = new StringActuatorData();
+        deviceId = path.getDeviceId();
+        if (observers != null) {
+            for (DeviceUICallbacks observer : observers) {
+                if (observer.getDeviceId().equals(path.getDeviceId())) {
+                    String val = message.toString();
+                    ActuatorData data = null;
+                    if (val.charAt(0) == '{') {
+                        data = new JsonActuatorData();
+                    } else {
+                        data = new StringActuatorData();
+                    }
+                    data.load(val);
+                    data.setAsset(path.getAssetId()[0]);
+                    observer.onActuatorValue(this, data);
+                }
             }
-            data.load(val);
-            data.setAsset(path.getAssetId()[0]);
-            callbacks.onActuatorValue(this, data);
         }
     }
 
@@ -203,6 +234,8 @@ public class IoTGateway implements MqttCallback {
                 result.put("value", value);
                 toSend = result.toString();
             } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
@@ -746,6 +779,13 @@ public class IoTGateway implements MqttCallback {
     }
 
     public boolean authenticate() {
+        if (clientKey == null || clientKey.isEmpty()) {
+            return false;
+        }
+        if (gatewayId == null || gatewayId.isEmpty()) {
+            return false;
+        }
+
         try {
             String uri = apiUri + "/gateway";
 

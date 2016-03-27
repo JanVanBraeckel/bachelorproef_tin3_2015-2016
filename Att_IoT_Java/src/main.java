@@ -81,7 +81,7 @@ public class main implements DeviceUICallbacks {
             try {
                 InetAddress ip = InetAddress.getLocalHost();
                 NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-                byte[] mac = network.getHardwareAddress();
+                byte[] mac  = network.getHardwareAddress();
 
                 StringBuilder builder = new StringBuilder();
                 for(int i = 0; i < mac.length; i++){

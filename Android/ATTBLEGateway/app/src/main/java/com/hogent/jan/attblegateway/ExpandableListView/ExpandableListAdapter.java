@@ -72,7 +72,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
-    public void callback(String service, String characteristic, String message) {
+    public void onActuatorValue(String service, String characteristic, String message) {
         for(BleService s : mBluetoothServices){
             if(s.getBleService().getUuid().toString().replace("-", "").equals(service)){
                 for(BleCharacteristic ch : s.getBleCharacteristics()){
