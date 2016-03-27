@@ -27,18 +27,22 @@ public class main implements DeviceUICallbacks {
 
         connect();
 
-        String deviceId = "DF:92:08:D3:C6:95";
+        String deviceId = "DF9208D3C695";
         while (true) {
             if(!devices.contains(deviceId)){
                 devices.add(deviceId);
                 if(!this.gateway.deviceExists(deviceId)){
                     this.gateway.addDevice(deviceId, "name of the device", "description of the device", true);
                     break;
+                }else{
+                    break;
                 }
             }
         }
 
         gateway.addAsset(deviceId, "mlksjdflmkqsdjf_mlkqsdjflmkqsdjf","test asset", "test", true, "boolean");
+
+        gateway.send(deviceId, "mlksjdflmkqsdjf_mlkqsdjflmkqsdjf", "true");
 
         while(true){
 
@@ -60,6 +64,11 @@ public class main implements DeviceUICallbacks {
                     //store config
                     return true;
                 }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }else{
             return gateway.authenticate();
@@ -76,7 +85,7 @@ public class main implements DeviceUICallbacks {
 
                 StringBuilder builder = new StringBuilder();
                 for(int i = 0; i < mac.length; i++){
-                    builder.append(String.format("%02X%s", mac[i], (i< mac.length - 1) ? ":":""));
+                    builder.append(String.format("%02X", mac[i]));
                 }
 
                 address = builder.toString();

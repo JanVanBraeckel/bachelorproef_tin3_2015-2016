@@ -169,10 +169,17 @@ public class IoTGateway implements MqttCallback {
     }
 
     private String getTopicPath(String assetId) {
-        return String.format("client/%s/out/device/%s/asset/%s/state", clientId, deviceId, assetId);
+        String topic = "client/" + clientId + "/out/gateway/" + gatewayId;
+        if (deviceId != null && !deviceId.isEmpty()) {
+            topic += "/device/" + deviceId + "/asset/" + assetId + "/state";
+        } else {
+            topic += "/asset/" + assetId + "/state";
+        }
+        return topic;
     }
 
-    public void send(String asset, Object value) {
+    public void send(String deviceId, String asset, Object value) {
+        this.deviceId = deviceId;
         String toSend = prepareValueForSending(value);
 
         MqttTopic topic = mqtt.getTopic(getTopicPath(asset));
@@ -217,40 +224,27 @@ public class IoTGateway implements MqttCallback {
 
     private void subscribeToTopics() {
         if (mqtt != null) {
-
-            Thread t = new Thread() {
-                public void run() {
-                    try {
-                        String[] toSubscribe = getTopics();
-                        int[] qos = new int[toSubscribe.length];
-                        for (int i = 0; i < toSubscribe.length; i++) {
-                            qos[i] = 0; // at most once?
-                        }
-                        mqtt.subscribe(toSubscribe, qos);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
+            try {
+                String[] toSubscribe = getTopics();
+                int[] qos = new int[toSubscribe.length];
+                for (int i = 0; i < toSubscribe.length; i++) {
+                    qos[i] = 0; // at most once?
                 }
-            };
-
-            t.start();
+                mqtt.subscribe(toSubscribe, qos);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void unSubscribeToTopics() {
         if (mqtt != null) {
-            Thread t = new Thread() {
-                public void run() {
-                    try {
-                        String[] toRemove = getTopics();
-                        mqtt.unsubscribe(toRemove);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            t.start();
+            try {
+                String[] toRemove = getTopics();
+                mqtt.unsubscribe(toRemove);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -292,7 +286,7 @@ public class IoTGateway implements MqttCallback {
 
             String urlParameters = sb.toString();
 
-            // Send post request
+            // Send put request
             con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             wr.writeBytes(urlParameters);
@@ -314,14 +308,16 @@ public class IoTGateway implements MqttCallback {
     public boolean addAsset(String deviceId, String assetId, String name, String description, boolean isActuator, String type) {
         this.deviceId = deviceId;
         try {
-            String content;
+            JSONObject content = new JSONObject();
 
-            if (type == null || type.isEmpty()) {
-                content = String.format("{ \"is\" : \"%s\", \"name\" : \"%s\", \"description\" : \"%s\" }", isActuator ? "actuator" : "sensor", name, description);
-            } else if (type.startsWith("{")) {
-                content = String.format("{ \"is\" : \"%s\", \"name\" : \"%s\", \"description\" : \"%s\", \"profile\": %s }", isActuator ? "actuator" : "sensor", name, description, type);
+            content.put("is", isActuator ? "actuator" : "sensor");
+            content.put("name", name);
+            content.put("description", description);
+
+            if (type != null && !type.isEmpty() && type.startsWith("{")) {
+                content.put("profile", type);
             } else {
-                content = String.format("{ \"is\" : \"%s\", \"name\" : \"%s\", \"description\" : \"%s\", \"profile\" : { \"type\" : \"%s\" }}", isActuator ? "actuator" : "sensor", name, description, type);
+                content.put("profile", new JSONObject("{\"type\": \"" + type + "\"}"));
             }
 
             String uri = apiUri + "/device/" + deviceId + "/asset/" + assetId;
@@ -335,9 +331,9 @@ public class IoTGateway implements MqttCallback {
             con.setRequestProperty("Auth-GatewayId", gatewayId);
             prepareRequestForAuth(con);
 
-            String urlParameters = content;
+            String urlParameters = content.toString();
 
-            // Send post request
+            // Send put request
             con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
             wr.writeBytes(urlParameters);
@@ -630,14 +626,7 @@ public class IoTGateway implements MqttCallback {
             con.setRequestMethod("GET");
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Auth-GatewayKey", clientKey);
-            con.setRequestProperty("Auth-GatewayId", gatewayId);
-            prepareRequestForAuth(con);
-
-            // Send get request
-            con.setDoOutput(true);
-            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-            wr.flush();
-            wr.close();
+            con.setRequestProperty("Auth-GateWayId", gatewayId);
 
             int responseCode = con.getResponseCode();
             System.out.println("Sending 'GET' request to URL : " + uri);
@@ -646,10 +635,7 @@ public class IoTGateway implements MqttCallback {
 
             httpError = false;
 
-            if(responseCode != 200){
-                return false;
-            }
-            return true;
+            return responseCode == 200;
         } catch (Exception e) {
             e.printStackTrace();
             httpError = true;
@@ -740,9 +726,9 @@ public class IoTGateway implements MqttCallback {
 
             String responseString = response.toString();
 
-            JSONObject res =  new JSONObject();
+            JSONObject res = new JSONObject();
 
-            if(!responseString.isEmpty()){
+            if (!responseString.isEmpty()) {
                 res = new JSONObject(response.toString());
                 gatewayId = res.getString("id");
             }
