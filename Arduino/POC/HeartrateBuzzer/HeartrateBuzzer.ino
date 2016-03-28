@@ -16,7 +16,6 @@ BLECharacteristic heartRateChar("2A37",  // standard 16-bit characteristic UUID
                               // https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.heart_rate_measurement.xml
 BLEUnsignedCharCharacteristic buzzerChar("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead | BLEWrite); // Custom characteristic to toggle buzzer. 0 for off, everything else for on
 
-int oldHeartRate = 0;  // last heart rate reading from analog input
 long previousMillis = 0;  // last time the heart rate was checked, in ms
 
 void setup() {
@@ -55,12 +54,12 @@ void loop() {
     // print the central's MAC address:
     Serial.println(central.address());
 
-    // check the heart rate measurement every 200ms
+    // check the heart rate measurement every 1 second
     // as long as the central is still connected:
     while (central.connected()) {
       long currentMillis = millis();
-      // if 200ms have passed, check the heart rate measurement:
-      if (currentMillis - previousMillis >= 200) {
+      // if 1 second has passed, check the heart rate measurement:
+      if (currentMillis - previousMillis >= 1000) {
         previousMillis = currentMillis;
         updateHeartRate();
       }
@@ -88,11 +87,8 @@ void updateHeartRate() {
   */
   int heartRateMeasurement = analogRead(A0);
   int heartRate = map(heartRateMeasurement, 0, 1023, 0, 100);
-  if (heartRate != oldHeartRate) {      // if the heart rate has changed
-    Serial.print("Heart Rate is now: "); // print it
-    Serial.println(heartRate);
-    const unsigned char heartRateCharArray[2] = { 0, (char)heartRate };
-    heartRateChar.setValue(heartRateCharArray, 2);  // and update the heart rate measurement characteristic
-    oldHeartRate = heartRate;           // save the level for next comparison
-  }
+  Serial.print("Heart Rate is now: "); // print it
+  Serial.println(heartRate);
+  const unsigned char heartRateCharArray[2] = { 0, (char)heartRate };
+  heartRateChar.setValue(heartRateCharArray, 2);  // and update the heart rate measurement characteristic
 }
