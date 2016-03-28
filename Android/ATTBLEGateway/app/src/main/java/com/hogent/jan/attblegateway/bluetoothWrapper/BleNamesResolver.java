@@ -223,8 +223,18 @@ public class BleNamesResolver {
         mCharacteristics.put("f000ffc2-0451-4000-b000-000000000000", "OAD Image block request/response");
 
         mCharacteristicTypes.put("00002a37-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("00002a04-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("00002a23-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("00002a50-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("39e1fd01-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa03-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa04-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa02-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa05-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa01-84a8-11e2-afba-0002a5d5c51b", "integer");
         mCharacteristicTypes.put("19b10001-e8f2-537e-4f6c-d104768a1214", "boolean");
         mCharacteristicTypes.put("39e1fa07-84a8-11e2-afba-0002a5d5c51b", "boolean");
+        mCharacteristicTypes.put("39e1fa06-84a8-11e2-afba-0002a5d5c51b", "boolean");
 
         mValueFormats.put(Integer.valueOf(52), "32bit float");
         mValueFormats.put(Integer.valueOf(50), "16bit float");

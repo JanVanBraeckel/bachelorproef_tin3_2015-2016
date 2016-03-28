@@ -39,7 +39,7 @@ public interface BleWrapperUiCallbacks {
                                             final BluetoothGattService service,
                                             final BluetoothGattCharacteristic ch,
                                             final String strValue,
-                                            final int intValue,
+                                            final double doubleValue,
                                             final byte[] rawValue,
                                             final String timestamp);
 
@@ -82,7 +82,7 @@ public interface BleWrapperUiCallbacks {
         @Override
         public void uiNewValueForCharacteristic(BluetoothGatt gatt,
                                                 BluetoothDevice device, BluetoothGattService service,
-                                                BluetoothGattCharacteristic ch, String strValue, int intValue,
+                                                BluetoothGattCharacteristic ch, String strValue, double doubleValue,
                                                 byte[] rawValue, String timestamp) {}
         @Override
         public void uiGotNotification(BluetoothGatt gatt, BluetoothDevice device,

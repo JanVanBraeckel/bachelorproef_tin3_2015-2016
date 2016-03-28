@@ -12,30 +12,30 @@ public class BleCharacteristic {
     private BluetoothGattCharacteristic mBleCharacteristic;
     private List<BleDescriptor> mBleDescriptors;
     private String mStrValue = "N/A";
-    private int mIntValue = 0;
+    private double mDoubleValue = 0;
     private String mAsciiValue = "N/A";
     private String mTimetamp = "N/A";
 
-    public BleCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic){
+    public BleCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic) {
         mBleCharacteristic = bluetoothGattCharacteristic;
         mBleDescriptors = new ArrayList<>();
     }
 
-    public BleCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic, List<BleDescriptor> bleDescriptors){
+    public BleCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic, List<BleDescriptor> bleDescriptors) {
         mBleCharacteristic = bluetoothGattCharacteristic;
         mBleDescriptors = bleDescriptors;
     }
 
-    public BluetoothGattCharacteristic getBleCharacteristic(){
+    public BluetoothGattCharacteristic getBleCharacteristic() {
         return mBleCharacteristic;
     }
 
-    public List<BleDescriptor> getBleDescriptors(){
+    public List<BleDescriptor> getBleDescriptors() {
         return mBleDescriptors;
     }
 
-    public int getIntValue() {
-        return mIntValue;
+    public double getDoubleValue() {
+        return mDoubleValue;
     }
 
     public String getAsciiValue() {
@@ -50,29 +50,29 @@ public class BleCharacteristic {
         return mTimetamp;
     }
 
-    public void setBleCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic, String strValue, int intValue, byte[] rawValue, String timestamp){
+    public void setBleCharacteristic(BluetoothGattCharacteristic bluetoothGattCharacteristic, String strValue, double doubleValue, byte[] rawValue, String timestamp) {
         mBleCharacteristic = bluetoothGattCharacteristic;
-            String asciiValue = "";
-            if(rawValue != null && rawValue.length > 0){
-                final StringBuilder stringBuilder = new StringBuilder(rawValue.length);
-                for(byte byteChar: rawValue){
-                    stringBuilder.append(String.format("%02X", byteChar));
-                }
-                asciiValue = "0x" + stringBuilder.toString();
+        String asciiValue = "";
+        if (rawValue != null && rawValue.length > 0) {
+            final StringBuilder stringBuilder = new StringBuilder(rawValue.length);
+            for (byte byteChar : rawValue) {
+                stringBuilder.append(String.format("%02X", byteChar));
             }
+            asciiValue = "0x" + stringBuilder.toString();
+        }
 
         mStrValue = strValue;
-        mIntValue = intValue;
+        mDoubleValue = doubleValue;
         mAsciiValue = asciiValue;
         mTimetamp = timestamp;
     }
 
-    public void setBleDescriptors(List<BleDescriptor> bleDescriptors){
+    public void setBleDescriptors(List<BleDescriptor> bleDescriptors) {
         mBleDescriptors = bleDescriptors;
     }
 
-    public void addBleDescriptor(BleDescriptor bleDescriptor){
-        if(!mBleDescriptors.contains(bleDescriptor)){
+    public void addBleDescriptor(BleDescriptor bleDescriptor) {
+        if (!mBleDescriptors.contains(bleDescriptor)) {
             mBleDescriptors.add(bleDescriptor);
         }
     }

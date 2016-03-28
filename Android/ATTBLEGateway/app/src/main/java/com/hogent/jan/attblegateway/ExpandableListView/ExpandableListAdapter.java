@@ -22,6 +22,8 @@ import com.hogent.jan.attblegateway.bluetoothWrapper.BleCharacteristic;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleNamesResolver;
 import com.hogent.jan.attblegateway.bluetoothWrapper.BleService;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -62,10 +64,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
-    public void newValueForCharacteristic(BluetoothGattService bluetoothGattService, BluetoothGattCharacteristic characteristic, String strValue, int intValue, byte[] rawValue, String timestamp) {
+    public void newValueForCharacteristic(BluetoothGattService bluetoothGattService, BluetoothGattCharacteristic characteristic, String strValue, double doubleValue, byte[] rawValue, String timestamp) {
         for(BleService s : mBluetoothServices){
             if(s.getBleService() == bluetoothGattService){
-                s.newValueForCharacteristic(characteristic, strValue, intValue, rawValue, timestamp);
+                s.newValueForCharacteristic(characteristic, strValue, doubleValue, rawValue, timestamp);
             }
         }
 
@@ -106,7 +108,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 }
                                 break;
                             default:
-                                mListener.writeDataToCharacteristic(serv, charact, parseHexStringToBytes(String.format("0x%08X", message)), message);
+                                try {
+                                    mListener.writeDataToCharacteristic(serv, charact, message.getBytes("UTF-8"), message);
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
                                 break;
                         }
                     }
@@ -170,7 +176,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             BleCharacteristic ch = mBluetoothServices.get(groupPosition).getBleCharacteristics().get(childPosition);
             lblValue.setText(ch.getAsciiValue());
-            lblDecimalValue.setText(String.format("%d", ch.getIntValue()));
+            lblDecimalValue.setText(String.format("%.2f", ch.getDoubleValue()));
             lblStringValue.setText(ch.getStrValue());
             lblUpdated.setText(ch.getTimestamp());
         }
@@ -271,7 +277,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                     BleCharacteristic ch = mBluetoothServices.get(groupPosition).getBleCharacteristics().get(childPosition);
                     lblValue.setText(ch.getAsciiValue());
-                    lblDecimalValue.setText(String.format("%d", ch.getIntValue()));
+                    lblDecimalValue.setText(String.format("%.2f", ch.getDoubleValue()));
                     lblStringValue.setText(ch.getStrValue());
                     lblUpdated.setText(ch.getTimestamp());
                     detailView.setVisibility(View.GONE);

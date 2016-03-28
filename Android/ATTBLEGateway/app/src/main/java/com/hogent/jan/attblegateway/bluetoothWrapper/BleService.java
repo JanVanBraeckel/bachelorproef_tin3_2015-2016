@@ -45,10 +45,10 @@ public class BleService {
         }
     }
 
-    public void newValueForCharacteristic(BluetoothGattCharacteristic characteristic, String strValue, int intValue, byte[] rawValue, String timestamp) {
+    public void newValueForCharacteristic(BluetoothGattCharacteristic characteristic, String strValue, double doubleValue, byte[] rawValue, String timestamp) {
         for(BleCharacteristic ch : mBleCharacteristics){
             if(ch.getBleCharacteristic()==characteristic){
-                ch.setBleCharacteristic(characteristic, strValue, intValue, rawValue, timestamp);
+                ch.setBleCharacteristic(characteristic, strValue, doubleValue, rawValue, timestamp);
             }
         }
     }

@@ -172,8 +172,8 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
     }
 
     @Override
-    public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final BluetoothGattCharacteristic ch, final String strValue, final int intValue, final byte[] rawValue, final String timestamp) {
-        Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service.getUuid() + "], ch = [" + ch.getUuid() + "], strValue = [" + strValue + "], intValue = [" + intValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
+    public void uiNewValueForCharacteristic(BluetoothGatt gatt, BluetoothDevice device, final BluetoothGattService service, final BluetoothGattCharacteristic ch, final String strValue, final double doubleValue, final byte[] rawValue, final String timestamp) {
+        Log.d(TAG, "uiNewValueForCharacteristic() called with: " + "gatt = [" + gatt + "], device = [" + device + "], service = [" + service.getUuid() + "], ch = [" + ch.getUuid() + "], strValue = [" + strValue + "], intValue = [" + doubleValue + "], rawValue = [" + rawValue + "], timestamp = [" + timestamp + "]");
 
         new Thread(new Runnable() {
             @Override
@@ -184,10 +184,10 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
                     case "integer":
                         iotGateway.send(mDeviceAddress.replace(":", ""),
                                 service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""),
-                                String.valueOf(intValue));
+                                String.valueOf((int)doubleValue));
                         break;
                     case "boolean":
-                        if (intValue != 0) {
+                        if (doubleValue != 0) {
                             iotGateway.send(mDeviceAddress.replace(":", ""),
                                     service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""),
                                     "true");
@@ -196,6 +196,11 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
                                     service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ""),
                                     "false");
                         }
+                        break;
+                    case "double":
+                        iotGateway.send(mDeviceAddress.replace(":", ""),
+                                service.getUuid().toString().replace("-", "") + "_" + ch.getUuid().toString().replace("-", ":"),
+                                String.valueOf(doubleValue));
                         break;
                     default:
                         iotGateway.send(mDeviceAddress.replace(":", ""),
@@ -209,7 +214,7 @@ public class DeviceDetailFragment extends Fragment implements BleWrapperUiCallba
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListAdapter.newValueForCharacteristic(service, ch, strValue, intValue, rawValue, timestamp);
+                mListAdapter.newValueForCharacteristic(service, ch, strValue, doubleValue, rawValue, timestamp);
             }
         });
     }

@@ -278,7 +278,7 @@ public class BleWrapper {
 
         byte[] rawValue = ch.getValue();
         String strValue = null;
-        int intValue = 0;
+        double doubleValue = 0;
 
         // lets read and do real parsing of some characteristic to get meaningful value from it
         UUID uuid = ch.getUuid();
@@ -290,8 +290,8 @@ public class BleWrapper {
             // also we need to define format
             int format = (index == 1) ? BluetoothGattCharacteristic.FORMAT_UINT8 : BluetoothGattCharacteristic.FORMAT_UINT16;
             // now we have everything, get the value
-            intValue = ch.getIntValue(format, index);
-            strValue = intValue + " bpm"; // it is always in bpm units
+            doubleValue = ch.getIntValue(format, index);
+            strValue = doubleValue + " bpm"; // it is always in bpm units
         } else if (uuid.equals(BleDefinedUUIDs.Characteristic.HEART_RATE_MEASUREMENT) || // manufacturer name string
                 uuid.equals(BleDefinedUUIDs.Characteristic.MODEL_NUMBER_STRING) || // model number string)
                 uuid.equals(BleDefinedUUIDs.Characteristic.FIRMWARE_REVISION_STRING)) // firmware revision string
@@ -301,17 +301,17 @@ public class BleWrapper {
             strValue = ch.getStringValue(0);
         } else if (uuid.equals(BleDefinedUUIDs.Characteristic.APPEARANCE)) { // appearance
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
-            intValue = ((int) rawValue[1]) * 256;
-            intValue += rawValue[0];
-            strValue = BleNamesResolver.resolveAppearance(intValue);
+            doubleValue = ((double) rawValue[1]) * 256;
+            doubleValue += rawValue[0];
+            strValue = BleNamesResolver.resolveAppearance((int)doubleValue);
         } else if (uuid.equals(BleDefinedUUIDs.Characteristic.BODY_SENSOR_LOCATION)) { // body sensor location
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.body_sensor_location.xml
-            intValue = rawValue[0];
-            strValue = BleNamesResolver.resolveHeartRateSensorLocation(intValue);
+            doubleValue = rawValue[0];
+            strValue = BleNamesResolver.resolveHeartRateSensorLocation((int)doubleValue);
         } else if (uuid.equals(BleDefinedUUIDs.Characteristic.BATTERY_LEVEL)) { // battery level
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
-            intValue = rawValue[0];
-            strValue = "" + intValue + "% battery level";
+            doubleValue = rawValue[0];
+            strValue = "" + doubleValue + "% battery level";
         }
         // flower power calculations
         else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILTEMP) ||
@@ -321,52 +321,51 @@ public class BleWrapper {
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
             short value = bb.getShort();
-            intValue = (int) (0.00000003044 * Math.pow(value, 3.0) - 0.00008038 * Math.pow(value, 2.0) + value * 0.1149 - 30.449999999999999);
+            doubleValue =0.00000003044 * Math.pow(value, 3.0) - 0.00008038 * Math.pow(value, 2.0) + value * 0.1149 - 30.449999999999999;
 
-            strValue = intValue + " °C";
+            strValue = doubleValue + " °C";
         }
         else if(uuid.equals(BleDefinedUUIDs.Characteristic.LIGHT)){
             ByteBuffer bb = ByteBuffer.wrap(rawValue);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
             short value = bb.getShort();
-            intValue = (int) (0.08640000000000001 * (192773.17000000001 * Math.pow(value, -1.0606619)));
+            doubleValue = 0.08640000000000001 * (192773.17000000001 * Math.pow(value, -1.0606619));
 
-            strValue = String.valueOf(intValue);
+            strValue = String.valueOf(doubleValue);
         }
         else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILEC)){
             ByteBuffer bb = ByteBuffer.wrap(rawValue);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
-            short value = bb.getShort();
-            intValue = (int) value;
+            doubleValue = bb.getShort();
 
-            strValue = String.valueOf(intValue);
+            strValue = String.valueOf(doubleValue);
         }else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILVWC)){
             ByteBuffer bb = ByteBuffer.wrap(rawValue);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
             short value = bb.getShort();
             double moisture = 11.4293 + (0.0000000010698 * Math.pow(value, 4.0) - 0.00000152538 * Math.pow(value, 3.0) +  0.000866976 * Math.pow(value, 2.0) - 0.169422 * value);
-            intValue = (int) (100.0 * (0.0000045 * Math.pow(moisture, 3.0) - 0.00055 * Math.pow(moisture, 2.0) + 0.0292 * moisture - 0.053));
+            doubleValue = 100.0 * (0.0000045 * Math.pow(moisture, 3.0) - 0.00055 * Math.pow(moisture, 2.0) + 0.0292 * moisture - 0.053);
 
-            strValue = String.valueOf(intValue);
+            strValue = String.valueOf(doubleValue);
         }
         else {
             // not known type of characteristic, so we need to handle this in "general" way
             // get first four bytes and transform it to integer
-            intValue = 0;
+            doubleValue = 0;
             if (rawValue.length > 0) {
-                intValue = (int) rawValue[0];
+                doubleValue = (int) rawValue[0];
             }
             if (rawValue.length > 1) {
-                intValue = intValue + ((int) rawValue[1] * 256);
+                doubleValue = doubleValue + ((double) rawValue[1] * 256);
             }
             if (rawValue.length > 2) {
-                intValue = intValue + ((int) rawValue[2] * 8);
+                doubleValue = doubleValue + ((double) rawValue[2] * 8);
             }
             if (rawValue.length > 3) {
-                intValue = intValue + ((int) rawValue[3] * 8);
+                doubleValue = doubleValue + ((double) rawValue[3] * 8);
             }
 
             if (rawValue.length > 0) {
@@ -386,7 +385,7 @@ public class BleWrapper {
                 mBluetoothSelectedService,
                 ch,
                 strValue,
-                intValue,
+                doubleValue,
                 rawValue,
                 timestamp);
     }
