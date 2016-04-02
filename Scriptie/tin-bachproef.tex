@@ -37,6 +37,8 @@
 \usepackage[T1]{fontenc}     % Ivm lettertypes
 \usepackage{lmodern}
 \usepackage{textcomp}
+\usepackage{tikz}
+\usepackage{pgfplots}
 
 %%---------- Layout ------------------------------------------------------
 
@@ -215,9 +217,16 @@ In this section, the goal is to quickly familiarize the reader with the subject 
 
 \subsection{Problem statement}
 \label{subsec:problemstatement}
-At the time of writing, there are already a lot of Bluetooth enabled products on the technology market. With the new Bluetooth Low Energy specification, Bluetooth is reaching out even further to products like socks\footnote{http://www.sensoriafitness.com/}, shoes\footnote{https://secure-nikeplus.nike.com/plus/products/basketball}, fitness bands\footnote{https://www.fitbit.com/} and more are being added to the list every day. The problem with these products is that in a lot of cases, the products only synchronize with a smartphone. Some manufacturers extend this connectivity by occasionally synchronizing the data the smartphone captures to their own proprietary cloud, where the data can be analyzed by both the company and the consumer. Most of the time, this is where the data cycle stops and it can't be further accessed by other parties, this is known as a closed loop system. In some cases, developers can still access the data with an API that communicates with the cloud service of the manufacturer, but this doesn't give any access to the raw sensor values and doesn't allow real-time data transfer.
+At the time of writing, there are already a lot of Bluetooth enabled products on the technology market. With the new Bluetooth Low Energy specification, Bluetooth is reaching out even further to products like socks\footnote{http://www.sensoriafitness.com/}, shoes\footnote{https://secure-nikeplus.nike.com/plus/products/basketball}, fitness bands\footnote{https://www.fitbit.com/} and more are being added to the list every day. The problem with these products is that in a lot of cases, the products only synchronize with a smartphone. Some manufacturers extend this connectivity by occasionally synchronizing the data the smartphone captures to their own proprietary cloud, where the data can be analyzed by both the company and the consumer. Most of the time, this is where the data cycle stops and it can't be further accessed by other parties, this is known as a closed loop system. In some cases, developers can still access the data with an API that communicates with the cloud service of the manufacturer, but this doesn't give any access to the raw sensor values and doesn't allow real-time data transfer. An example of a closed system versus open system can be found in figure \ref{fig:networkloops}.
 
 On top of this, a lot of the devices being manufactured don't use standard SIG adopted BLE services, which makes interoperability with existing applications hard, if not impossible if authentication and encryption are added into the mix.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{img/networkloop.png}
+    \caption[Image demonstrating a closed cloud system versus an open cloud system]{Image demonstrating a closed system (left) versus an open system (right). A closed system usually has its own (optional) cloud for every device from a different manufacturer, only pushing data but not pulling it. It also (not always) exposes a Web API to allow users to pull the data to their computer. An open system exposes \textit{one} public cloud like the AllThingsTalk cloud with \textit{one} Web API, also allowing 2-way data communication between smartphone and cloud.}
+    \label{fig:networkloops}
+\end{figure}
 
 \subsection{Research questions}
 \label{subsec:researchquestions}
@@ -245,15 +254,15 @@ AllThingsTalk has come a long way since the start of the company. They've receiv
 
 Furthermore, they've hit some other major milestones throughout the years. In November 2014 they launched the first set of Rapid Development Kits for Internet of Things, where they added the Intel Rapid Development Kit in April 2015 and the LoRa Rapid Development Kit in November 2015. Other milestones include Internet of Things hackathons, the launch of IOTOPIA.be - a platform to introduce children in secondary schools to Internet of Things - and a LoRa partnership with Proximus, one of the largest telecommunications companies in Belgium.
 
-\subsection{Products and services}
-\label{subsec:attproductsservices}
-The three main products and services AllThingsTalk offer are guidance, tools and cloud. 
-
-For guidance, they offer IoT innovation workshops and private hackathons. This means that AllThingstalk organizes workshops for companies tailored to their needs, as well as hackathons which involve ideation, prototyping and more.
-
-The second product is tools. AllThingsTalk offers a range of development kits that companies can purchase to accelerate their Internet of Things research. This includes kits like LoRa, Arduino Raspberry Pi, Intel Edison and Windows 10 IoT. `Hackathon in a Box' is also available, which helps companies to organize their own Internet of Things hackathon on their own.
-
-Last but not least is the AllThingsTalk cloud, an Internet of Things prototyping platform which enables companies to connect their devices rapidly to the cloud, instead of hosting their own complicated infrastructure. Not only can this be used to prototype, but the platform is already being used in some very exciting projects like helping the elderly live in their home longer and an ongoing project which provides predictive maintenance in industries with machinery.
+%\subsection{Products and services}
+%\label{subsec:attproductsservices}
+%The three main products and services AllThingsTalk offer are guidance, tools and cloud. 
+%
+%For guidance, they offer IoT innovation workshops and private hackathons. This means that AllThingstalk organizes workshops for companies tailored to their needs, as well as hackathons which involve ideation, prototyping and more.
+%
+%The second product is tools. AllThingsTalk offers a range of development kits that companies can purchase to accelerate their Internet of Things research. This includes kits like LoRa, Arduino Raspberry Pi, Intel Edison and Windows 10 IoT. `Hackathon in a Box' is also available, which helps companies to organize their own Internet of Things hackathon on their own.
+%
+%Last but not least is the AllThingsTalk cloud, an Internet of Things prototyping platform which enables companies to connect their devices rapidly to the cloud, instead of hosting their own complicated infrastructure. Not only can this be used to prototype, but the platform is already being used in some very exciting projects like helping the elderly live in their home longer and an ongoing project which provides predictive maintenance in industries with machinery.
 
 % TODO: Wees zo concreet mogelijk bij het formuleren van je
 % onderzoeksvra(a)g(en). Een onderzoeksvraag is trouwens iets waar nog
@@ -332,7 +341,7 @@ Other names that can commonly be found are Bluetooth Smart (single-mode) and Blu
 \label{table:configurations}
 \begin{tabular}{|l|l|l|}
 \hline
-\textit{\textbf{Bluetooth version}} & \textit{\textbf{Supports BR/EDR}} & \textit{\textbf{Supports BLE}} \\ \hline
+\textit{\textbf{Bluetooth specification}} & \textit{\textbf{Supports BR/EDR}} & \textit{\textbf{Supports BLE}} \\ \hline
 \textbf{Pre-v4.0}                   & v                                 & x                              \\ \hline
 \textbf{4.x Bluetooth Smart}        & x                                 & v                              \\ \hline
 \textbf{4.x Bluetooth Smart Ready}  & v                                 & v                              \\ \hline
@@ -415,6 +424,78 @@ At the core of Bluetooth Low Energy communication, the Generic Attribute Profile
 
 \chapter{Why Bluetooth Low Energy and Internet of Things}
 \label{ch:BLEIOT}
+\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+The Internet of Things is quickly growing and it's already huge, filled with both long-range sensors using LoRa and Sigfox technologies and short-range sensors using WiFi or directly connected with a gateway connected to internet. Why would it then be beneficial to add another spectrum of devices: Bluetooth Low Energy? The main reason for this is because no other technology fills this spectrum of devices yet. Right now, you can compare wireless IOT technologies against 2 axis: power and range, as seen in figure \ref{fig:powerrange}. Before Bluetooth Low Energy, there wasn't really any major technology to fill the Low Energy, Low Range spectrum. One can say that Zigbee or other technologies could fill this end of the spectrum, but none of these are as widely adopted as Bluetooth Low Energy is today. In this chapter we'll further discuss the use cases Bluetooth Low Energy can fulfill in this Low Power, Low Range spectrum as well as briefly introducing its competitors, before ending with what the future holds for Bluetooth Low Energy.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+
+\begin{axis}[axis equal=true,
+		ticks=none, axis y line=center, axis x line=middle, axis on top=true,
+    xmin=-4.5, xmax=4.5, ymin=-4.5, ymax=4.5,
+		xlabel={Power}, ylabel={Range}
+] 
+
+\fill[white] (axis cs:0,0) rectangle (rel axis cs:1,1) node [pos=0.5,text=black] {Cellular};
+
+\fill[white] (current axis.right of origin) rectangle (current axis.below origin) node [pos=0.5,text=black] {Wifi};
+
+\fill[white]
+    (axis cs:\pgfkeysvalueof{/pgfplots/xmin},\pgfkeysvalueof{/pgfplots/ymax})
+    rectangle (axis cs:0,0) node [pos=0.5,text=black] {LoRa, Sigfox};
+	
+\fill[white]
+    (axis cs:\pgfkeysvalueof{/pgfplots/xmin},\pgfkeysvalueof{/pgfplots/ymin})
+    rectangle (axis cs:0,0) node [pos=0.5,text=black] {BLE};
+
+\end{axis} 
+\end{tikzpicture} 
+
+\caption{Image showing Bluetooth Low Energy's place in the Range vs Power spectrum.}
+\label{fig:powerrange}
+
+\end{figure}
+
+\newpage{}
+
+\section{Uses of Bluetooth Low Energy}
+\label{sec:usesble}
+When looking at the adopted Bluetooth Low Energy profiles and services, as discussed in sections \ref{sec:profiles} and \ref{sec:services}, it's quite easy to find some general use cases that the technology can be used for. Some important use cases are listed below, but are surely not limited to this list:
+
+\begin{itemize}
+	\item{\textbf{Quantified Self, Sport and Fitness}: Cycling Power, Cycling Speed and Cadence, Running Speed and Cadence, Body Composition, Heart Rate, Weight Scale}
+	\item{\textbf{Health care}: Blood Pressure, Glucose, Continuous Glucose Monitoring, Health Thermometer, Heart Rate and Weight Scale, Pulse Oximeter}
+	\item{\textbf{Location and Proximity}: Find Me, Location and Navigation, Proximity, Indoor Positioning}
+\end{itemize}
+
+Of course, once we include non-adopted specifications, the list could go on forever with entries being added every day. For example, there's the ``Flower Power''\footnote{http://www.parrot.com/usa/products/flower-power/} device which measures your plant health by monitoring air temperature, soil temperature, soil moisture, soil electrical conductivity and more. It synchronizes with a smartphone that has the Flower Power application paired to the device and synchronizes the data to an online cloud at set intervals, where the data can then be queried with an API  (closed system as seen in figure \ref{fig:networkloops}). A lot of these services aren't included in the adopted specifications, so extending standard Bluetooth profiles with your own can greatly expand the possibilities of the technology. However, if the manufacturer doesn't release the specifications of their device, interoperability with existing apps or integrating that device in other apps will be made very hard.
+
+However, the Flower Power example isn't exactly the best Bluetooth Low Energy use case in existence. For example, what if there's a gardener who plants some of these devices in his/her customers' yards. If the customer isn't home for two weeks, then there's no cellphone to synchronize the data to and the gardener will have to come over to check if the plants need care either way. Some people in the community also thought this was a problem and made a NodeJS gateway application to run on a Raspberry PI or other computer but the product wasn't originally designed for this and the NodeJS gateway leaves a lot do be desired.
+
+\section{Competitors}
+\label{sec:competitors}
+As the rules of marketing tell us, there aren't (or there are very little) products that have no significant competitors. While Bluetooth Low Energy is trumping its competitors pretty well, it's still worthwhile to look at the these other technologies and what they do.
+
+\subsection{ZigBee}
+\label{subsec:zigbee}
+ZigBee has been designed from the ground up with automation in mind, as well as Internet of Things. It's not just focused on home automation, but it's also used for smart energy products, health care, equipment monitoring, remote controls and more. Some major technology manufacturers have adopted this technology and are selling home automation kits for people to set up in their homes, like Xiaomi with its Smart Home kit. Another thing ZigBee does very well is mesh networking. Devices can be connected with one another and exchange data without needing additional gateways to fetch the data. However, the problem with ZigBee is that the platform is completely open and changes can be made for it as the manufacturer wishes. So it might happen that two devices with a ZigBee chip aren't even able to communicate with one another.
+
+\subsection{Z-Wave}
+\label{subsec:zwave}
+Another wireless technology that is built completely for home automation is Z-Wave. The major difference between ZigBee and Z-Wave however, is that the Z-Wave technology isn't open. This is both good and bad because it's not open at all to development, you simply take the technology as it comes and no flexibility is offered beyond that point. For the consumer this is beneficial however, ensuring interoperability between Z-Wave devices, since Z-Wave also features mesh networking.
+
+\subsection{ANT}
+\label{subsec:ant}
+ANT is another good example of a Bluetooth Low Energy competitor. This is again a proprietary technology and was built with sensor networks in mind. It features powerful mesh networking as well as star, tree and point-to-point networks, allowing all kind of networks to be used in unison.
+
+\section{Future of Bluetooth Low Energy}
+\label{subsec:futureble}
+Bluetooth Low Energy has been an exciting technology from the start and is gaining popularity at a very rapid rate. While the Bluetooth 4.0 specification brought Bluetooth Low Energy to life, some very much needed updates have made it to the Bluetooth specification, which is now at version 4.2. Bluetooth 4.1 brought improved consumer usability with better co-existence between Bluetooth Low Energy and Bluetooth BR/EDR, as well as increased data exchange rate and more flexibility for the developers. The 4.1 specification also brought IP-based connections to Bluetooth Low Energy. In essence, a device can directly communicate over internet once it's been connected to a gateway that has internet access, like a smartphone.
+
+The newest update, Bluetooth 4.2, brings yet more changes to the Bluetooth specification. It brings improved speeds yet again, support for IPv6, 6LoWPAN (IPv6 over Low power Wireless Personal Area Networks) and improved security.
+
+The Bluetooth SIG is constantly working on Bluetooth Low Energy, and it has been announced that the range would be significantly improved. They also brought mesh networking to the table, just like ZigBee, Z-Wave and ANT. These improvements will bring even more use cases to Bluetooth Low Energy, the main one being home automation.
 
 \chapter{Android programming}
 \label{ch:android}
