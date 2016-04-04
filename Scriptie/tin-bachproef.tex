@@ -353,7 +353,7 @@ Other names that can commonly be found are Bluetooth Smart (single-mode) and Blu
 There are a couple of techniques Bluetooth Low Energy uses to achieve low energy consumption. The fact alone that it can run off a 3 volt CR2032 coin cell battery and still retain 8 months of battery life proves that it is indeed a \textit{true} low energy technology. There are a couple of decisions that made it possible to achieve this low amount of energy consumption, some being the following:
 
 \begin{itemize}
-\item{\textbf{Use the radio as little as possible.} Keeping the radio on any wireless technology active requires quite a bit of power, which is also the case with Bluetooth Low Energy. By using the radio as little as possible, Bluetooth Low Energy can significantly increase its battery life. At a set interval, devices will broadcast advertising packets on the three advertising channels, which are explained more in chapter \ref{ch:gap}. After it advertises, it must listen briefly to any connection requests that follow it, in between these events the radio is simply turned off. The radio and the protocol stack, explained more in depth in chapter \ref{ch:protocolstack}, have also been designed to be as fast as possible. An advertising event, connection event, reading a single value of data and acknowledging the event can take as little as 3 milliseconds, which is vital in not only keeping the energy consumption to a minimum, but it also helps passively cool the radio.}
+\item{\textbf{Use the radio as little as possible.} Keeping the radio on any wireless technology active requires quite a bit of power, which is also the case with Bluetooth Low Energy. By using the radio as little as possible, Bluetooth Low Energy can significantly increase its battery life. At a set interval, devices will broadcast advertising packets on the three advertising channels, which are explained more in section \ref{sec:channels}. After it advertises, it must listen briefly to any connection requests that follow it, in between these events the radio is simply turned off. The radio and the protocol stack, explained more in depth in chapter \ref{ch:protocolstack}, have also been designed to be as fast as possible. An advertising event, connection event, reading a single value of data and acknowledging the event can take as little as 3 milliseconds, which is vital in not only keeping the energy consumption to a minimum, but it also helps passively cool the radio.}
 
 \item{\textbf{Keep packets very small.} Restricting the packet length to a maximum of 47 bytes allows very rapid packet transfers, which in turn contributes to keeping the radio off as much as possible. A maximum size packet of 47 bytes can be transferred in as little as 0.3 milliseconds. Keeping packets small also lowers the complexity of the transmitter and receiver, resulting in much lower power consumption than technologies that allow large packets.}
 \end{itemize}
@@ -402,6 +402,42 @@ There are a couple of techniques Bluetooth Low Energy uses to achieve low energy
 
 \chapter{Generic Access Profile}
 \label{ch:gap}
+
+\section{Roles and states}
+\label{sec:rolesstates}
+Every Bluetooth Low Energy device has a couple of roles it can fulfill and states it can take on. Each of these roles and states have been optimized to perform their task as best it can. The following two sections explain these roles and states more in detail.
+
+\subsection{Roles}
+\label{subsec:roles}
+First of all there's the Broadcaster role, which only requires a device to have a transmitter and advertising profile. Broadcasters aren't necessarily devices that you can connect to, so manufacturing broadcast only devices could cut down on cost even more as there's no need to have a receiver on these devices. An example of this is a thermostat which constantly broadcasts its temperature.
+
+Secondly there's the Observers, these devices are opposite to broadcasters as they don't require a transmitter. Observers just listen to advertising events and process the data further, without ever making a connection. These devices make perfect gateways for Observers, as a connection will never occur between these two, and the observer can just relay the data to an other collection point.
+
+The last two types of roles are Peripherals and Centrals. These two are the most complex roles as both devices are required to have both a transmitter and receiver. The big difference however is that a Peripheral will always act as a slave in a connection and a Central will always act as a master. This also means that the peripheral will (most of the time) be the least powerful device with the lowest battery life, like a watch or a sensor. It's vital that Peripheral devices don't do the heavy lifting in connections because this would drain the battery too quickly. The Central in a connection is usually a much more powerful device with a better battery life, like a smartphone, tablet or even computers.
+
+\subsection{States}
+\label{subsec:states}
+
+\section{Data channels}
+\label{sec:channels}
+Bluetooth Low Energy uses a number of channels in the 2.4 GHz ISM frequency band. Some of these channels are used for advertising and most of them are used for transferring data once a connection has been made. In total 40 channels are used, 3 of which are used for advertising and the remaining 37 are used for connections. The frequency range starts at 2402 and ends at 2483.5, giving each frequency a range of about 2 MHz to operate on. These channels have been carefully picked to have the least interference possible from WiFi on the advertising channels. Since every connection starts with advertisements it's vital that these packets flow without interference.
+
+In order to make sure that connection packets flow as frequently as possible without having too many dropped packets, Bluetooth Low Energy uses adaptive frequency hopping. This means that at a set interval that the master and slave negotiate with each other, they will switch frequency with a known algorithm, ensuring they'll always end up in the same frequency band. If data doesn't make it through on a given channel, the frequency hop will occur prematurely and both master and slave will move on to the next frequency and resend the packet(s) that weren't acknowledged.
+
+\section{Advertising, scanning and broadcasting}
+\label{sec:advscbroa}
+
+\subsection{Advertising}
+\label{subsec:advertising}
+
+\subsection{Scanning}
+\label{subsec:scanning}
+
+\subsection{Broadcasting}
+\label{subsec:broadcasting}
+
+\section{Connections}
+\label{sec:connections}
 
 \chapter{Generic Attribute Profile}
 \label{ch:gatt}
