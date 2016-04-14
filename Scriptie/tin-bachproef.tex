@@ -328,7 +328,6 @@ Bluetooth Low Energy doesn't bring all good news, but there are also a few key l
 
 Another limitation is the transfer speed. Again, in theory, Bluetooth Low Energy can have a (full packet) transfer speed of up to 1 Mbps\footnote{1 Mbps equals to 100 kilobytes per second.}. If you take into account the actual data contained in said packet and add up all of the overhead that goes into transferring a packet, 5 to 10 KB per second is a much more realistic representation. Knowing this, it's safe to assume that Bluetooth Low Energy won't be replacing WiFi any time soon.
 
-
 \section{Bluetooth configurations}
 \label{sec:bleconfigurations}
 Bluetooth Low Energy is known by a variety of names on the market and while some of them are used to describe the same technology, in a few there's some differences to be found. `Bluetooth Low Energy' is mostly used as a catch-all name and can consist of a few different configurations. Some people assume `classic' or Bluetooth BR/EDR is also Bluetooth Low Energy, but this assumption couldn't be more wrong. If you have a product that specifies that you must have Bluetooth Version 4.0 or later, you're probably dealing with a Bluetooth Low Energy product.
@@ -369,6 +368,7 @@ There are a couple of techniques Bluetooth Low Energy uses to achieve low energy
 
 \subsection{Link Layer}
 \label{subsec:controllerLL}
+STATE MACHINE https://www.bluetooth.com/specifications/bluetooth-core-specification/technical-considerations
 
 \subsection{Host Controller Interface}
 \label{subsec:controllerHCI}
@@ -428,20 +428,32 @@ In order to make sure that connection packets flow as frequently as possible wit
     \label{fig:channelmap}
 \end{figure}
 
-\section{Advertising, scanning and broadcasting}
-\label{sec:advscbroa}
+\section{Advertising}
+\label{sec:advertising}
+As quoted a few times before, advertising is one of the most important procedures in Bluetooth Low Energy. A device can be built solely around advertising data, but no device can work without it. Its main purpose is to broadcast the device is present and active so devices can connect with it if the device is connectable, but it can be used for more than that. A typical device will constantly be advertising its state to other devices. This state can be device name, device address and even an (incomplete) list of available services on the device. The advertising interval differs from device to device, but it's easy to conclude that a device with a faster advertising interval will drain battery more quickly than one with a slow advertising interval.
 
-\subsection{Advertising}
-\label{subsec:advertising}
+If the device can't fit enough data into the advertising packet, there is a second option to send more data without requiring a connection. Once a device receives an advertising packet, it can send out a Scan Request, acknowledging that it received the previous advertising packet and is listening for extra packets if there are any. The peripheral can then proceed to send a Scan Response with extra data. \colorbox[rgb]{0.2,0.8,0.2}{It's important to note however that a peripheral that uses Scan Requests isn't connectable,} \colorbox[rgb]{0.2,0.8,0.2}{which means that it's perfect for a beacon or any sort of other advertising device.} SOURCE
 
-\subsection{Scanning}
-\label{subsec:scanning}
+\subsection{Data format}
+\label{subsec:advdataformat}
+As discussed in subsection \ref{subsec:controllerLL}, each packet, be it advertising or data, has the same maximum length and structure but the data part of the packet is filled depending on the type of packet that is sent. The data in an advertising packet is filled with AD Types which take up one byte, and the data for that AD Type which is of variable length. An incomplete list of these AD Types together with their definition is found below. A full list of AD Types together with their descriptions can be found on the Bluetooth website\footnote{https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile} and Bluetooth Core Specification.
 
-\subsection{Broadcasting}
-\label{subsec:broadcasting}
+\begin{itemize}
+	\item {List of Service Class UUIDs (0x02 - 0x07): Helps with finding out the purpose of a device, can contain a complete or partial list of available services on the device.}
+	\item {Shortened or Complete Local Name (0x08 \& 0x09): Usually gives a friendly name to a device in UTF-8 format.}
+	\item {Service Data (0x16): Represents a GATT service and the data associated with it, this is in essence how a broadcasting only device transfers data.}
+	\item {Appearance (0x19): Contains a number representing the external appearance. This can be anything from ``Generic Keyring'' to ``Joystick''.}
+	\item {Indoor Positioning (0x25): Helps with mapping BLE devices in a building, can contain coordinates, altitude, floor number and location name.}
+	\item {Advertising Interval (0x1A): How often the device advertises its presence.}
+\end{itemize}
+
+\section{Broadcasting}
+\label{sec:broadcasting}
+As discussed in the Advertising section (\ref{sec:advertising}), it's possible to have a device that only advertises data and isn't connectable, or its main purpose doesn't rely on connections. This is known as a broadcast device and can be used in broadcasting network topologies. Take for example a radio station, it simply broadcasts its data and it doesn't really matter how many people are listening. When broadcasting, you don't care how many devices can be listening to your data and you shouldn't care about security when advertising data. A great example of this are beacons, which broadcast a very simple payload telling they're there. Infinite amount of devices can listen in on this data communication and use it for their own. Once you need to send sensitive data or only want two-way communication, a connection must be established which uses the GATT Profile to exchange data between master and slave. More information on GATT can be found in chapter \ref{ch:gatt}.
 
 \section{Connections}
 \label{sec:connections}
+Once a central is ready to connect to a peripheral, it sends a connection request to the peripheral. The peripheral can then accept or deny the request and once accepted, the connection sequence can begin. During the establishment of a connection, a few key rules are established that will stay in place for the remainder of that connection or until both devices agree to change the connection parameters. These rules can be hop frequency, hop amount, what to do when the connection fails and more. Some of these parameters can be changed during the connection lifetime, an example of this is given in section \ref{sec:channels}, where the devices can agree to avoid a given channel for a certain time because there's too much interference. Once a connection has been established, the peripheral will stop advertising its presence since it can only be connected to one central. For the remainder of that connection, both master and slave will exchange data solely with GATT until the connection terminates. The peripheral will then continue once again to advertise its presence.
 
 \chapter{Generic Attribute Profile}
 \label{ch:gatt}
