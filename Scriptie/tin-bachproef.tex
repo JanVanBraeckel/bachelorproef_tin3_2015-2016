@@ -104,7 +104,7 @@
 
 % Soort rapport
 \newcommand{\rapporttype}{Scriptie voorgedragen tot het bekomen van de graad\\Bachelor in de toegepaste informatica}
-\newcommand{\reporttype}{Thesis submitted in fulfillment of the requirements for the degree of\\Bachelor in applied computer sciences}
+\newcommand{\reporttype}{Thesis submitted in fulfilment of the requirements for the degree of\\Bachelor in applied computer sciences}
 
 % Academiejaar
 \newcommand{\academiejaar}{2015-2016}
@@ -232,7 +232,7 @@ On top of this, a lot of the devices being manufactured don't use standard SIG a
 \label{subsec:researchquestions}
 There are a couple of questions that can be asked when combining Bluetooth Low Energy and the Internet of Things, and some of those questions alone could have multiple papers dedicated to them. For example, the matter of security will be a never ending debate, and even more concerns arise when talking about security in the Internet of Things. Another concern is privacy, but since this is very much a gray area, it's hard to formulate a one-sided conclusion on this matter. Some of these concerns will be addressed further in section \ref{sec:concerns}.
 
-The main goals this thesis tries to fulfill are in essence very simple, but of course there are always some other questions that arise when looking at the big picture. These questions can be categorized as following, the questions in bold being the main research questions and the ones in plain text being auxiliary questions:
+The main goals this thesis tries to fulfil are in essence very simple, but of course there are always some other questions that arise when looking at the big picture. These questions can be categorized as following, the questions in bold being the main research questions and the ones in plain text being auxiliary questions:
 \begin{itemize}
 	\item{\textbf{Can Bluetooth Low Energy wearables be used in an Internet of Things cloud infrastructure?}}
 	\item{\textbf{Is is possible to use a smartphone as gateway to communicate with the AllThingsTalk cloud in real-time?}}
@@ -320,7 +320,7 @@ As the diligent reader probably already noticed, it seems that Bluetooth and Blu
 
 \subsection{A new technology emerges}
 \label{subsec:newtechnology}
-A lot of authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace other wireless technologies in the slightest where a continuous flow of data is required. They've also both been built around completely different core principles and have been designed to fulfill these requirements as best as possible.
+A lot of authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace other wireless technologies in the slightest where a continuous flow of data is required. They've also both been built around completely different core principles and have been designed to fulfil these requirements as best as possible.
 
 \subsection{Limitations of Bluetooth Low Energy}
 \label{subsec:limitations}
@@ -409,7 +409,7 @@ One of the most important parts in Bluetooth Low Energy, if not most important o
 
 \section{Roles}
 \label{sec:roles}
-Every Bluetooth Low Energy device has a one or more roles it can fulfill. Each of these roles have been optimized to perform their task as best it can. First of all there's the Broadcaster role, which only requires a device to have a transmitter and advertising profile. Broadcasters aren't necessarily devices that you can connect to, so manufacturing broadcast only devices could cut down on cost even more as there's no need to have a receiver on these devices. An example of this is a thermostat which constantly broadcasts its temperature.
+Every Bluetooth Low Energy device has a one or more roles it can fulfil. Each of these roles have been optimized to perform their task as best it can. First of all there's the Broadcaster role, which only requires a device to have a transmitter and advertising profile. Broadcasters aren't necessarily devices that you can connect to, so manufacturing broadcast only devices could cut down on cost even more as there's no need to have a receiver on these devices. An example of this is a thermostat which constantly broadcasts its temperature.
 
 Secondly there's the Observers, these devices are opposite to broadcasters as they don't require a transmitter. Observers just listen to advertising events and process the data further, without ever making a connection. These devices make perfect gateways for Observers, as a connection will never occur between these two, and the observer can just relay the data to an other collection point.
 
@@ -464,20 +464,34 @@ At the core of Bluetooth Low Energy communication, the Generic Attribute Profile
 
 \section{Profiles}
 \label{sec:profiles}
+Profiles in Bluetooth Low Energy are an abstract representation of how a device can be implemented to fill a specific use case. These profiles are purely an example of how things can be done and these can be extended as you want or you can start from scratch and define your own profile. The Heart Rate profile for example defines that the device uses a minimum of two services: the Heart Rate Service and the optional Device Information Service. Its role is a Heart Rate Sensor and it serves as a collector, collecting data and then broadcasting it or sending it to a connected master device.
 
 \section{Services}
 \label{sec:services}
+All data in Bluetooth Low Energy is accessed through services. You can compare it to simple Object Oriented principles: a service has multiple characteristics and a characteristic belongs to one single service. An example of this is the Bluetooth SIG defined Heart Rate Service. This document defines the way the Heart Rate Service is used and what characteristics are contained in the service. For example, the Heart Rate Service defines 3 characteristics: Heart Rate Measurement, Body Sensor Location and Heart Rate Control Point, only the Heart Rate Measurement is mandatory to include.
+
+A device can host any number of services which are independent of one another. Every service also has its own security options which you can customize. You can set options like encryption for individual services or the device as a whole.
+
+Apart from multiple primary services, a service can also be contained in a parent service, this is then known as a secondary service. However, the secondary service system isn't encountered that often, but it can be useful at times. Take for example a device which has two temperature sensors, one for the outside temperature and one for the battery temperature. The manufacturer could then choose to include the temperature service for the battery as a secondary service of the battery service, this avoids ambiguity.
+
+Apart from the SIG-defined services, a custom service can be designed if the defined services don't meet the expectations of the use case. It's up to the manufacturer to provide documentation for these services or not.
 
 \section{Characteristics}
 \label{sec:characteristics}
+The actual data of services is contained in characteristics. Every characteristic belongs to a specific service and has a value attached to it. However, it's not because you can see the characteristic, that you don't need special rights to read or write it. A characteristic can specify certain rights like read, write, read uncommitted (where no acknowledgement is sent for the write request) and more. This is something that can be ignored, but an error message will be returned anyway if you try to read a characteristic that isn't readable. These permissions can be used to notify the user interface that it shouldn't allow the user to interact with certain characteristics.
+
+If we take our trusty Heart Rate for example, the Heart Rate Measurement, we can look at the data structure and how the value should be parsed. This characteristic also has some ``Flags'' bits which indicate things like the data type of the value (UINT8 or UINT16) and if certain fields are present or not. Depending on the Flags, there are a couple of values to be found inside this characteristic: Heart Rate Measurement Value, Energy Expended and RR-Interval.
+
+As with services, custom characteristics can also be defined. A template characteristic can be used or the bit structure can be designed from the ground up to accommodate the specific use case.
 
 \section{Descriptors}
 \label{sec:descriptors}
+If we go down even further, we come to the descriptors. These can optionally accompany characteristics and describe the value of a given characteristic. The descriptors can house very useful data like a description, a valid range of the data and a couple more. If these descriptors are defined, it can greatly help with building up a user interface by only allowing certain values or showing a description for a custom made characteristic, but one shouldn't rely on these descriptors as they're not filled in more often than not.
 
 \chapter{Why Bluetooth Low Energy and Internet of Things}
 \label{ch:BLEIOT}
 \epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
-The Internet of Things is quickly growing and it's already huge, filled with both long-range sensors using LoRa and Sigfox technologies and short-range sensors using WiFi or directly connected with a gateway connected to internet. Why would it then be beneficial to add another spectrum of devices: Bluetooth Low Energy? The main reason for this is because no other technology fills this spectrum of devices yet. Right now, you can compare wireless IOT technologies against 2 axis: power and range, as seen in figure \ref{fig:powerrange}. Before Bluetooth Low Energy, there wasn't really any major technology to fill the Low Energy, Low Range spectrum. One can say that Zigbee or other technologies could fill this end of the spectrum, but none of these are as widely adopted as Bluetooth Low Energy is today. In this chapter we'll further discuss the use cases Bluetooth Low Energy can fulfill in this Low Power, Low Range spectrum as well as briefly introducing its competitors, before ending with what the future holds for Bluetooth Low Energy.
+The Internet of Things is quickly growing and it's already huge, filled with both long-range sensors using LoRa and Sigfox technologies and short-range sensors using WiFi or directly connected with a gateway connected to internet. Why would it then be beneficial to add another spectrum of devices: Bluetooth Low Energy? The main reason for this is because no other technology fills this spectrum of devices yet. Right now, you can compare wireless IOT technologies against 2 axis: power and range, as seen in figure \ref{fig:powerrange}. Before Bluetooth Low Energy, there wasn't really any major technology to fill the Low Energy, Low Range spectrum. One can say that Zigbee or other technologies could fill this end of the spectrum, but none of these are as widely adopted as Bluetooth Low Energy is today. In this chapter we'll further discuss the use cases Bluetooth Low Energy can fulfil in this Low Power, Low Range spectrum as well as briefly introducing its competitors, before ending with what the future holds for Bluetooth Low Energy.
 
 \begin{figure}[h]
 \centering
@@ -491,7 +505,7 @@ The Internet of Things is quickly growing and it's already huge, filled with bot
 
 \fill[white] (axis cs:0,0) rectangle (rel axis cs:1,1) node [pos=0.5,text=black] {Cellular};
 
-\fill[white] (current axis.right of origin) rectangle (current axis.below origin) node [pos=0.5,text=black] {Wifi};
+\fill[white] (current axis.right of origin) rectangle (current axis.below origin) node [pos=0.5,text=black] {WiFi};
 
 \fill[white]
     (axis cs:\pgfkeysvalueof{/pgfplots/xmin},\pgfkeysvalueof{/pgfplots/ymax})
