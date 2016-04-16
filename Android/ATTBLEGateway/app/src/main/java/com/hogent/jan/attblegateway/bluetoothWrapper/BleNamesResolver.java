@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class BleNamesResolver {
     private static HashMap<String, String> mServices = new HashMap<String, String>();
     private static HashMap<String, String> mCharacteristics = new HashMap<String, String>();
+    private static HashMap<String, String> mCharacteristicTypes = new HashMap<>();
     private static SparseArray<String> mValueFormats = new SparseArray<String>();
     private static SparseArray<String> mAppearance = new SparseArray<String>();
     private static SparseArray<String> mHeartRateSensorLocation = new SparseArray<String>();
@@ -25,6 +26,12 @@ public class BleNamesResolver {
     static public String resolveValueTypeDescription(final int format) {
         Integer tmp = Integer.valueOf(format);
         return mValueFormats.get(tmp, "Unknown Format");
+    }
+
+
+    static public String resolveCharacteristicType(final String uuid) {
+        String result = mCharacteristicTypes.get(uuid);
+        return result == null ? "string" : result;
     }
 
     static public String resolveCharacteristicName(final String uuid) {
@@ -91,6 +98,14 @@ public class BleNamesResolver {
         mServices.put("00001814-0000-1000-8000-00805f9b34fb", "Running Speed and Cadence");
         mServices.put("00001813-0000-1000-8000-00805f9b34fb", "Scan Parameters");
         mServices.put("00001804-0000-1000-8000-00805f9b34fb", "Tx Power");
+        /*Custom services*/
+        mServices.put("19b10000-e8f2-537e-4f6c-d104768a1214", "Buzzer Service");
+        mServices.put("39e1fa00-84a8-11e2-afba-0002a5d5c51b", "Live service");
+        mServices.put("39e1fb00-84a8-11e2-afba-0002a5d5c51b", "Upload service");
+        mServices.put("39e1fc00-84a8-11e2-afba-0002a5d5c51b", "History service");
+        mServices.put("39e1fd00-84a8-11e2-afba-0002a5d5c51b", "FlowerPower clock service");
+        mServices.put("39e1fe00-84a8-11e2-afba-0002a5d5c51b", "FlowerPower calibration service");
+        mServices.put("f000ffc0-0451-4000-b000-000000000000", "Over The Air Download Service");
 
         mCharacteristics.put("00002a43-0000-1000-8000-00805f9b34fb", "Alert Category ID");
         mCharacteristics.put("00002a42-0000-1000-8000-00805f9b34fb", "Alert Category ID Bit Mask");
@@ -173,6 +188,53 @@ public class BleNamesResolver {
         mCharacteristics.put("00002a0e-0000-1000-8000-00805f9b34fb", "Time Zone");
         mCharacteristics.put("00002a07-0000-1000-8000-00805f9b34fb", "Tx Power Level");
         mCharacteristics.put("00002a45-0000-1000-8000-00805f9b34fb", "Unread Alert Status");
+        /*Custom Characteristics*/
+        mCharacteristics.put("19b10001-e8f2-537e-4f6c-d104768a1214", "Buzzer Control");
+        mCharacteristics.put("39e1fa01-84a8-11e2-afba-0002a5d5c51b", "Light sensor Value");
+        mCharacteristics.put("39e1fa02-84a8-11e2-afba-0002a5d5c51b", "Soil EC");
+        mCharacteristics.put("39e1fa03-84a8-11e2-afba-0002a5d5c51b", "Soil Temperature");
+        mCharacteristics.put("39e1fa04-84a8-11e2-afba-0002a5d5c51b", "Air Temperature");
+        mCharacteristics.put("39e1fa05-84a8-11e2-afba-0002a5d5c51b", "Soil % VWC");
+        mCharacteristics.put("39e1fa06-84a8-11e2-afba-0002a5d5c51b", "Live measure Period");
+        mCharacteristics.put("39e1fa07-84a8-11e2-afba-0002a5d5c51b", "Led state");
+        mCharacteristics.put("39e1fa08-84a8-11e2-afba-0002a5d5c51b", "Last move date");
+        mCharacteristics.put("39e1fa09-84a8-11e2-afba-0002a5d5c51b", "Calibrated VWC");
+        mCharacteristics.put("39e1fa0a-84a8-11e2-afba-0002a5d5c51b", "Calibrated air temperature");
+        mCharacteristics.put("39e1fa0b-84a8-11e2-afba-0002a5d5c51b", "Calibrated DLI");
+        mCharacteristics.put("39e1fa0c-84a8-11e2-afba-0002a5d5c51b", "Calibrated Ea");
+        mCharacteristics.put("39e1fa0d-84a8-11e2-afba-0002a5d5c51b", "Calibrated Ecb");
+        mCharacteristics.put("39e1fa0e-84a8-11e2-afba-0002a5d5c51b", "Calibrated Ec porous");
+        mCharacteristics.put("39e1fb01-84a8-11e2-afba-0002a5d5c51b", "Tx buffer");
+        mCharacteristics.put("39e1fb02-84a8-11e2-afba-0002a5d5c51b", "Tx Status");
+        mCharacteristics.put("39e1fb03-84a8-11e2-afba-0002a5d5c51b", "Rx Status");
+        mCharacteristics.put("39e1fb04-84a8-11e2-afba-0002a5d5c51b", "Rx buffer");
+        mCharacteristics.put("39e1fc01-84a8-11e2-afba-0002a5d5c51b", "Nb entries");
+        mCharacteristics.put("39e1fc02-84a8-11e2-afba-0002a5d5c51b", "Last entry index");
+        mCharacteristics.put("39e1fc03-84a8-11e2-afba-0002a5d5c51b", "Transfer Start Index");
+        mCharacteristics.put("39e1fc04-84a8-11e2-afba-0002a5d5c51b", "Current Session ID");
+        mCharacteristics.put("39e1fc05-84a8-11e2-afba-0002a5d5c51b", "Current Session Start Index");
+        mCharacteristics.put("39e1fc06-84a8-11e2-afba-0002a5d5c51b", "Current Session Period");
+        mCharacteristics.put("39e1fd01-84a8-11e2-afba-0002a5d5c51b", "FlowerPower current time (s)");
+        mCharacteristics.put("39e1fe01-84a8-11e2-afba-0002a5d5c51b", "Calibration data");
+        mCharacteristics.put("39e1fe02-84a8-11e2-afba-0002a5d5c51b", "Force bond characteristic");
+        mCharacteristics.put("39e1fe03-84a8-11e2-afba-0002a5d5c51b", "Name");
+        mCharacteristics.put("39e1fe04-84a8-11e2-afba-0002a5d5c51b", "Color");
+        mCharacteristics.put("f000ffc1-0451-4000-b000-000000000000", "OAD Image notify");
+        mCharacteristics.put("f000ffc2-0451-4000-b000-000000000000", "OAD Image block request/response");
+
+        mCharacteristicTypes.put("00002a37-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("00002a04-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("00002a23-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("00002a50-0000-1000-8000-00805f9b34fb", "integer");
+        mCharacteristicTypes.put("39e1fd01-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa03-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa04-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa02-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa05-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("39e1fa01-84a8-11e2-afba-0002a5d5c51b", "integer");
+        mCharacteristicTypes.put("19b10001-e8f2-537e-4f6c-d104768a1214", "boolean");
+        mCharacteristicTypes.put("39e1fa07-84a8-11e2-afba-0002a5d5c51b", "boolean");
+        mCharacteristicTypes.put("39e1fa06-84a8-11e2-afba-0002a5d5c51b", "boolean");
 
         mValueFormats.put(Integer.valueOf(52), "32bit float");
         mValueFormats.put(Integer.valueOf(50), "16bit float");
