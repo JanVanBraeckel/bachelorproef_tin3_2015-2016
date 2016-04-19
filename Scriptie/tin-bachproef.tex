@@ -359,16 +359,47 @@ There are a couple of techniques Bluetooth Low Energy uses to achieve low energy
 
 \chapter{The Bluetooth Low Energy protocol stack}
 \label{ch:protocolstack}
+\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+Before diving more into the specifics about communication in Bluetooth Low Energy with data packets and advertising packets it's important to know at least some of the fundamentals of the protocol stack that enables devices to communicate with one another. The protocol stack consists of three main parts: the controller, the host and the application. In this chapter we'll be looking at each of the layers, interfaces, protocols and profiles that make up these three parts, giving some insights as to how Bluetooth Low Energy works on a lower level and how data is delegated from layer to layer to build comprehensible communication. Two of the profiles discussed in this chapter however are a fundamental part of Bluetooth Low Energy and thus have their own chapters dedicated to them in order to go into them deeper.
+
+\newpage{}
 
 \section{Controller}
 \label{sec:stackController}
+At the lowest level in the Bluetooth Low Energy stack, closest to the actual antenna which broadcasts packets, is the controller. The controller manages everything from sending actual data through the radio and the state of the radio. In the following subsection we'll look at the physical layer, which contains circuitry as well as the link layer which sends commands to the physical layer in order to make the process easier through a shared interface.
 
 \subsection{Physical Layer}
 \label{subsec:controllerPHY}
+The physical layer is the layer responsible for actually sending data over the air. As explained in section \ref{sec:channels}, the physical layer uses the 2.4 GHz ISM band to send and receive its data. In order to avoid interference from WiFi or other technologies that use this band, Bluetooth Low Energy uses frequency hopping with the following algorithm:
+
+\begin{equation*}
+\text{newChannel = (currentChannel + hopAmount) mod 37}
+\end{equation*}
+
+The hop amount is communicated with both master and slave once a connection has been established, so this hop amount can be different for every connection made and it shouldn't be assumed that this is a fixed number.
 
 \subsection{Link Layer}
 \label{subsec:controllerLL}
-STATE MACHINE https://www.bluetooth.com/specifications/bluetooth-core-specification/technical-considerations
+The link layer is the layer that manages the physical layer. It sends the data the physical layer should send and it also keeps the state of the physical layer, the state machine diagram is shown in figure \ref{fig:llstatemachine}. 
+
+This state machine diagram shows which states the Physical Layer can be in. The Physical Layer can only be in one state at a time, and the diagram shows which states each state can flow into when it's time.
+
+First up is the Standby state, where the Physical Layer doesn't send nor receive any packets. As seen on the diagram, the Standby state can be entered from any other state and can transition into any state except the Connection state.
+
+In the Advertising state, the Physical Layer will only advertise its presence and potential sensor data if configured correctly, this is also known as an advertiser. It also listens to scan requests and can respond to these requests if it wishes to do so. This state can only be entered from the Standby state.
+
+Next up is the Scanning state, where the Physical Layer only listens to advertising packets from other Bluetooth Low Energy devices, this is also known as a Scanner. The Scanning state can only be entered from the Standby state.
+
+Further up is the Initiating state, where the Physical Layer listens to advertising packets from certain devices which have indicated they want to connect to the device, this is also known as an Initiator. The Initiating state can only be entered from the Standby state after the right conditions have been met.
+
+Last but not least is the Connection state. You can see that this state can be entered from both the Advertising and Initiating state. When it is entered from the Advertising state, the device will take on the role of slave or peripheral. When entered from the Initiating state, the device will be seen as the master.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/llstate.png}
+    \caption{State diagram for the Link Layer state machine}
+    \label{fig:llstatemachine}
+\end{figure}
 
 \subsection{Host Controller Interface}
 \label{subsec:controllerHCI}
@@ -396,9 +427,7 @@ STATE MACHINE https://www.bluetooth.com/specifications/bluetooth-core-specificat
 
 \section{Application}
 \label{sec:stackApplication}
-
-\subsection{Application}
-\label{subsec:applicationApp}
+At the highest level of the protocol stack is the application. As you'd expect, the application is the actual program that embedded software developers will make. It contains logic, calculations and/or the user interface. This application can be coded in a variety of languages and dialects, but most developers will be familiar with C or C++, which is used for a lot of low level applications. An example of such application will be given in chapter \ref{ch:android} for an Arduino 101/Genuino 101 with an Intel Curie chip, which enables Bluetooth Low Energy communication. This Genuino 101 is programmed using the Arduino language which is basically a set of C and C++ functions, so these languages could be used as well to build an application.
 
 \chapter{Generic Access Profile}
 \label{ch:gap}
@@ -449,7 +478,7 @@ As discussed in subsection \ref{subsec:controllerLL}, each packet, be it adverti
 
 \section{Broadcasting}
 \label{sec:broadcasting}
-As discussed in the Advertising section (\ref{sec:advertising}), it's possible to have a device that only advertises data and isn't connectable, or its main purpose doesn't rely on connections. This is known as a broadcast device and can be used in broadcasting network topologies. Take for example a radio station, it simply broadcasts its data and it doesn't really matter how many people are listening. When broadcasting, you don't care how many devices can be listening to your data and you shouldn't care about security when advertising data. A great example of this are beacons, which broadcast a very simple payload telling they're there. Infinite amount of devices can listen in on this data communication and use it for their own. Once you need to send sensitive data or only want two-way communication, a connection must be established which uses the GATT Profile to exchange data between master and slave. More information on GATT can be found in chapter \ref{ch:gatt}.
+As discussed in the Advertising section \ref{sec:advertising}, it's possible to have a device that only advertises data and isn't connectable, or its main purpose doesn't rely on connections. This is known as a broadcast device and can be used in broadcasting network topologies. Take for example a radio station, it simply broadcasts its data and it doesn't really matter how many people are listening. When broadcasting, you don't care how many devices can be listening to your data and you shouldn't care about security when advertising data. A great example of this are beacons, which broadcast a very simple payload telling they're there. Infinite amount of devices can listen in on this data communication and use it for their own. Once you need to send sensitive data or only want two-way communication, a connection must be established which uses the GATT Profile to exchange data between master and slave. More information on GATT can be found in chapter \ref{ch:gatt}.
 
 \section{Connections}
 \label{sec:connections}
