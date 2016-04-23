@@ -43,6 +43,20 @@ public class BleWrapper {
     /* define NULL object for UI callbacks */
     private static final BleWrapperUiCallbacks NULL_CALLBACK = new BleWrapperUiCallbacks.Null();
 
+    private Activity mParent = null;
+    private boolean mConnected = false;
+    private String mDeviceAddress = "";
+
+    private BluetoothManager mBluetoothManager = null;
+    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothDevice mBluetoothDevice = null;
+    private BluetoothGatt mBluetoothGatt = null;
+    private BluetoothGattService mBluetoothSelectedService = null;
+    private List<BluetoothGattService> mBluetoothGattServices = null;
+
+    private Handler mTimerHandler = new Handler();
+    private boolean mTimerEnabled = false;
+
     /* creates BleWrapper object, set its parent activity and callback object */
     public BleWrapper(Activity parent, BleWrapperUiCallbacks callback) {
         this.mParent = parent;
@@ -95,8 +109,7 @@ public class BleWrapper {
         }
 
         // and then check if BT LE is also available
-        boolean hasBle = mParent.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
-        return hasBle;
+        return mParent.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
     }
 
 
@@ -110,11 +123,7 @@ public class BleWrapper {
         }
 
         final BluetoothAdapter adapter = manager.getAdapter();
-        if (adapter == null) {
-            return false;
-        }
-
-        return adapter.isEnabled();
+        return adapter != null && adapter.isEnabled();
     }
 
     /* start scanning for BT LE devices around */
@@ -140,10 +149,7 @@ public class BleWrapper {
         if (mBluetoothAdapter == null) {
             mBluetoothAdapter = mBluetoothManager.getAdapter();
         }
-        if (mBluetoothAdapter == null) {
-            return false;
-        }
-        return true;
+        return mBluetoothAdapter != null;
     }
 
     /* connect to the device with specified address */
@@ -189,7 +195,7 @@ public class BleWrapper {
     public void readPeriodicalyRssiValue(final boolean repeat) {
         mTimerEnabled = repeat;
         // check if we should stop checking RSSI value
-        if (mConnected == false || mBluetoothGatt == null || mTimerEnabled == false) {
+        if (!mConnected || mBluetoothGatt == null || !mTimerEnabled) {
             mTimerEnabled = false;
             return;
         }
@@ -197,9 +203,7 @@ public class BleWrapper {
         mTimerHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mBluetoothGatt == null ||
-                        mBluetoothAdapter == null ||
-                        mConnected == false) {
+                if (mBluetoothGatt == null || mBluetoothAdapter == null || !mConnected) {
                     mTimerEnabled = false;
                     return;
                 }
@@ -249,9 +253,8 @@ public class BleWrapper {
         if (service == null) {
             return;
         }
-        List<BluetoothGattCharacteristic> chars = null;
+        List<BluetoothGattCharacteristic> chars = service.getCharacteristics();
 
-        chars = service.getCharacteristics();
         mUiCallback.uiCharacteristicForService(mBluetoothGatt, mBluetoothDevice, service, chars);
         // keep reference to the last selected service
         mBluetoothSelectedService = service;
@@ -303,29 +306,28 @@ public class BleWrapper {
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.gap.appearance.xml
             doubleValue = ((double) rawValue[1]) * 256;
             doubleValue += rawValue[0];
-            strValue = BleNamesResolver.resolveAppearance((int)doubleValue);
+            strValue = BleNamesResolver.resolveAppearance((int) doubleValue);
         } else if (uuid.equals(BleDefinedUUIDs.Characteristic.BODY_SENSOR_LOCATION)) { // body sensor location
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.body_sensor_location.xml
             doubleValue = rawValue[0];
-            strValue = BleNamesResolver.resolveHeartRateSensorLocation((int)doubleValue);
+            strValue = BleNamesResolver.resolveHeartRateSensorLocation((int) doubleValue);
         } else if (uuid.equals(BleDefinedUUIDs.Characteristic.BATTERY_LEVEL)) { // battery level
             // follow: https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.battery_level.xml
             doubleValue = rawValue[0];
             strValue = "" + doubleValue + "% battery level";
         }
         // flower power calculations
-        else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILTEMP) ||
-                uuid.equals(BleDefinedUUIDs.Characteristic.AIRTEMP)){
+        else if (uuid.equals(BleDefinedUUIDs.Characteristic.SOILTEMP) ||
+                uuid.equals(BleDefinedUUIDs.Characteristic.AIRTEMP)) {
 
             ByteBuffer bb = ByteBuffer.wrap(rawValue);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
             short value = bb.getShort();
-            doubleValue =0.00000003044 * Math.pow(value, 3.0) - 0.00008038 * Math.pow(value, 2.0) + value * 0.1149 - 30.449999999999999;
+            doubleValue = 0.00000003044 * Math.pow(value, 3.0) - 0.00008038 * Math.pow(value, 2.0) + value * 0.1149 - 30.449999999999999;
 
             strValue = doubleValue + " °C";
-        }
-        else if(uuid.equals(BleDefinedUUIDs.Characteristic.LIGHT)){
+        } else if (uuid.equals(BleDefinedUUIDs.Characteristic.LIGHT)) {
             ByteBuffer bb = ByteBuffer.wrap(rawValue);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -333,25 +335,23 @@ public class BleWrapper {
             doubleValue = 0.08640000000000001 * (192773.17000000001 * Math.pow(value, -1.0606619));
 
             strValue = String.valueOf(doubleValue);
-        }
-        else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILEC)){
+        } else if (uuid.equals(BleDefinedUUIDs.Characteristic.SOILEC)) {
             ByteBuffer bb = ByteBuffer.wrap(rawValue);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
             doubleValue = bb.getShort();
 
             strValue = String.valueOf(doubleValue);
-        }else if(uuid.equals(BleDefinedUUIDs.Characteristic.SOILVWC)){
+        } else if (uuid.equals(BleDefinedUUIDs.Characteristic.SOILVWC)) {
             ByteBuffer bb = ByteBuffer.wrap(rawValue);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
             short value = bb.getShort();
-            double moisture = 11.4293 + (0.0000000010698 * Math.pow(value, 4.0) - 0.00000152538 * Math.pow(value, 3.0) +  0.000866976 * Math.pow(value, 2.0) - 0.169422 * value);
+            double moisture = 11.4293 + (0.0000000010698 * Math.pow(value, 4.0) - 0.00000152538 * Math.pow(value, 3.0) + 0.000866976 * Math.pow(value, 2.0) - 0.169422 * value);
             doubleValue = 100.0 * (0.0000045 * Math.pow(moisture, 3.0) - 0.00055 * Math.pow(moisture, 2.0) + 0.0292 * moisture - 0.053);
 
             strValue = String.valueOf(doubleValue);
-        }
-        else {
+        } else {
             // not known type of characteristic, so we need to handle this in "general" way
             // get first four bytes and transform it to integer
             doubleValue = 0;
@@ -371,9 +371,10 @@ public class BleWrapper {
             if (rawValue.length > 0) {
                 final StringBuilder stringBuilder = new StringBuilder(rawValue.length);
                 for (byte byteChar : rawValue) {
-                    try{
+                    try {
                         stringBuilder.append(String.format("%c", byteChar));
-                    }catch (Exception ignored){}
+                    } catch (Exception ignored) {
+                    }
                 }
                 strValue = stringBuilder.toString();
             }
@@ -519,9 +520,7 @@ public class BleWrapper {
         }
 
         @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic characteristic,
-                                         int status) {
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             // we got response regarding our request to fetch characteristic value
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 // and it success, so we can get the value
@@ -555,8 +554,6 @@ public class BleWrapper {
             }
         }
 
-        ;
-
         @Override
         public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
@@ -564,21 +561,5 @@ public class BleWrapper {
                 mUiCallback.uiNewRssiAvailable(mBluetoothGatt, mBluetoothDevice, rssi);
             }
         }
-
-        ;
     };
-
-    private Activity mParent = null;
-    private boolean mConnected = false;
-    private String mDeviceAddress = "";
-
-    private BluetoothManager mBluetoothManager = null;
-    private BluetoothAdapter mBluetoothAdapter = null;
-    private BluetoothDevice mBluetoothDevice = null;
-    private BluetoothGatt mBluetoothGatt = null;
-    private BluetoothGattService mBluetoothSelectedService = null;
-    private List<BluetoothGattService> mBluetoothGattServices = null;
-
-    private Handler mTimerHandler = new Handler();
-    private boolean mTimerEnabled = false;
 }

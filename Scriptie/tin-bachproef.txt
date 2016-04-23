@@ -384,17 +384,17 @@ questions
 .
 
 15
-15
-15
-15
 16
 16
 16
-16
-16
-16
-16
-16
+18
+18
+18
+18
+18
+18
+18
+18
 
 3
 
@@ -424,8 +424,7 @@ questions
 
 CONTENTS
 
-Application . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
-4.3.1 Application . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+Application . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
 
 5 Generic Access Profile
 5.1 Roles . . . . . . . .
@@ -812,48 +811,48 @@ Things
 .
 .
 
-17
-18
-18
-19
 19
 20
+20
 21
-
-.
-.
-.
-.
-
+21
 22
 23
-23
-23
+
+.
+.
+.
+.
+
 24
-
-.
-.
-.
-.
-.
-.
-.
-
+25
+25
 25
 26
+
+.
+.
+.
+.
+.
+.
+.
+
 27
-27
-27
-28
-28
 28
 29
+29
+29
+30
+30
+30
+31
 
 9 Discussion
-30
-9.1 Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
-9.2 Concerns . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
-9.3 Future work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+32
+9.1 Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+9.2 Concerns . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+9.3 Future work . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
 
 4
 
@@ -1229,21 +1228,84 @@ consumption than technologies that allow large packets.
 Chapter 4
 The Bluetooth Low Energy protocol
 stack
+“I NEED TO LOOK UP A QUOTE
+FOR THIS CHAPTER”
+Jan Van Braeckel
+
+Before diving more into the specifics about communication in Bluetooth Low Energy
+with data packets and advertising packets it’s important to know at least some of the
+fundamentals of the protocol stack that enables devices to communicate with one
+another. The protocol stack consists of three main parts: the controller, the host
+and the application. In this chapter we’ll be looking at each of the layers, interfaces,
+protocols and profiles that make up these three parts, giving some insights as to how
+Bluetooth Low Energy works on a lower level and how data is delegated from layer
+to layer to build comprehensible communication. Two of the profiles discussed in this
+chapter however are a fundamental part of Bluetooth Low Energy and thus have their
+own chapters dedicated to them in order to go into them deeper.
+
+15
+
+CHAPTER 4. THE BLUETOOTH LOW ENERGY PROTOCOL STACK
 
 4.1
 
 Controller
 
+At the lowest level in the Bluetooth Low Energy stack, closest to the actual antenna
+which broadcasts packets, is the controller. The controller manages everything from
+sending actual data through the radio and the state of the radio. In the following
+subsection we’ll look at the physical layer, which contains circuitry as well as the link
+layer which sends commands to the physical layer in order to make the process easier
+through a shared interface.
+
 4.1.1
 
 Physical Layer
+
+The physical layer is the layer responsible for actually sending data over the air. As
+explained in section 5.2, the physical layer uses the 2.4 GHz ISM band to send and
+receive its data. In order to avoid interference from WiFi or other technologies that use
+this band, Bluetooth Low Energy uses frequency hopping with the following algorithm:
+newChannel = (currentChannel + hopAmount) mod 37
+The hop amount is communicated with both master and slave once a connection
+has been established, so this hop amount can be different for every connection made
+and it shouldn’t be assumed that this is a fixed number.
 
 4.1.2
 
 Link Layer
 
-STATE MACHINE https://www.bluetooth.com/specifications/bluetooth-core-specification/technicalconsiderations
-15
+The link layer is the layer that manages the physical layer. It sends the data the
+physical layer should send and it also keeps the state of the physical layer, the state
+machine diagram is shown in figure 4.1.
+This state machine diagram shows which states the Physical Layer can be in. The
+Physical Layer can only be in one state at a time, and the diagram shows which states
+each state can flow into when it’s time.
+First up is the Standby state, where the Physical Layer doesn’t send nor receive
+any packets. As seen on the diagram, the Standby state can be entered from any other
+state and can transition into any state except the Connection state.
+In the Advertising state, the Physical Layer will only advertise its presence and
+potential sensor data if configured correctly, this is also known as an advertiser. It also
+listens to scan requests and can respond to these requests if it wishes to do so. This
+state can only be entered from the Standby state.
+Next up is the Scanning state, where the Physical Layer only listens to advertising
+packets from other Bluetooth Low Energy devices, this is also known as a Scanner.
+The Scanning state can only be entered from the Standby state.
+16
+
+CHAPTER 4. THE BLUETOOTH LOW ENERGY PROTOCOL STACK
+Further up is the Initiating state, where the Physical Layer listens to advertising
+packets from certain devices which have indicated they want to connect to the device,
+this is also known as an Initiator. The Initiating state can only be entered from the
+Standby state after the right conditions have been met.
+Last but not least is the Connection state. You can see that this state can be
+entered from both the Advertising and Initiating state. When it is entered from the
+Advertising state, the device will take on the role of slave or peripheral. When entered
+from the Initiating state, the device will be seen as the master.
+
+Figure 4.1: State diagram for the Link Layer state machine
+
+17
 
 CHAPTER 4. THE BLUETOOTH LOW ENERGY PROTOCOL STACK
 
@@ -1283,11 +1345,17 @@ Generic Attribute Profile
 
 Application
 
-4.3.1
+At the highest level of the protocol stack is the application. As you’d expect, the
+application is the actual program that embedded software developers will make. It
+contains logic, calculations and/or the user interface. This application can be coded
+in a variety of languages and dialects, but most developers will be familiar with C or
+C++, which is used for a lot of low level applications. An example of such application
+will be given in chapter 8 for an Arduino 101/Genuino 101 with an Intel Curie chip,
+which enables Bluetooth Low Energy communication. This Genuino 101 is programmed
+using the Arduino language which is basically a set of C and C++ functions, so these
+languages could be used as well to build an application.
 
-Application
-
-16
+18
 
 Chapter 5
 Generic Access Profile
@@ -1305,7 +1373,7 @@ look at some general information about the Generic Access Profile like device ro
 and data channels before taking a look at how advertising, scanning, broadcasting and
 connections work.
 
-17
+19
 
 CHAPTER 5. GENERIC ACCESS PROFILE
 
@@ -1353,7 +1421,7 @@ having too many dropped packets, Bluetooth Low Energy uses adaptive frequency
 hopping. This means that at a set interval that the master and slave negotiate with
 each other, they will switch frequency with a known algorithm, ensuring they’ll always
 end up in the same frequency band. If data doesn’t make it through on a given channel,
-18
+20
 
 CHAPTER 5. GENERIC ACCESS PROFILE
 the frequency hop will occur prematurely and both master and slave will move on to
@@ -1390,7 +1458,7 @@ As discussed in subsection 4.1.2, each packet, be it advertising or data, has th
 maximum length and structure but the data part of the packet is filled depending on
 the type of packet that is sent. The data in an advertising packet is filled with AD
 Types which take up one byte, and the data for that AD Type which is of variable
-19
+21
 
 CHAPTER 5. GENERIC ACCESS PROFILE
 length. An incomplete list of these AD Types together with their definition is found
@@ -1413,7 +1481,7 @@ contain coordinates, altitude, floor number and location name.
 
 Broadcasting
 
-As discussed in the Advertising section (5.3), it’s possible to have a device that only
+As discussed in the Advertising section 5.3, it’s possible to have a device that only
 advertises data and isn’t connectable, or its main purpose doesn’t rely on connections.
 This is known as a broadcast device and can be used in broadcasting network topologies.
 Take for example a radio station, it simply broadcasts its data and it doesn’t really
@@ -1429,7 +1497,7 @@ be found in chapter 6.
 
 https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile
 
-20
+22
 
 CHAPTER 5. GENERIC ACCESS PROFILE
 
@@ -1451,7 +1519,7 @@ central. For the remainder of that connection, both master and slave will exchan
 solely with GATT until the connection terminates. The peripheral will then continue
 once again to advertise its presence.
 
-21
+23
 
 Chapter 6
 Generic Attribute Profile
@@ -1470,7 +1538,7 @@ using a standard SIG-approved Profile, as well as why and how one would implemen
 their own Profile, either because the SIG-approved Profiles don’t fit the use case or
 because the manufacturer wants to make the used technology more private.
 
-22
+24
 
 CHAPTER 6. GENERIC ATTRIBUTE PROFILE
 
@@ -1519,7 +1587,7 @@ The actual data of services is contained in characteristics. Every characteristi
 to a specific service and has a value attached to it. However, it’s not because you
 can see the characteristic, that you don’t need special rights to read or write it. A
 characteristic can specify certain rights like read, write, read uncommitted (where no
-23
+25
 
 CHAPTER 6. GENERIC ATTRIBUTE PROFILE
 acknowledgement is sent for the write request) and more. This is something that
@@ -1546,7 +1614,7 @@ interface by only allowing certain values or showing a description for a custom 
 characteristic, but one shouldn’t rely on these descriptors as they’re not filled in more
 often than not.
 
-24
+26
 
 Chapter 7
 Why Bluetooth Low Energy and
@@ -1569,7 +1637,7 @@ use cases Bluetooth Low Energy can fulfil in this Low Power, Low Range spectrum 
 well as briefly introducing its competitors, before ending with what the future holds
 for Bluetooth Low Energy.
 
-25
+27
 
 CHAPTER 7. WHY BLUETOOTH LOW ENERGY AND INTERNET OF THINGS
 Range
@@ -1611,7 +1679,7 @@ specifications, so extending standard Bluetooth profiles with your own can great
 
 http://www.parrot.com/usa/products/flower-power/
 
-26
+28
 
 CHAPTER 7. WHY BLUETOOTH LOW ENERGY AND INTERNET OF THINGS
 expand the possibilities of the technology. However, if the manufacturer doesn’t release
@@ -1659,7 +1727,7 @@ The major difference between ZigBee and Z-Wave however, is that the Z-Wave techn
 you simply take the technology as it comes and no flexibility is offered beyond that
 point. For the consumer this is beneficial however, ensuring interoperability between
 Z-Wave devices, since Z-Wave also features mesh networking.
-27
+29
 
 CHAPTER 7. WHY BLUETOOTH LOW ENERGY AND INTERNET OF THINGS
 
@@ -1702,12 +1770,12 @@ mesh networking to the table, just like ZigBee, Z-Wave and ANT. These improvemen
 will bring even more use cases to Bluetooth Low Energy, the main one being home
 automation.
 
-28
+30
 
 Chapter 8
 Android programming
 
-29
+31
 
 Chapter 9
 Discussion
@@ -1730,27 +1798,31 @@ that is being heavily used by other technologies.
 
 Future work
 
-30
+32
 
 Bibliography
 
-31
+33
 
 List of Figures
 1.1
 
 Image demonstrating a closed cloud system versus an open cloud system
 
+4.1
+
+State diagram for the Link Layer state machine . . . . . . . . . . . . . 17
+
 5.1
 
-Image visualizing the Bluetooth Low Energy channel spectrum . . . . . 19
+Image visualizing the Bluetooth Low Energy channel spectrum . . . . . 21
 
 7.1
 
 Image showing Bluetooth Low Energy’s place in the Range vs Power
-spectrum. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+spectrum. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
 
-32
+34
 
 7
 
@@ -1759,6 +1831,6 @@ spectrum. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
 
 Compatibility table of Bluetooth specifications . . . . . . . . . . . . . 14
 
-33
+35
 
 

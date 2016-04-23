@@ -596,8 +596,70 @@ The newest update, Bluetooth 4.2, brings yet more changes to the Bluetooth speci
 
 The Bluetooth SIG is constantly working on Bluetooth Low Energy, and it has been announced that the range would be significantly improved. They also brought mesh networking to the table, just like ZigBee, Z-Wave and ANT. These improvements will bring even more use cases to Bluetooth Low Energy, the main one being home automation.
 
-\chapter{Android programming}
+\chapter{Building an Android gateway}
 \label{ch:android}
+\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+With all of the previous chapters, a good idea and base has been formed as to what Bluetooth Low Energy is and why it would be valuable to integrate it into an Internet of Things environment.
+
+This chapter aims to provide a practical approach to answering some of the research questions stated in bold in subsection \ref{subsec:researchquestions} through a Proof of Concept. The Proof of Concept concerns building an Android application that can successfully connect, communicate and act as a gateway for Bluetooth Low Energy devices. First of all, the devices that were used in the making of this application will be talked about more in detail before looking at how one would implement a gateway for Android. As this is a prototype, a lot of optimizations have to be made and the method used might not be the most ideal one. Methods on one of the ways to implement this on a large scale will be given in section \ref{sec:futurework}.
+
+\newpage{}
+
+\section{Used devices}
+\label{sec:devices}
+Before going in depth on how to implement and use the Bluetooth API for Android and connect the devices to an online platform, it's interesting to go over the devices that were used in the making of this Proof of Concept. In order to quickly prototype and simulate the `real' life at the same time, a mix of consumer and both development devices were used. This was mainly to speed up the development process as certain development devices allow you to easily write your own application as discussed in section \ref{sec:stackApplication}.
+
+\subsection{Nexus 5}
+\label{subsec:nexus}
+The most important device for developing the gateway is of course a smartphone. It's important that the smartphone used features at least Bluetooth v4.0, as v4.0 and up started to support Bluetooth Low Energy.
+
+By all means, another device than the Nexus 5 could be used to make a gateway. It was just used because it was the best device to my disposal that suited the use case. The Nexus 5 features Bluetooth v4.0, but using a device that has Bluetooth v4.2 won't limit the possibilities in any way since Bluetooth Low Energy is backwards compatible.
+
+\subsection{Arduino 101 / Genuino 101}
+\label{subsec:arduino101}
+One of the most popular microcontrollers is the Arduino. For this use case, a Genuino 101\footnote{https://www.arduino.cc/en/Main/ArduinoBoard101} (in Europe, Arduino 101 in America) was used because it features an Intel Curie System on Chip. This Intel Curie module, amongst a 6 axis gyroscope and accelerator, features a Bluetooth Low Energy module which makes it ideal for fast prototyping since it's easy to create an application with the Arduino IDE without requiring a lot of set-up.
+
+Besides the board, some additional modules and sensors were used to create an application. For this use case, a very simple application was made based on an existing Heart Rate Monitor application from Arduino\footnote{https://www.arduino.cc/en/Tutorial/Genuino101CurieBLEHeartRateMonitor}.
+
+The adapted application monitors a rotary switch and if connected to a master, it will notify the master every second with the value of the switch. It reports this value through the standard defined Heart Rate service and Heart Rate Measurement characteristic. In a real scenario heart rate wouldn't be measured with a rotary switch, but since this is a prototype it's the easiest solution. To give the device an actuator as well as a sensor, a simple custom service and characteristic were made that just enable or disable a digital device by writing 0 or 1 to the characteristic. The source code of the adapted example can be found in the appendix.
+
+\subsection{Flower Power}
+\label{subsec:flowerpower}
+In order to have a consumer device to test with, the Flower Power was used. This is a handy little gadget filled with sensors that connects to an application on a smartphone which monitors your plant. It notifies the user when the plant should be watered, if it needs to be moved because it has too little sunlight, if it's too hot or too cold or if its soil isn't fertile enough.
+
+This device features a lot of custom services and characteristics, so it's a very good test device to find out if it's viable to easily support these kind of devices as well. Luckily the Flower Power has good documentation available\footnote{http://developer.parrot.com/docs/flowerpower/FlowerPower-BLE.pdf} so that prevented a lot of reverse engineering and extra time and effort.
+
+\subsection{MetaWear CPRO}
+\label{subsec:metawearcpro}
+For the last device, a MetaWear CPRO from MbientLab\footnote{https://store.mbientlab.com/product/metawear-cpro/} was used. This is another device destined for prototyping and features a large range of sensors. On top of that, it also runs off a coin cell battery, is very small and even allows developers to write their own firmware or expand the board. It features a temperature sensor, light sensor, a 10 axis motion sensor (gyroscope, magnitude, barometer) and the MetaWear CPRO used for this thesis is also fitted with a buzzer.
+
+\section{Goal}
+\label{sec:pocgoal}
+The general goal for this Proof of Concept is to build a rough Android application that can connect with multiple Bluetooth Low Energy devices simultaneously, read data and write data. It should also be possible to register the smartphone as a gateway in an Internet of Things cloud, in this case the AllThingsTalk developer cloud. The application has to create devices it connects to on the platform and add its assets, sensors and actuators. Once the data is read on the device, it should also send that data to the correct asset on the online platform. Once this is achieved, the next goal is to enable two-way communication, not only sending data to the platform but also receiving data and sending it to the right device, sensor or actuator.
+
+\section{Android programming}
+\label{sec:androidprogramming}
+In this section, the most important parts in building a gateway for Android will be discussed. Everything from building the Bluetooth layer to the network layer will be talked about and it will give a good overview of how all these APIs can work together. The full source code for the application is available on \texttt{GITHUB(LINK)}. This application is a working prototype to bridge Bluetooth Low Energy to the AllThingsTalk developer cloud.
+
+\subsection{Bluetooth layer}
+\label{subsec:bluetoothlayer}
+As a starting point, the first goal is to get the Bluetooth layer working. In order to get a kick start, the Bluetooth group exposes an Application Accelerator\footnote{https://www.bluetooth.com/develop-with-bluetooth/developer-resources-tools/app-acc-2} that's very easy to use and provides a solid layer above the Android Bluetooth API, making Bluetooth more friendly to use.
+
+However, it's still important to know how the Bluetooth API of Android works and it will save quite a bit of time down the road when debugging a problem.
+
+The starting point for using Bluetooth Low Energy is the \texttt{BluetoothManager} class. After checking Bluetooth compatibility and acquiring the right permissions, this is where all communication will start. The \texttt{BluetoothManager} can be acquired by requesting the \texttt{Context.BLUETOOTH\_SERVICE} system service from the hosting activity which will return an object if it's compatible and permissions have been acquired, or \texttt{null} if it can't return the manager.
+
+\texttt{BluetoothManager} is a high level class used to do overall Bluetooth Management, but it also exposes the \texttt{BluetoothAdapter} class. This class allows for device discovery, querying already bonded Bluetooth devices, initiating a connection using a MAC address and it also allows for scanning Bluetooth Low Energy devices.
+
+Once scanning has been initiated, callbacks will be reported on the \texttt{ScanCallback} interface which exposes a \texttt{ScanResult} object. This object exposes the very important \texttt{BluetoothDevice} member. This device can be queried for the device address, which in turn can be used to initiate a connection. Essentially, connecting to the device means getting a reference to its GATT server - described in chapter \ref{ch:gatt} - which exposes all of the data on the device.
+
+The \texttt{BluetoothGatt} class allows exposes everything that has to do with data. It allows discovering services, its characteristics and its descriptors. It also allows reading data, writing data, enabling or disabling notifications, reading RSSI (signal strength) and more. As with the \texttt{ScanCallback}, the \texttt{BluetoothGatt} class also requires a callback interface to bring data to the application, as all communication in Bluetooth Low Energy happens asynchronously. Once this interface has been implemented, it's simply a task of delegating the data to different parts of the application and displaying it on the screen.
+
+\subsection{Network layer}
+\label{subsec:networklayer}
+
+\subsection{User interface}
+\label{subsec:userinterface}
 
 \chapter{Discussion}
 \label{ch:discussion}
