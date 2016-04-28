@@ -99,7 +99,7 @@ public class BleNamesResolver {
         mServices.put("00001813-0000-1000-8000-00805f9b34fb", "Scan Parameters");
         mServices.put("00001804-0000-1000-8000-00805f9b34fb", "Tx Power");
         /*Custom services*/
-        mServices.put("19b10000-e8f2-537e-4f6c-d104768a1214", "Buzzer Service");
+        mServices.put("19b10000-e8f2-537e-4f6c-d104768a1214", "Generic On/Off Service");
         mServices.put("39e1fa00-84a8-11e2-afba-0002a5d5c51b", "Live service");
         mServices.put("39e1fb00-84a8-11e2-afba-0002a5d5c51b", "Upload service");
         mServices.put("39e1fc00-84a8-11e2-afba-0002a5d5c51b", "History service");
@@ -189,7 +189,7 @@ public class BleNamesResolver {
         mCharacteristics.put("00002a07-0000-1000-8000-00805f9b34fb", "Tx Power Level");
         mCharacteristics.put("00002a45-0000-1000-8000-00805f9b34fb", "Unread Alert Status");
         /*Custom Characteristics*/
-        mCharacteristics.put("19b10001-e8f2-537e-4f6c-d104768a1214", "Buzzer Control");
+        mCharacteristics.put("19b10001-e8f2-537e-4f6c-d104768a1214", "Generic On/Off Switch");
         mCharacteristics.put("39e1fa01-84a8-11e2-afba-0002a5d5c51b", "Light sensor Value");
         mCharacteristics.put("39e1fa02-84a8-11e2-afba-0002a5d5c51b", "Soil EC");
         mCharacteristics.put("39e1fa03-84a8-11e2-afba-0002a5d5c51b", "Soil Temperature");
