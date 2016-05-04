@@ -1,0 +1,36 @@
+Peter Leemans commentaar:
+
+"How Low Energy is Bluetooth Low Energy? Comparative Measurements with ZigBee/802.15.4" doorsturen naar Peter voor info over 6lowpan
+
+POC hoofdstuk mss wat groter, meer evenwicht tussen POC/theorie
+
+Kleinere opmerkingen:
+1.1.1 on the technology market => on the market
+		Important requirement, als je het van uit de cloud van de manufacturer kunt halen kan het ook werken
+		
+		Typically the BLE are built for the purpose of the "single use case" of the manufacturer, AllThingsTalk wants to find out how it can 'reuse' this for other use cases, such as the elderly home problem.... (en dan de use case uitleggen)
+		
+"Proof of Concept" misschien slecht gekozen: "First demonstrator" misschien betere naam
+
+6.2 Service & Characteristic in bijlage? Eventueel code er bij steken in bijlage met technische uitleg over de code
+
+Chapter 7: "Wearables" meer vermelden, wearables zijn belangrijkste use case met BLE & IoT
+Concurrenten op vlak van wearables?
+
+7.4 Als 6lowpan komt, is er dan nog een gateway nodig? Als de 6lowpan devices op de markt komen, wat is het stroomverbruik? Als hij 5 keer zoveel energie verbruikt is het misschien niet ideaal voor wearables
+
+8.1 Rough android application => First android application
+
+8.2 Smartphone is belangrijk omdat het over wearables gaat => wearables aanhalen!
+
+8.3.3 Screenshots adden
+
+Chapter 8: hoe de devices geconnecteerd zijn, welke gelukt zijn, hoe ze verschillen, ...
+Tussen network & user interface eventueel het werk dat gedaan is om de devices werkende te krijgen
+Eventueel extra chapter voor POC conclusies: high level. Bv. het is mogelijk maar sommige characters hebben verschillende constraints
+
+Chapter 9: architectuur, wat er moet op gelet worden naar later toe
+
+2 soorten devices: standaarden & geen standaarden. Standaarden kun je zomaar connecten en het werkt zonder extra werk
+
+DINSDAG AVOND DRAFT DOORSTUREN 10/05
