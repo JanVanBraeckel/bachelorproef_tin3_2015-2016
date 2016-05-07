@@ -203,7 +203,7 @@
 \chapter{Introduction}
 \label{ch:introduction}
 \epigraph{``If you think that the internet has changed your life, think again. The IoT is about to change it all over again!''}{Brendan O'Brien}
-The Internet of Things hasn't been around for a very long time, yet it is quickly becoming very popular and almost every tech company wants to be a part of it. It gained a lot of popularity around 2011 when IPV6 was released and it was around this time Gartner \citep{gartner2014} also took note of this trend and put it on their annual Hype Cycle for the first time. Around the same time of the growing popularity of the Internet of Things, the Bluetooth Special Interest Group released a new Bluetooth specification that was built for the Internet of Things: Bluetooth Low Energy. Gartner \citep{gartner2015} also suggests that by 2020, around 20 billion `things' will be connected to the Internet of Things, a market that Bluetooth Low Energy wants to play a big role in.
+The Internet of Things hasn't been around for a very long time, yet it is quickly becoming very popular and almost every technology company wants to be a part of it. It gained a lot of popularity around 2011 when IPV6 was released and it was around this time Gartner \citep{gartner2012} also took note of this trend and put it on their annual Hype Cycle for the first time. Around the same time of the growing popularity of the Internet of Things, the Bluetooth Special Interest Group released a new Bluetooth specification that was built for the Internet of Things: Bluetooth Low Energy. Gartner \citep{gartner2015} also suggests that by 2020, around 20 billion `things' will be connected to the Internet of Things, a market that Bluetooth Low Energy wants to play a big role in.
 
 This thesis aims to provide an introduction to Bluetooth Low Energy and how a smartphone can be used as gateway to allow Bluetooth Low Energy devices, which don't have internet capabilities, to connect to the internet. In this chapter the problem that the thesis is trying to find an answer for is elaborated, as well as the actual questions that need answering. An introduction about `AllThingsTalk' can also be found, a company that is trying to figure out how to connect Bluetooth Low Energy wearables with their Internet of Things infrastructure.
 
@@ -407,31 +407,43 @@ Last but not least is the Connection state. You can see that this state can be e
 
 \subsection{Host Controller Interface}
 \label{subsec:controllerHCI}
+The Host Controller Interface provides interfaces so the Host can more easily communicate with the Controller. This was a common architecture in Bluetooth Classic so Bluetooth Low Energy has also adapted this way of working. The Host Controller Interface has to be present on both the Host and Controller level, providing a channel where everything can be routed through. This makes it possible to separate the Host and Controller from one another, which is the case in many mobile devices like a smartphone. The Host part will typically be handled by the smartphone itself, but the actual Bluetooth hardware and Controller are embedded in a different chip. It's also possible to host the entire Bluetooth Low Energy stack on a single chip, which is usually the case with sensors or other low power devices.
+
+There are a couple of different interfaces that are used commonly on different types of devices. On a device with a lot of power the widely known USB\footnote{Universal Serial Bus} is commonly used but on lower powered devices, a UART\footnote{Universal Asynchronous Receiver/Transmitter} interface is typically provided but an SDIO\footnote{Secure Digital Input Output} interface can also be used.
 
 \section{Host}
 \label{sec:stackHost}
+Above the Controller resides the Host, which is built on top of the Host side of the Host Controller Interface. The Host contains quite a lot of different layers, protocols and procedures exposed as some kind of API to allow the Application to easily tap into this functionality.
 
 \subsection{Host Controller Interface}
 \label{subsec:hostHCI}
+The Host side of the Host Controller Interface is pretty much the same as the Controller side. It's simply a layer in between the Host and the Controller, where the Host side exposes different interfaces to send data to and the Controller side will then control the hardware to do the right thing and make sure the data gets sent correctly.
 
-\subsection{Logical Link Control and Adaption Protocol}
-\label{subsec:hostATTL2CAP}
+\subsection{Logical Link Control and Adaptation Protocol}
+\label{subsec:hostL2CAP}
+The Logical Link Control and Adaptation Protocol, or L2CAP in short, is the layer that provides multiplexing capabilities to the Blutooth Low Energy stack. This multiplexing provides a way to encapsulate different protocols and messages into a single Bluetooth Low Energy data packet and can also convert them back when receiving a packet.
+
+If the data sent by the upper layers in the stack are too large, L2CAP can also split this data into the maximum size of a payload. Naturally, it can also combine multiple fragmented packets it receives and combine them again for processing.
 
 \subsection{Attribute Protocol}
 \label{subsec:hostATT}
+The Attribute Protocol is responsible for exposing a ``database'' with attributes and their respective values, permissions, handles and unique identifiers. The peripheral that exposes this database is called a server and the device requesting values is called a client. The client can use the attribute handle to request data for the given attribute.
 
 \subsection{Security Manager Protocol}
 \label{subsec:hostSMP}
+As the name suggests, the Security Manager Protocol handles all of the security for a Bluetooth Low Energy device. It is used for the very common ``pairing'' action for Bluetooth devices. This action pairs two devices together with randomized keys, allowing easy reconnection in the future. The Security Manager Protocols is responsible for generating and handing out these keys. It is also responsible for encrypting the link if the client requests to do so.
 
 \subsection{Generic Access Profile}
 \label{subsec:hostGAP}
 
+
 \subsection{Generic Attribute Profile}
 \label{subsec:hostGATT}
+The Generic Attribute Profile or GATT is the layer above the Attribute Protocol. While the Attribute Protocol exposes an attribute server, GATT provides a layer of abstraction above these attributes, grouping them into Services and Characteristics. It also enables Services to contain other services. More information about GATT is given in chapter \ref{ch:gap}.
 
 \section{Application}
 \label{sec:stackApplication}
-At the highest level of the protocol stack is the application. As you'd expect, the application is the actual program that embedded software developers will make. It contains logic, calculations and/or the user interface. This application can be coded in a variety of languages and dialects, but most developers will be familiar with C or C++, which is used for a lot of low level applications. An example of such application will be given in chapter \ref{ch:android} for an Arduino 101/Genuino 101 with an Intel Curie chip, which enables Bluetooth Low Energy communication. This Genuino 101 is programmed using the Arduino language which is basically a set of C and C++ functions, so these languages could be used as well to build an application.
+At the highest level of the protocol stack is the application. As you'd expect, the application is the actual program that contains logic, calculations and/or the user interface. Some of these applications are standards defined by the Bluetooth Special Interest Group as Profiles, but custom Profiles could also be developed. It would be up to the manufacturer to expose these Profiles to allow interoperability with other devices.
 
 \chapter{Generic Access Profile}
 \label{ch:gap}
@@ -661,13 +673,13 @@ The \texttt{BluetoothGatt} class allows exposes everything that has to do with d
 
 \subsection{Network layer}
 \label{subsec:networklayer}
-The network layer can differ from architecture to architecture, but the steps used to connect to the AllThingsTalk developer cloud will be discussed here. There are two kinds of clients that can interact with the cloud: a gateway and a device. The difference between these two is that a gateway can register and update multiple devices, but a device can only register and update itself. It makes sense that when using a smartphone, it should be configured as a gateway since it can connect with multiple devices.
+The network layer can differ from architecture to architecture, but the steps used to connect to the AllThingsTalk developer cloud will be discussed here. There are two kinds of clients that can interact with this cloud: a gateway and a device. The difference between these two is that a gateway can register and update multiple devices, but a device can only register and update itself. It makes sense that when using a smartphone, it should be configured as a gateway since it can connect with multiple devices.
 
 First things first, the smartphone has to be registered as a gateway before being able to send any data. The first step is to create the gateway as an orphan on the platform by sending a POST request to \texttt{https://api.smartliving.io/gateway} with a UID (unique identifier, in this case the MAC address of the smartphone), the name of the gateway (in this case the device name, Nexus 5) and the assets, which allow the gateway to be configured from the online portal.
 
 Once this procedure is finished, the smartphone is an orphan in the platform and has to be claimed within 30 seconds before time-out. In order to check if the gateway has been registered, a POST request can be sent to the same URI and once the device has been claimed the response will contain the gateway id. It is a good idea to then save the gateway id on the device so the claim procedure doesn't have to take place every time the application starts. The gateway can then be used to add assets to the online platform. This can be done by sending a PUT request to \texttt{https://api.smartliving.io/device/\_deviceId\_/asset/\_assetId\_/}. The \texttt{deviceId} and \texttt{assetId} are variables that should be carefully chosen so when data is received, the device knows what to do with it. To easily identify where the data should flow, the \texttt{deviceId} is determined by the connected Bluetooth device's unique address. The \texttt{assetId} is a combination of the Bluetooth Service UUID and the Bluetooth Characteristic UUID.
 
-After adding assets, the only thing left is to send actual data. This is done using the MQTT protocol, though HTTP can be used but MQTT is the preferred method. The MQTT protocol is a machine-to-machine protocol optimized for small sensors and mobile devices, which makes it ideal for an Internet of Things infrastructure. It is basically a very simple publisher/subscriber client, where a publisher publishes data to a topic and a subscriber can listen to topics to get updates. So sending and receiving data from the platform can simply be done by sending data to the right topic and subscribing to the topic the client wants to get updates from, in this case all topics are subscribed to in order to receive all asset state updates. In order to make this communication easier, the Paho Java Client library\footnote{\url{https://eclipse.org/paho/clients/java/}} was used.
+After adding assets, the only thing left is to send actual data. This is done using the MQTT protocol \citep{waher2015learning}, though HTTP can be used but MQTT is the preferred method. The MQTT protocol is a machine-to-machine protocol optimized for small sensors and mobile devices, which makes it ideal for an Internet of Things infrastructure. It is basically a very simple publisher/subscriber client, where a publisher publishes data to a topic and a subscriber can listen to topics to get updates. So sending and receiving data from the platform can simply be done by sending data to the right topic and subscribing to the topic the client wants to get updates from, in this case all topics are subscribed to in order to receive all asset state updates. In order to make this communication easier, the Paho Java Client library\footnote{\url{https://eclipse.org/paho/clients/java/}} was used.
 
 \subsection{User interface}
 \label{subsec:userinterface}
