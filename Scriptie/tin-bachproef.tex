@@ -687,13 +687,20 @@ This part of the application is the most flexible one and doesn't need a whole l
 
 The first screen is a \texttt{RecyclerView} in a \texttt{SwipeRefreshLayout}. The swipe to refresh layout serves to scan, as it is not that efficient to have the device scanning for connections all the time. It will scan for a set amount of seconds and fill the \texttt{RecyclerView} with any devices it finds, displaying the device name, device address and RSSI (signal strength).
 
-Once a device has been chosen, a new fragment opens with more information about the device. At the top of the screen the device name, device address and RSSI are still displayed. The rest of the screen is filled up using an \texttt{ExpandableListView} which displays all Services in the first level and the Characteristics in the second. The component has been modified so it can expand to three levels, this to accomodate extra information about a Characteristic. Once a Characteristic is expanded, the third level opens which displays the data type, properties (read, write, write no response, ...) and three buttons. The buttons serve to toggle notifications, read and write data. Once data has been read, additional info will be displayed in this third level such as the hexadecimal value, string value, decimal value and timestamp of the last time the data was updated.
+Once a device has been chosen, a new fragment opens with more information about the device. At the top of the screen the device name, device address and RSSI are still displayed. The rest of the screen is filled up using an \texttt{ExpandableListView} which displays all Services in the first level and the Characteristics in the second. The component has been modified so it can expand to three levels, this to accommodate extra information about a Characteristic. Once a Characteristic is expanded, the third level opens which displays the data type, properties (read, write, write no response, ...) and three buttons. The buttons serve to toggle notifications, read and write data. Once data has been read, additional info will be displayed in this third level such as the hexadecimal value, string value, decimal value and time stamp of the last time the data was updated.
 
 \chapter{Discussion}
 \label{ch:discussion}
+\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+The last chapter of this thesis aims to provide a concise conclusion regarding the posed research questions. Some goals that were achieved will be listed as well as some concerns for the future of Internet of Things and Bluetooth Low Energy. Furthermore, the state of the current work and possible expansions or extra research for future work will be listed.
 
 \section{Conclusion}
 \label{sec:conclusion}
+This thesis aimed to provide a quick overview of the Bluetooth Low Energy technology, both from a high and low level. Basic information about the technology was given like pros and cons, differences between Bluetooth specifications and how Bluetooth Low Energy exposes data. Some possible use cases were discussed and a couple of reasons were given why it could be interesting to connect Bluetooth Low Energy wearables to an Internet of Things infrastructure. Furthermore, a first demonstrator application was built to prove some of the more abstract research questions.
+
+When looking back at these research questions, some general conclusions can be made. First of all, it is in fact possible to connect Bluetooth Low Energy wearables to the Internet of Things. Raw data from the sensors were able to be aggregated in the AllThingsTalk developer cloud, making it available for further analysis. Secondly, the first demonstrator also proved it is possible to manage this data communication in a real-time scenario. Thanks to the lightweight MQTT protocol, data can be sent very quickly across the network.
+
+The last big question can be answered by a use case presented a couple of times in this thesis, more specifically the use case of elder people living alone in their homes. While sensors could be placed around the house to see where the person is, there may be blind spots and uncertainty of some actions that the person undertakes. Bluetooth Low Energy wearables that are connected with a smartphone could potentially increase data quality by providing accelerometer and gyroscope data, which can be analysed to find out if a person has fallen or not. The wearable could then have some sort of mechanism for the person to indicate they're okay if your data shows something might have gone wrong, like a red light and a button that has to be pressed within a certain amount of time. It could also measure glucose and blood pressure levels, which can indicate that something is going wrong when an unusual spike in numbers occur.
 
 \section{Concerns}
 \label{sec:concerns}
@@ -708,15 +715,15 @@ Bluetooth Low Energy doesn't stay under the radar either, as it is increasingly 
 
 Some students at the University of Illinois have also used the gyroscope and accelerometer of a smartwatch to detect what the user is typing on an ordinary or laptop keyboard \citep{wang2015mole}, something that could be both a privacy and security issue in the future.
 
+\section{Remarks}
+\label{sec:remarks}
+While the combination of Bluetooth Low Energy wearables and an Internet of Things infrastructure sounds very promising, there is a big variable that this thesis didn't take into account: battery usage. It was established that real-time data transfer between a Bluetooth Low Energy device and the Internet is in fact possible, but the impact of battery performance wasn't measured. Bluetooth Low Energy was designed to quickly open and close connections, not having a continuous connection active so this could play a large factor in implementation. There are however solutions to this problem. Some Bluetooth Low Energy wearables have an event log that can record events over a long period of time. The smartphone application could periodically connect to the Bluetooth device, read this event log, send it to the cloud and then disconnect again, drastically reducing the time a connection is active.
+
 \section{Future work}
 \label{sec:futurework}
+The future of the Internet of Things is still building and is therefore fairly uncertain. Few people can make accurate predictions as so what this technology will bring and how it will revolutionize the future.
 
-% TODO: Trek een duidelijke conclusie, in de vorm van een antwoord op de
-% onderzoeksvra(a)g(en). Reflecteer kritisch over het resultaat. Zijn er
-% zaken die nog niet duidelijk zijn? Heeft het ondezoek geleid tot nieuwe
-% vragen die uitnodigen tot verder onderzoek?
-
-
+A technology quickly mentioned in this paper was 6LoWPAN, basically enabling low energy devices to be IPv6 enabled. Possible future research topics could include investigation about 6LoWPAN and how the battery and data communication are impacted using IPv6 addressing versus connecting to a gateway. Another topic could include research about mesh networking with Bluetooth Low Energy peripherals once the specification is released.
 
 \bibliographystyle{apa}
 \bibliography{tin-bachproef}
