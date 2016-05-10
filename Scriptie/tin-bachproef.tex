@@ -203,16 +203,10 @@
 \chapter{Introduction}
 \label{ch:introduction}
 \epigraph{``If you think that the internet has changed your life, think again. The IoT is about to change it all over again!''}{Brendan O'Brien}
-The Internet of Things hasn't been around for a very long time, yet it is quickly becoming very popular and almost every technology company wants to be a part of it. It gained a lot of popularity around 2011 when IPV6 was released and it was around this time Gartner \citep{gartner2012} also took note of this trend and put it on their annual Hype Cycle for the first time. Around the same time of the growing popularity of the Internet of Things, the Bluetooth Special Interest Group released a new Bluetooth specification that was built for the Internet of Things: Bluetooth Low Energy. Gartner \citep{gartner2015} also suggests that by 2020, around 20 billion `things' will be connected to the Internet of Things, a market that Bluetooth Low Energy wants to play a big role in.
+The Internet of Things has not been around for a very long time, yet it is quickly becoming very popular and almost every company wants to be a part of it. It gained a lot of popularity around 2011 when IPV6 was released and it was around this time Gartner \citep{gartner2012} also took note of this trend and put it on their annual Hype Cycle for the first time. Around the same time of the growing popularity of the Internet of Things, the Bluetooth Special Interest Group released a new Bluetooth specification that was built for the Internet of Things: Bluetooth Low Energy. Gartner \citep{gartner2015} also suggests that by 2020, around 20 billion `things' will be connected to the Internet of Things, a market that Bluetooth Low Energy wants to play a big role in.
 
 This thesis aims to provide an introduction to Bluetooth Low Energy and how a smartphone can be used as gateway to allow Bluetooth Low Energy devices, which don't have internet capabilities, to connect to the internet. In this chapter the problem that the thesis is trying to find an answer for is elaborated, as well as the actual questions that need answering. An introduction about `AllThingsTalk' can also be found, a company that is trying to figure out how to connect Bluetooth Low Energy wearables with their Internet of Things infrastructure.
 
-% De inleiding moet de lezer alle nodige informatie verschaffen om het onderwerp te begrijpen zonder nog externe werken te moeten raadplegen \citep{Pollefliet2011}. Dit is een doorlopende tekst die gebaseerd is op al wat je over het onderwerp gelezen hebt (literatuuronderzoek).
-
-% Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz. naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${cite\{\}}} of \texttt{$\backslash${citep\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\TeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin, gebruik je \texttt{$\backslash${}cite\{\}}.
-% Soms wil je de auteur niet expliciet vernoemen, dan gebruik je \texttt{$\backslash${}citep\{\}}. Hieronder een voorbeeld van elk.
-
-% \cite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\citep{Creeger2009}.
 \newpage{}
 \section{Problem statement and research questions}
 \label{sec:problemdefinition}
@@ -220,11 +214,11 @@ First of all, the problem statement will be discussed where a quick sketch will 
 
 \subsection{Problem statement}
 \label{subsec:problemstatement}
-At the time of writing, there are already a lot of Bluetooth enabled products on the technology market. With the new Bluetooth Low Energy specification, Bluetooth is reaching out even further to products like socks\footnote{\url{http://www.sensoriafitness.com/}}, shoes\footnote{\url{https://secure-nikeplus.nike.com/plus/products/basketball}}, fitness bands\footnote{\url{https://www.fitbit.com/}} and more are being added to the list every day. The problem with these products is that in a lot of cases, the products only synchronize with a smartphone. Some manufacturers extend this connectivity by occasionally synchronizing the data the smartphone captures to their own proprietary cloud, where the data can be analysed by both the company and the consumer. Most of the time, this is where the data cycle stops and it can't be further accessed by other parties, this is known as a closed loop system. In some cases, developers can still access the data with an API that communicates with the cloud service of the manufacturer, but this doesn't give any access to the raw sensor values and doesn't allow real-time data transfer.
+At the time of writing, there are already a lot of Bluetooth enabled products on the  market \citep{gartner2015}. With the new Bluetooth Low Energy specification, Bluetooth is reaching out even further to products like socks\footnote{\url{http://www.sensoriafitness.com/}}, shoes\footnote{\url{https://secure-nikeplus.nike.com/plus/products/basketball}}, fitness bands\footnote{\url{https://www.fitbit.com/}} and more are being added to the list every day. The problem with these products is that in a lot of cases, the products only synchronize with a smartphone. Some manufacturers extend this connectivity by occasionally synchronizing the data the smartphone captures to their own proprietary cloud, where the data can be analysed by both the company and the consumer. Most of the time, this is where the data cycle stops and it can't be further accessed by other parties, this is known as a closed loop system. In some cases, developers can still access the data with an API that communicates with the cloud service of the manufacturer, but this doesn't give any access to the raw sensor values and doesn't allow real-time data transfer. Typical these Bluetooth Low Energy devices are built for the purpose of the (single) use case of the manufacturer. AllThingsTalk wants to find out how it can (re)use these existing devices for other use cases.
 
-One of the use cases where this could be an important requirement is in elderly homes. For instance, when making a monitoring system to check if elderly people have fallen or something else is going wrong, it is not acceptable to only receive data every 15 minutes because by that time it might be too late. When building a system like this, it can also be handy to have a central service where all of the raw data is collected instead of containing it in separate closed loops for every system. An example of a closed system versus open system can be found in figure \ref{fig:networkloops}.
+One of the use cases where low latency data communication through wearables could be useful is in elderly homes. For instance when making a monitoring system to check if elderly people have fallen by tracking the gyroscope and accelerometer of a wearable, it is not acceptable to receive data every 15 minutes because by that time help might be too late when considering a worst case scenario. When building a system like this, it can also be useful to have a central service where all of the raw data is collected instead of containing it in separate closed loops for every system. While a closed system is an approach that could work, it doesn't give as much flexibility over all of the data compared to an open system and few manufacturers expose this data for further use. An example of a closed system versus open system can be found in figure \ref{fig:networkloops}.
 
-On top of this, a lot of the devices being manufactured don't use Bluetooth Special Interest Group adopted standards, which makes interoperability with existing applications hard, if not impossible if authentication and encryption are added into the mix.
+On top of this, a lot of the Bluetooth Low Energy wearables being manufactured don't use Bluetooth Special Interest Group adopted standards, which makes interoperability with existing applications hard, if not impossible if authentication and encryption are added into the mix.
 
 \begin{figure}[h]
     \centering
@@ -435,7 +429,7 @@ As the name suggests, the Security Manager Protocol handles all of the security 
 
 \subsection{Generic Access Profile}
 \label{subsec:hostGAP}
-
+The Generic Access Profile, as it is conveniently named, manages all of the access to the device. It provides functionality for advertising device presence, allowing other devices to scan it and then read the advertising packet payload or initiate a connection request. This profile also defines behaviour once devices are connected and some procedures that allow extra security measures. In-depth information about the Generic Access Profile will be given in chapter \ref{ch:gap}.
 
 \subsection{Generic Attribute Profile}
 \label{subsec:hostGATT}
@@ -513,7 +507,7 @@ Profiles in Bluetooth Low Energy are an abstract representation of how a device 
 
 \section{Services}
 \label{sec:services}
-All data in Bluetooth Low Energy is accessed through services. You can compare it to simple Object Oriented principles: a service has multiple characteristics and a characteristic belongs to one single service. An example of this is the Bluetooth SIG defined Heart Rate Service. This document defines the way the Heart Rate Service is used and what characteristics are contained in the service. For example, the Heart Rate Service defines 3 characteristics: Heart Rate Measurement, Body Sensor Location and Heart Rate Control Point, only the Heart Rate Measurement is mandatory to include.
+All data in Bluetooth Low Energy is accessed through services. You can compare it to simple Object Oriented principles: a service has multiple characteristics and a characteristic belongs to one single service. An example of this is the Bluetooth SIG defined Heart Rate Service. This document defines the way the Heart Rate Service is used and what characteristics are contained in the service. For example, the Heart Rate Service defines 3 characteristics: Heart Rate Measurement, Body Sensor Location and Heart Rate Control Point, only the Heart Rate Measurement is mandatory to include. A functioning Arduino application serving a Heart Rate Service together with a custom written service can be found in the Appendix.
 
 A device can host any number of services which are independent of one another. Every service also has its own security options which you can customize. You can set options like encryption for individual services or the device as a whole.
 
@@ -536,7 +530,7 @@ If we go down even further, we come to the descriptors. These can optionally acc
 \chapter{Why Bluetooth Low Energy and Internet of Things}
 \label{ch:BLEIOT}
 \epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
-The Internet of Things is quickly growing and by the end of 2016 it is expected to have about 6.3 billion connected devices \citep{gartner2015}, filled with both long-range sensors using LoRa and Sigfox technologies and short-range sensors using WiFi or directly connected with a gateway connected to internet. Why would it then be beneficial to add another spectrum of devices: Bluetooth Low Energy? The main reason for this is because no other very big and open technology fills this spectrum of the market yet. Right now, you can compare wireless IoT technologies against 2 axis: power and range, as seen in figure \ref{fig:powerrange}. Before Bluetooth Low Energy, there wasn't really any major technology to fill the Low Energy, Low Range spectrum. One can say that Zigbee or other technologies could fill this end of the spectrum, but none of these are as widely adopted as Bluetooth Low Energy is today and interoperability is sometimes a problem with other standards \citep{colitti2014}. In this chapter we'll further discuss the use cases Bluetooth Low Energy can fulfil in this Low Power, Low Range spectrum as well as briefly introducing its competitors, before ending with what the future holds for Bluetooth Low Energy.
+The Internet of Things is quickly growing and by the end of 2016 it is expected to have about 6.3 billion connected devices \citep{gartner2015}, filled with both long-range sensors using LoRa and Sigfox technologies and short-range sensors using WiFi or directly connected with a gateway connected to internet. Why would it then be beneficial to add another spectrum of devices: Bluetooth Low Energy? One of the big reasons for this is because increasingly more wearables start to use Bluetooth Low Energy technology, making it an interesting technology to connect to the Internet of Things \citep{wei2014wearables}. Right now, you can compare wireless IoT technologies against 2 axis: power and range, as seen in figure \ref{fig:powerrange}. Before Bluetooth Low Energy, there wasn't really any major technology to fill the Low Energy, Low Range spectrum. One can say that Zigbee or other technologies could fill this end of the spectrum, but none of these are as widely adopted as Bluetooth Low Energy is today and interoperability is sometimes a problem with other standards \citep{colitti2014}. In this chapter we'll further discuss the use cases Bluetooth Low Energy can fulfil in this Low Power, Low Range spectrum as well as briefly introducing its competitors, before ending with what the future holds for Bluetooth Low Energy.
 
 \begin{figure}[h]
 \centering
@@ -600,9 +594,20 @@ Another wireless technology that is built completely for home automation is Z-Wa
 \label{subsec:ant}
 ANT is another good example of a Bluetooth Low Energy competitor. This is again a proprietary technology and was built with sensor networks in mind. It features powerful mesh networking as well as star, tree and point-to-point networks, allowing all kind of networks to be used in unison.
 
-\section{Other wireless technologies}
-\label{sec:othertechnologies}
+\subsection{Other wireless technologies}
+\label{subsec:othertechnologies}
 There are quite a bit of other technologies that can be used to power the Internet of Things, discussing all of them would take a paper of its own. Some of these technologies and protocols are X10 (home automation), KNX (home automation) and M-bus (industry). Other technologies, not necessarily in the Low Energy/Low Range spectrum are LoRa (Long Range), GPRS (General Packet Radio Service) and Sigfox.
+
+\section{Bluetooth Low Energy, Internet of Things and wearables}
+\label{sec:bleiotwearables}
+Bluetooth Low Energy and Internet of Things sound like a promising use case, but it is important to understand the complete picture and how and what devices could be connected through this technology, as well as what the ultimate use cases could be.
+
+The main target for Bluetooth Low Energy as of now is wearables \citep{blakesnow2016}. As both the wearable technology and Bluetooth Low Energy specification will evolve, it becomes increasingly more interesting to capture the data that the various sensors on these wearables collect.
+
+Use cases for connecting these wearables could simply be self-health monitoring. In a world where ``quantified self-tracking'' is becoming more and more popular \citep{swan2012sensor}, it could provide useful to capture all of this health data from people with a vastly different health profile and background in order to provide new information about the human body. These people could simply wear some fashion products filled with sensors like a design-focused fitness and sleep monitor\footnote{\url{http://misfit.com/products/shine2}} or even a Swarovski bracelet\footnote{\url{http://misfit.com/products/swarovski-shine}}.
+
+Another use case quoted a couple of times in this thesis is homes of elderly people. Static sensors could be placed inside a home which can track where the person is moving inside the house. However, there might be some blind spots that these sensors can't track, or what if the person wants to go outside? This is where wearables can provide an added value. By equipping the person with a simple wristband that could potentially track a variety of values, - like blood pressure, heart rate, tilt, acceleration forces and more - this data could be combined with the static sensors around the house to provide much more accurate readings because there are more sources of data that are potentially more reliable.
+
 
 \section{Future of Bluetooth Low Energy}
 \label{sec:futureble}
@@ -623,11 +628,13 @@ This chapter aims to provide a practical approach to answering some of the resea
 
 \section{Goal}
 \label{sec:pocgoal}
-The general goal for this Proof of Concept is to build a rough Android application that can connect with multiple Bluetooth Low Energy devices simultaneously, read data and write data. It should also be possible to register the smartphone as a gateway in an Internet of Things cloud, in this case the AllThingsTalk developer cloud. The application has to create devices it connects to on the platform and add its assets, sensors and actuators. Once the data is read on the device, it should also send that data to the correct asset on the online platform. Once this is achieved, the next goal is to enable two-way communication, not only sending data to the platform but also receiving data and sending it to the right device, sensor or actuator.
+The general goal for this Proof of Concept is to build a first Android application that can connect with multiple Bluetooth Low Energy devices simultaneously, read data and write data. It should also be possible to register the smartphone as a gateway in an Internet of Things cloud, in this case the AllThingsTalk developer cloud. The application has to create devices it connects to on the platform and add its assets, sensors and actuators. Once the data is read on the device, it should also send that data to the correct asset on the online platform. Once this is achieved, the next goal is to enable two-way communication, not only sending data to the platform but also receiving data and sending it to the right device, sensor or actuator.
 
 \section{Used devices}
 \label{sec:devices}
 Before going in depth on how to implement and use the Bluetooth API for Android and connect the devices to an online platform, it is interesting to go over the devices that were used in the making of this Proof of Concept. In order to quickly prototype and simulate the `real' life at the same time, a mix of consumer and both development devices were used. This was mainly to speed up the development process as certain development devices allow you to easily write your own application as discussed in section \ref{sec:stackApplication}.
+
+The main reason why a gateway is being implemented on a smartphone is because of the wearable products that have been talked about in subsection \ref{subsec:problemstatement} and section \ref{sec:bleiotwearables}. Wearable products usually move around a lot so it wouldn't make a lot of sense to make an Arduino gateway for these devices. Since a lot of people always carry a smartphone around, it makes sense to connect these wearables to the smartphone and let the smartphone take responsibility of publishing the data the wearable captures to an online service.
 
 \subsection{Nexus 5}
 \label{subsec:nexus}
@@ -652,6 +659,36 @@ This device features a lot of custom services and characteristics, so it is a ve
 \subsection{MetaWear CPRO}
 \label{subsec:metawearcpro}
 For the last device, a MetaWear CPRO from MbientLab\footnote{\url{https://store.mbientlab.com/product/metawear-cpro/}} was used. This is another device destined for prototyping and features a large range of sensors. On top of that, it also runs off a coin cell battery, is very small and even allows developers to write their own firmware or expand the board. It features a temperature sensor, light sensor, a 10 axis motion sensor (gyroscope, magnitude, barometer) and the MetaWear CPRO used for this thesis is also fitted with a buzzer.
+
+\section{Working methods for each device}
+\label{sec:achievements}
+In the previous section, all of the Bluetooth Low Energy devices that were used to build this Proof of Concept were introduced. A couple of decisions and ways of working had to be realized in order to try and support these different devices as best as possible. In this section a quick overview will be given about what effort and design decisions were required to support these devices.
+
+\subsection{Arduino/Genuino 101}
+\label{subsec:achievementsarduino101}
+The Arduino/Genuino 101 was by far the easiest device to implement in this gateway application. With the Arduino, it is possible to write a custom application, so the decision was made to make this application as simple as possible. It contains a simple sketch that measures Heart Rate through a rotary angle sensor and uses standard Bluetooth SIG approved services and characteristics (except for a simple custom one added later). Because this is a standard service, it is quite easy to support because all the data needed is available on the Bluetooth website and no surprises can be expected there when using the standards.
+
+Later in the development phase an extremely simple custom service and characteristic were added that served to operate a simple on/off control. This was to make sure the Arduino also had an actuator that could be activated.
+
+However, adding a custom service and characteristic meant a change in architecture. In order to support these and give them a friendly name, an extra mapping had to be made in the Android application, mapping the UUID of the service and characteristic to a more understandable format.
+
+This means that every custom service and characteristic that isn't yet mapped in the application won't have a name, so it will be hard to determine what it is for.
+
+\subsection{Flower Power}
+\label{subsec:achievementsflowerpower}
+Once the standard services and characteristics were implemented, the Flower Power already had some data that could be read from it. However, this device uses \textit{a lot} of custom services to provide its data. Luckily the documentation can be found on the Parrot website\footnote{\url{http://developer.parrot.com/docs/flowerpower/FlowerPower-BLE.pdf}} so each UUID could be mapped to a friendly name.
+
+However, this device features a lot of behaviour that can't be anticipated from beforehand. For example, it has a history service that allows the application to read the event log from when it wasn't connected with the device, which doesn't have any standards defined anywhere as to how this has to be implemented.
+
+Furthermore, the sensory data contained within this device like temperature were reported in Little Endian Integers and only reported the voltage levels, not the actual temperature themselves. While characteristics do have a data type associated with them in the Android Bluetooth library, this data type isn't correct most of the time, so an extra mapping had to be made from UUID to real data type. The calculation from voltage levels to actual temperature also required a custom mapping, as this formula may vary from sensor to sensor.
+
+This means that besides keeping a mapping from UUID to friendly name, an additional mapping has to be made from UUID to data type and from characteristic value to real value. These are also factors that can't be defined globally for all devices, since every manufacturer will use its own conventions.
+
+\subsection{MetaWear CPRO}
+\label{subsec:achievementsmetawear}
+Last but not least is the MetaWear CPRO. Sadly due to time constraints this device wasn't able to be implemented, but a quick look at the developer pages revealed that this is quite a complex device.
+
+While most devices use different characteristics to read and write every sensor or actuator on a device, the MetaWear CPRO features only two characteristics to handle a variety of different sensors and actuators. Without digging into the source code and SDK of the device or using a Bluetooth sniffer, it is extremely hard to support this device. There is an Android API available from MetaWear themselves\footnote{\url{https://github.com/mbientlab/Metawear-AndroidAPI}} that provides easy access to the device that could potentially solve this problem. However, it would only solve it on a small scale because it would be extremely hard to realize on a large scale. Imagine for example that this application was scaled to support 5000 devices and 300 of them would need a device specific implementation like this one, the application would quickly very large and complex.
 
 \section{Android programming}
 \label{sec:androidprogramming}
@@ -689,6 +726,8 @@ The first screen is a \texttt{RecyclerView} in a \texttt{SwipeRefreshLayout}. Th
 
 Once a device has been chosen, a new fragment opens with more information about the device. At the top of the screen the device name, device address and RSSI are still displayed. The rest of the screen is filled up using an \texttt{ExpandableListView} which displays all Services in the first level and the Characteristics in the second. The component has been modified so it can expand to three levels, this to accommodate extra information about a Characteristic. Once a Characteristic is expanded, the third level opens which displays the data type, properties (read, write, write no response, ...) and three buttons. The buttons serve to toggle notifications, read and write data. Once data has been read, additional info will be displayed in this third level such as the hexadecimal value, string value, decimal value and time stamp of the last time the data was updated.
 
+\textbf{TODO, some screenshots...}
+
 \chapter{Discussion}
 \label{ch:discussion}
 \epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
@@ -698,9 +737,9 @@ The last chapter of this thesis aims to provide a concise conclusion regarding t
 \label{sec:conclusion}
 This thesis aimed to provide a quick overview of the Bluetooth Low Energy technology, both from a high and low level. Basic information about the technology was given like pros and cons, differences between Bluetooth specifications and how Bluetooth Low Energy exposes data. Some possible use cases were discussed and a couple of reasons were given why it could be interesting to connect Bluetooth Low Energy wearables to an Internet of Things infrastructure. Furthermore, a first demonstrator application was built to prove some of the more abstract research questions.
 
-When looking back at these research questions, some general conclusions can be made. First of all, it is in fact possible to connect Bluetooth Low Energy wearables to the Internet of Things. Raw data from the sensors were able to be aggregated in the AllThingsTalk developer cloud, making it available for further analysis. Secondly, the first demonstrator also proved it is possible to manage this data communication in a real-time scenario. Thanks to the lightweight MQTT protocol, data can be sent very quickly across the network.
+When looking back at these research questions, some general conclusions can be made. First of all, it is in fact possible to connect Bluetooth Low Energy wearables to the Internet of Things. Raw data from the sensors were able to be aggregated in the AllThingsTalk developer cloud, making it available for further analysis. Secondly, the Proof of Concept also proved it is possible to manage this data communication in a real-time scenario. Thanks to the lightweight MQTT protocol, data can be sent very quickly across the network.
 
-The last big question can be answered by a use case presented a couple of times in this thesis, more specifically the use case of elder people living alone in their homes. While sensors could be placed around the house to see where the person is, there may be blind spots and uncertainty of some actions that the person undertakes. Bluetooth Low Energy wearables that are connected with a smartphone could potentially increase data quality by providing accelerometer and gyroscope data, which can be analysed to find out if a person has fallen or not. The wearable could then have some sort of mechanism for the person to indicate they're okay if your data shows something might have gone wrong, like a red light and a button that has to be pressed within a certain amount of time. It could also measure glucose and blood pressure levels, which can indicate that something is going wrong when an unusual spike in numbers occur.
+The last big question can be answered by a use case presented a couple of times in this thesis, more specifically the use case of elder people living alone in their homes. While sensors could be placed around the house to see where the person is, there may be blind spots and uncertainty of some actions that the person undertakes. Bluetooth Low Energy wearables that are connected with a smartphone could potentially increase data quality by providing accelerometer and gyroscope data which can be analysed to find out if a person has fallen or not for example. It could also measure glucose and blood pressure levels, which can indicate that something is going wrong when an unusual spike in numbers occur.
 
 \section{Concerns}
 \label{sec:concerns}
@@ -724,6 +763,16 @@ While the combination of Bluetooth Low Energy wearables and an Internet of Thing
 The future of the Internet of Things is still building and is therefore fairly uncertain. Few people can make accurate predictions as so what this technology will bring and how it will revolutionize the future.
 
 A technology quickly mentioned in this paper was 6LoWPAN, basically enabling low energy devices to be IPv6 enabled. Possible future research topics could include investigation about 6LoWPAN and how the battery and data communication are impacted using IPv6 addressing versus connecting to a gateway. Another topic could include research about mesh networking with Bluetooth Low Energy peripherals once the specification is released.
+
+\subsection{Android application}
+\label{subsec:androidapp}
+The Android application built in chapter \ref{ch:android} is just a first step in building a mobile Bluetooth Low Energy gateway. It provided a lot of useful insights for future work and provided a good idea as to what a possible high level architecture could look like in the future.
+
+First of all, a web service should be built that exposes supported Bluetooth service and characteristic UUIDs. This would allow the application to be updated in real-time with support for new services and characteristics instead of having to release a new version onto the market every time.
+
+Secondly, this web service from the previous step could also be expanded to make the application even more dynamic. Instead of also mapping the data type and calculations on the Android application itself, this service could do all of it. The application could then just send a UUID and an array of bytes to the service and it can then report the decimal, string, hexadeximal, ... values back to the application where it can be processed further.
+
+Some variations could be built on this where the web service pushes all of the data to the cloud instead of first sending it back to the application and then letting the application push it. The service could also push it and then just report the values in the graphical interface of the application, not needing any further processing by the application itself.
 
 \bibliographystyle{apa}
 \bibliography{tin-bachproef}
