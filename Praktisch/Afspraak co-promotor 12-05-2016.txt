@@ -1,0 +1,10 @@
+Meeting Peter 12/05
+
+ipv6 ble devices, er zijn er amper op de markt
+ipv6 op de cloud gaat nog niet (azure), zeer specifieke providers nodig
+
+theorie nog wat overheersend, misschien POC nog wat uitbreiden
+
+eventueel diagram over applicatie architectuur
+
+mag gepubliceerd worden
