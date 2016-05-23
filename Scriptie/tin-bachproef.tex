@@ -65,17 +65,6 @@
 
 % Commando voor invoegen Java-broncodebestanden (dank aan Niels Corneille)
 % Gebruik: \codefragment{source/MijnKlasse.java}{Uitleg bij de code}
-\newcommand{\javacode}[2]{ \lstset{%
-  language=java,
-  breaklines=true,
-  float=th,
-  caption={#2},
-  basicstyle=\scriptsize,
-  frame=single,
-  extendedchars=\true
-}
-\lstinputlisting{#1}}
-
 \newcommand{\arduinocode}[2]{ \lstset{%
   language=C++,
   breaklines=true,
@@ -165,6 +154,8 @@
 % Schutblad
 
 \emptypage
+\emptypage
+\emptypage
 
 
 \begin{titlepage}
@@ -191,25 +182,51 @@
   \restoregeometry
 \end{titlepage}
 
+\emptypage
 
 \begin{abstract}
-% TODO: De "abstract" of samenvatting is een kernachtige (max 1 blz. voor een
-% thesis) synthese van het document. In ons geval beschrijf je kort de
-% probleemstelling en de context, de onderzoeksvragen, de aanpak en de
-% resultaten.
+Abstract in het Nederlands...
 \end{abstract}
 
+\emptypage
 
+\begin{abstract}
+The Internet of Things is today's buzzword when talking about future technology. A lot of companies are investing in this technology with new devices being made and added to the internet every day.
+
+Around the same time of the release of IPv6, which provides a near inexhaustible number of IP addresses, Bluetooth Low Energy made it to the market as well. This technology aims to be the go-to technology when manufacturing low energy wearables and in the future, make it into the houses of everyone with updates like mesh networking which will help home automation.
+
+With the massive growth of the Internet of Things, a huge opportunity arises since the wearables market is increasingly gaining traction as well. A lot of these wearables use Bluetooth Low Energy technology as a low power and cost-efficient data transfer technology.
+
+This thesis aims to research Bluetooth Low Energy technology in a wearable context. The technology will be discussed as well as the difference between Bluetooth Low Energy and Bluetooth Classic. Further research includes the pros and cons, types of devices, the Bluetooth Low Energy protocol stack and more. A Proof of Concept will also be developed for an Android smartphone which aims to connect Bluetooth Low Energy wearables with the AllThingsTalk developer Cloud, which is one of the main goals for this thesis. Further goals include enabling real-time data transfer, supporting two-way data transfer and finding a real-life scenario where Bluetooth Low Energy wearables could provide an added value in an Internet of Things context.
+
+In order to research these subjects, a general knowledge had to be gained about Bluetooth Low Energy. This technology was researched extensively in order to best prepare for the Proof of Concept. Besides the official Bluetooth Core Specification, some books were purchased by experts such as Kevin Townsend and Robin Heydon.
+
+By putting the theory to the test in the Proof of Concept, we found that it is in fact possible to connect Bluetooth Low Energy wearables with a smartphone without too much trouble, as well as sending the data to an online Cloud where it can be analysed further.
+
+In conclusion, it can be said that Bluetooth Low Energy is in fact a good technology for wearable devices. It consumes extremely little power and is easy to set up and support, as long as manufacturers use standard Bluetooth Profiles, since implementing custom profiles can get very complicated very quickly.
+
+However, while the research questions have a fairly positive outcome, the Internet of Things still remains a big threat to a lot of people. Some problems concerning privacy and security arise, especially when dealing with sensitive objects.
+\end{abstract}
+
+\emptypage
 
 \chapter*{Preface}
 \label{ch:preface}
+Technology has always been a huge interest of me. Whether it be computers, microcontrollers or simply fixing a radio, it is always fascinating to me how everything works and how little I seem to know the deeper I dig into things. A while ago I also got introduced to the world of Raspberry Pi and Arduino. I purchased an Arduino starter kit and started working on it and trying to understand it. It seemed to me that there was a lot more potential than just pressing a button that turns a light on, and it was around that time I discovered the Internet of Things. Back when I discovered it, the Internet of Things seemed like a huge thing that I could not wrap my head around and I did not know where to start until I got to my third year in college and had to pick a thesis subject. I wanted the thesis to reflect my interests, and at that time it was the Internet of Things.
+
+After looking around for companies that were active in this field of work, I stumbled upon AllThingsTalk and asked if they had some potential research questions for me. After some mailing back and forth, Bluetooth Low Energy combined with wearables and Internet of Things came up and the subject immediately spoke to me as it seemed like an ideal combination of all my interests.
+
+This thesis is the result of pouring most of my spare time into a subject that interests me a lot. It aims to be a guideline for people interested in Internet of Things, Bluetooth Low Energy and even companies that are doing research about Bluetooth Low Energy.
 
 % TODO: Vergeet ook niet te bedanken wie je geholpen/gesteund/... heeft
 
+\chapter*{Acknowledgements}
+\label{ch:acknowledgements}
+In the making of this thesis, a few people were indispensable into making it how it is now and they definitely deserve some words of gratitude. First of all I want to thank my promotor Joeri Van Herreweghe. He helped me a lot with the structural part of this thesis and provided tons of useful feedback every time I sent a draft to him. Next up I want to thank AllThingsTalk, in special Peter Leemans, who made this thesis possible by providing the excellent subject and all of the Bluetooth Low Energy devices that were used in the Proof of Concept, as well as great guidance throughout the semester with bi-weekly meetings. Furthermore I want to thank another member of AllThingsTalk, Jan Bogaerts, for assisting me on a more technical level for this thesis during our meetings and numerous emails. I also want to thank Thomas Clauwaert, Eva Emmerechts, Annemie De Groote, Lara Delange and Idriz Velghe. These people helped me with lots of different things like reviewing my English, reviewing the document structure and content, giving me moral support and helping me with a lot of little questions I had.
+
 \tableofcontents
 
-% Als je een lijst van afkortingen of termen wil toevoegen, dan hoort die
-% hier thuis. Gebruik bijvoorbeeld de ``glossaries'' package.
+\emptypage
 
 %%---------- Kern --------------------------------------------------------
 
@@ -370,7 +387,7 @@ There are a couple of techniques Bluetooth Low Energy uses to achieve low energy
 
 \chapter{The Bluetooth Low Energy protocol stack}
 \label{ch:protocolstack}
-\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+\epigraph{``The real danger is not that computers will begin to think like men, but that men will begin to think like computers.''}{Sydney Harris}
 Before diving more into the specifics about communication in Bluetooth Low Energy with data packets and advertising packets it is important to know at least some of the fundamentals of the protocol stack that enables devices to communicate with one another. The protocol stack consists of three main parts: the controller, the host and the application. In this chapter each of the layers, interfaces, protocols and profiles that make up these three parts will be looked at, giving some insights as to how Bluetooth Low Energy works on a lower level and how data is delegated from layer to layer to build comprehensible communication. Two of the profiles discussed in this chapter however are a fundamental part of Bluetooth Low Energy and thus have their own chapters dedicated to them in order to go into them deeper.
 
 \newpage{}
@@ -454,7 +471,7 @@ At the highest level of the protocol stack is the Application. The Application i
 
 \chapter{Generic Access Profile}
 \label{ch:gap}
-\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+\epigraph{``Once a new technology rolls over you, if you’re not part of the steamroller, you’re part of the road.''}{Stewart Brand}
 One of the most basic components in Bluetooth Low Energy is the Generic Access Profile \citep{heydon2012bluetooth}. This profile determines everything from advertising device presence to continuing to a connection. It specifies rules how devices can and must behave in order to interact with one another and imposes some general rules devices have to follow. It also supports some modes and procedures to secure the data link like authentication, bonding, authorization and encryption. In this chapter, some general information about the Generic Access Profile like device roles and data channels will be looked at before describing how advertising, scanning, broadcasting and connections work.
 
 \newpage{}
@@ -542,7 +559,7 @@ If we go down even further, we come to the Descriptors. These can optionally acc
 
 \chapter{Why Bluetooth Low Energy and Internet of Things}
 \label{ch:BLEIOT}
-\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+\epigraph{``The truth is, homes change over time — and technology has to adapt, not try to do everything at once.''}{Tony Fadell}
 The Internet of Things is quickly growing and by the end of 2016 it is expected to have about 6.3 billion connected devices \citep{gartner2015}, filled with both long-range sensors using LoRa and Sigfox technologies and short-range sensors using Wi-Fi or directly connected with a gateway connected to internet. Why would it then be beneficial to add another spectrum of devices: Bluetooth Low Energy? One of the big reasons for this is because increasingly more wearables start to use Bluetooth Low Energy technology, making it an interesting technology to connect to the Internet of Things \citep{wei2014wearables}. Right now, wireless Internet of Things technologies can be compared against 2 axis: power and range, as seen in figure \ref{fig:powerrange}. Before Bluetooth Low Energy, there was not really any major technology to fill the Low Energy, Low Range spectrum. One can say that Zigbee or other technologies could fill this end of the spectrum, but none of these are as widely adopted as Bluetooth Low Energy is today and interoperability is sometimes a problem with other standards \citep{colitti2014}. In this chapter the use cases Bluetooth Low Energy can fulfil in this Low Power, Low Range spectrum will be discussed as well as briefly introducing its competitors, before ending with what the future holds for Bluetooth Low Energy.
 
 \begin{figure}[h]
@@ -632,7 +649,7 @@ The Bluetooth SIG is constantly working on Bluetooth Low Energy, and it has been
 
 \chapter{Building an Android gateway}
 \label{ch:android}
-\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+\epigraph{``Anything can change, because the smartphone revolution is still in the early stages.''}{Tim Cook}
 With all of the previous chapters, a good idea and basic knowledge has been formed around Bluetooth Low Energy and why it would be valuable to integrate it into an Internet of Things environment.
 
 This chapter aims to provide a practical approach to answering some of the research questions stated in bold in subsection \ref{subsec:researchquestions} through a Proof of Concept. The Proof of Concept concerns building an Android application that can successfully connect, communicate and act as a gateway for Bluetooth Low Energy devices. First of all, the devices that were used in the making of this application will be talked about more in detail before looking at how one would implement a gateway for Android. As this is a prototype, a lot of optimizations have to be made and the methods used might not be the most ideal ones. Ideas on one of the ways to implement this on a large scale will be given in section \ref{sec:futurework}.
@@ -705,7 +722,7 @@ While most devices use different Characteristics to read and write every sensor 
 
 \section{Android programming}
 \label{sec:androidprogramming}
-In this section, the most important parts in building a gateway for Android will be discussed. Everything from building the Bluetooth layer to the network layer will be talked about and it will give a good overview of how all these APIs can work together. The full source code for the application is available on \texttt{GITHUB(LINK)}. This application is a working prototype to bridge Bluetooth Low Energy to the AllThingsTalk developer Cloud.
+In this section, the most important parts in building a gateway for Android will be discussed. Everything from building the Bluetooth layer to the network layer will be talked about and it will give a good overview of how all these APIs can work together. The full source code for the application is available on Github\footnote{\url{https://github.com/JanVanBraeckel/ATT_BLE_Gateway}} and is free to use and modify. This application is a working prototype to bridge Bluetooth Low Energy to the AllThingsTalk developer Cloud.
 
 \subsection{Bluetooth layer}
 \label{subsec:bluetoothlayer}
@@ -745,7 +762,7 @@ Once a device has been chosen, a new fragment opens with more information about 
 
 \chapter{Discussion}
 \label{ch:discussion}
-\epigraph{``I NEED TO LOOK UP A QUOTE FOR THIS CHAPTER''}{Jan Van Braeckel}
+\epigraph{``Begin at the beginning'' the King said, very gravely, ``and go on till you come to the end: then stop''}{Lewis Carroll}
 The last chapter of this thesis aims to provide a concise conclusion regarding the posed research questions. Some goals that were achieved will be listed as well as some concerns for the future of Internet of Things and Bluetooth Low Energy. Furthermore, the state of the current work and possible expansions or extra research for future work will be listed.
 
 \section{Conclusion}
@@ -795,9 +812,9 @@ Another idea entirely could involve 6LoWPAN. Instead of processing the Bluetooth
 
 \chapter{Genuino 101 Sketch}
 \label{ch:arduinosketch}
-Sketch used to prototype the Genuino 101 used in the Proof of Concept. It features a Heart Rate Service with a Heart Rate Characteristic which is simulated by a rotary angle sensor. It also features a custom ``switch'' Service and Characteristic which just serve to turn an actuator on or off when 1 and 0 are written into it.
+Sketch made to prototype the Genuino 101 used in the Proof of Concept. It features a Heart Rate Service with a Heart Rate Characteristic which is simulated by a rotary angle sensor. It also features a custom ``switch'' Service and Characteristic which just serve to turn an actuator off or on when 0 or anything else are written into it.
 
-\arduinocode{source/HeartrateSwitch.ino}{Adjusted Arduino sketch with a Hear Rate Service and on-off Service}
+\arduinocode{source/HeartrateSwitch.ino}{Adjusted Arduino sketch with a Heart Rate Service and on-off Service}
 
 \bibliographystyle{apa}
 \bibliography{tin-bachproef}
