@@ -65,8 +65,19 @@
 
 % Commando voor invoegen Java-broncodebestanden (dank aan Niels Corneille)
 % Gebruik: \codefragment{source/MijnKlasse.java}{Uitleg bij de code}
-\newcommand{\codefragment}[2]{ \lstset{%
+\newcommand{\javacode}[2]{ \lstset{%
   language=java,
+  breaklines=true,
+  float=th,
+  caption={#2},
+  basicstyle=\scriptsize,
+  frame=single,
+  extendedchars=\true
+}
+\lstinputlisting{#1}}
+
+\newcommand{\arduinocode}[2]{ \lstset{%
+  language=C++,
   breaklines=true,
   float=th,
   caption={#2},
@@ -187,6 +198,8 @@
 % probleemstelling en de context, de onderzoeksvragen, de aanpak en de
 % resultaten.
 \end{abstract}
+
+
 
 \chapter*{Preface}
 \label{ch:preface}
@@ -507,7 +520,7 @@ Profiles in Bluetooth Low Energy are an abstract representation of how a device 
 
 \section{Services}
 \label{sec:services}
-All data in Bluetooth Low Energy is accessed through Services. It can be compared to simple Object Oriented principles: a Service has multiple Characteristics and a Characteristic belongs to one single Service. An example of this is the Bluetooth SIG defined Heart Rate Service. This document defines the way the Heart Rate Service is used and what Characteristics are contained in the Service. For example, the Heart Rate Service defines 3 Characteristics: Heart Rate Measurement, Body Sensor Location and Heart Rate Control Point, only the Heart Rate Measurement is mandatory to include. A functioning Arduino application serving a Heart Rate Service together with a custom written Service can be found in the Appendix.
+All data in Bluetooth Low Energy is accessed through Services. It can be compared to simple Object Oriented principles: a Service has multiple Characteristics and a Characteristic belongs to one single Service. An example of this is the Bluetooth SIG defined Heart Rate Service. This document defines the way the Heart Rate Service is used and what Characteristics are contained in the Service. For example, the Heart Rate Service defines 3 Characteristics: Heart Rate Measurement, Body Sensor Location and Heart Rate Control Point, only the Heart Rate Measurement is mandatory to include. A functioning Arduino application serving a Heart Rate Service together with a custom written Service can be found in Appendix \ref{ch:arduinosketch}.
 
 A device can host any number of Services which are independent of one another. Every Service also has its own security options which can be customized. Options like encryption for individual Services or the device as a whole can be set.
 
@@ -648,7 +661,7 @@ For this use case, a Genuino 101\footnote{\url{https://www.arduino.cc/en/Main/Ar
 
 Besides the board, some additional modules and sensors were used to create an application. For this use case, a very simple application was made based on an existing Heart Rate Monitor application from Arduino\footnote{\url{https://www.arduino.cc/en/Tutorial/Genuino101CurieBLEHeartRateMonitor}}.
 
-The adapted application monitors a rotary switch and if connected to a master, it will notify the master every second with the value of the switch. It reports this value through the standard defined Heart Rate Service and Heart Rate Measurement Characteristic. In a real scenario heart rate would not be measured with a rotary switch, but since this is a prototype it is the easiest solution. To give the device an actuator as well as a sensor, a simple custom Service and Characteristic were made that just enable or disable a connected actuator by writing 0 or 1 to the Characteristic. The source code of the adapted example can be found in the Appendix.
+The adapted application monitors a rotary switch and if connected to a master, it will notify the master every second with the value of the switch. It reports this value through the standard defined Heart Rate Service and Heart Rate Measurement Characteristic. In a real scenario heart rate would not be measured with a rotary switch, but since this is a prototype it is the easiest solution. To give the device an actuator as well as a sensor, a simple custom Service and Characteristic were made that just enable or disable a connected actuator by writing 0 or 1 to the Characteristic. The source code of the adapted example can be found in Appendix \ref{ch:arduinosketch}.
 
 \subsection{Flower Power}
 \label{subsec:flowerpower}
@@ -777,6 +790,14 @@ Secondly, this web service from the previous step could also be expanded to make
 Some variations could be built on this where the web service pushes all of the data to the Cloud instead of first sending it back to the application and then letting the application push it. The service could also push it and then just report the values in the graphical interface of the application, not needing any further processing by the application itself.
 
 Another idea entirely could involve 6LoWPAN. Instead of processing the Bluetooth packets on the smartphone itself, the smartphone could just serve to forward these packets to a web service where it can be decoded and the Bluetooth packet can be read. However, after searching on the internet, no devices seem to implement 6LoWPAN yet, so maybe this will become a popular approach in the future.
+
+\appendix
+
+\chapter{Genuino 101 Sketch}
+\label{ch:arduinosketch}
+Sketch used to prototype the Genuino 101 used in the Proof of Concept. It features a Heart Rate Service with a Heart Rate Characteristic which is simulated by a rotary angle sensor. It also features a custom ``switch'' Service and Characteristic which just serve to turn an actuator on or off when 1 and 0 are written into it.
+
+\arduinocode{source/HeartrateSwitch.ino}{Adjusted Arduino sketch with a Hear Rate Service and on-off Service}
 
 \bibliographystyle{apa}
 \bibliography{tin-bachproef}
