@@ -191,38 +191,36 @@ Abstract in het Nederlands...
 \emptypage
 
 \begin{abstract}
-The Internet of Things is today's buzzword when talking about future technology. A lot of companies are investing in this technology with new devices being made and added to the internet every day.
+The Internet of Things is today's buzzword when talking about future technology. A lot of companies are investing in it with new devices being made and connected to the internet every day.
 
-Around the same time of the release of IPv6, which provides a near inexhaustible number of IP addresses, Bluetooth Low Energy made it to the market as well. This technology aims to be the go-to technology when manufacturing low energy wearables and in the future, make it into the houses of everyone with updates like mesh networking which will help home automation.
+Around the same time of the release of IPv6, which provides a near inexhaustible number of IP addresses, Bluetooth Low Energy made it to the market as well. This specification aims to be the go-to technology when manufacturing low energy wearables and in the future, make it into the houses of everyone with updates like mesh networking which will help home automation.
 
-With the massive growth of the Internet of Things, a huge opportunity arises since the wearables market is increasingly gaining traction as well. A lot of these wearables use Bluetooth Low Energy technology as a low power and cost-efficient data transfer technology.
+With the massive growth of the Internet of Things, a huge opportunity arises since the wearables market is increasingly gaining traction as well. A lot of these wearables also use Bluetooth Low Energy technology as a low power and cost-efficient data transfer technology.
 
-This thesis aims to research Bluetooth Low Energy technology in a wearable context. The technology will be discussed as well as the difference between Bluetooth Low Energy and Bluetooth Classic. Further research includes the pros and cons, types of devices, the Bluetooth Low Energy protocol stack and more. A Proof of Concept will also be developed for an Android smartphone which aims to connect Bluetooth Low Energy wearables with the AllThingsTalk developer Cloud, which is one of the main goals for this thesis. Further goals include enabling real-time data transfer, supporting two-way data transfer and finding a real-life scenario where Bluetooth Low Energy wearables could provide an added value in an Internet of Things context.
+This thesis aims to research the Bluetooth Low Energy specification in a wearable context. The technology will be discussed as well as the difference between Bluetooth Low Energy and Bluetooth Classic. Further research includes the pros and cons, types of devices, the Bluetooth Low Energy protocol stack and more. A Proof of Concept will also be developed for an Android smartphone which aims to connect Bluetooth Low Energy wearables with the AllThingsTalk developer Cloud, which is one of the main goals of this thesis. Further goals include enabling real-time data transfer, supporting two-way data transfer and finding a real-life scenario where Bluetooth Low Energy wearables could provide an added value in an Internet of Things context.
 
 In order to research these subjects, a general knowledge had to be gained about Bluetooth Low Energy. This technology was researched extensively in order to best prepare for the Proof of Concept. Besides the official Bluetooth Core Specification, some books were purchased by experts such as Kevin Townsend and Robin Heydon.
 
-By putting the theory to the test in the Proof of Concept, we found that it is in fact possible to connect Bluetooth Low Energy wearables with a smartphone without too much trouble, as well as sending the data to an online Cloud where it can be analysed further.
+By putting the theory to the test in the Proof of Concept, we found that it is in fact possible to connect Bluetooth Low Energy wearables with a smartphone without too much trouble, as well as sending the data to an online Cloud in real time and retrieving data from rules made in the Cloud platform.
 
-In conclusion, it can be said that Bluetooth Low Energy is in fact a good technology for wearable devices. It consumes extremely little power and is easy to set up and support, as long as manufacturers use standard Bluetooth Profiles, since implementing custom profiles can get very complicated very quickly.
-
-However, while the research questions have a fairly positive outcome, the Internet of Things still remains a big threat to a lot of people. Some problems concerning privacy and security arise, especially when dealing with sensitive objects.
+In conclusion, it can be said that Bluetooth Low Energy is in fact a good technology for wearable devices. It consumes extremely little power and is easy to set up and support, as long as manufacturers use standard Bluetooth Profiles, since implementing custom profiles can get very complicated very quickly. However, while the research questions have a fairly positive outcome, the Internet of Things still remains a big problem for certain topics such as security and privacy.
 \end{abstract}
 
 \emptypage
 
 \chapter*{Preface}
 \label{ch:preface}
-Technology has always been a huge interest of me. Whether it be computers, microcontrollers or simply fixing a radio, it is always fascinating to me how everything works and how little I seem to know the deeper I dig into things. A while ago I also got introduced to the world of Raspberry Pi and Arduino. I purchased an Arduino starter kit and started working on it and trying to understand it. It seemed to me that there was a lot more potential than just pressing a button that turns a light on, and it was around that time I discovered the Internet of Things. Back when I discovered it, the Internet of Things seemed like a huge thing that I could not wrap my head around and I did not know where to start until I got to my third year in college and had to pick a thesis subject. I wanted the thesis to reflect my interests, and at that time it was the Internet of Things.
+Technology has always been a huge interest of me. Whether it be computers, microcontrollers or simply fixing a radio, it is always fascinating to me how everything works and how little I seem to know the deeper I dig into things. A while ago I also got introduced to the world of Raspberry Pi and Arduino. I purchased an Arduino starter kit and started working with it. It seemed to me that there was a lot more potential than just pressing a button that turns a light on, and it was around that time I discovered the Internet of Things. Back when I discovered it, the Internet of Things seemed like a huge thing that I could not wrap my head around and I did not know where to start until I got to my third year in college and had to pick a thesis subject. I wanted the thesis to reflect my interests, and at that time it was the Internet of Things.
 
-After looking around for companies that were active in this field of work, I stumbled upon AllThingsTalk and asked if they had some potential research questions for me. After some mailing back and forth, Bluetooth Low Energy combined with wearables and Internet of Things came up and the subject immediately spoke to me as it seemed like an ideal combination of all my interests.
+When looking around for companies that are active in this field of work, I stumbled upon AllThingsTalk and asked if they had some potential research questions for me. After some mailing back and forth, Bluetooth Low Energy combined with wearables and Internet of Things came up and the subject immediately spoke to me as it seemed like an ideal combination of all my interests.
 
-This thesis is the result of pouring most of my spare time into a subject that interests me a lot. It aims to be a guideline for people interested in Internet of Things, Bluetooth Low Energy and even companies that are doing research about Bluetooth Low Energy.
+This thesis is the result of pouring most of my spare time into a subject that interests me a lot. It aims to be a guideline for people interested in Internet of Things, people interested in Bluetooth Low Energy and even companies that are doing research about Bluetooth Low Energy.
 
 % TODO: Vergeet ook niet te bedanken wie je geholpen/gesteund/... heeft
 
 \chapter*{Acknowledgements}
 \label{ch:acknowledgements}
-In the making of this thesis, a few people were indispensable into making it how it is now and they definitely deserve some words of gratitude. First of all I want to thank my promotor Joeri Van Herreweghe. He helped me a lot with the structural part of this thesis and provided tons of useful feedback every time I sent a draft to him. Next up I want to thank AllThingsTalk, in special Peter Leemans, who made this thesis possible by providing the excellent subject and all of the Bluetooth Low Energy devices that were used in the Proof of Concept, as well as great guidance throughout the semester with bi-weekly meetings. Furthermore I want to thank another member of AllThingsTalk, Jan Bogaerts, for assisting me on a more technical level for this thesis during our meetings and numerous emails. I also want to thank Thomas Clauwaert, Eva Emmerechts, Annemie De Groote, Lara Delange and Idriz Velghe. These people helped me with lots of different things like reviewing my English, reviewing the document structure and content, giving me moral support and helping me with a lot of little questions I had.
+In the making of this thesis, a few people were indispensable into making it how it is now and they definitely deserve some words of gratitude. First of all I want to thank my promotor Joeri Van Herreweghe. He helped me a lot with the structural part of this thesis and provided tons of useful feedback every time I sent a draft to him. Next up I want to thank AllThingsTalk, in special Peter Leemans, who made this thesis possible by providing the excellent subject and all of the Bluetooth Low Energy devices that were used in the Proof of Concept, as well as great guidance throughout the semester with bi-weekly meetings. Furthermore I want to thank another member of AllThingsTalk, Jan Bogaerts, for assisting me on a more technical level for this thesis during our meetings and numerous emails. I also want to thank all of my friends who helped me with my thesis, especially Thomas Clauwaert, Annemie De Groote and Idriz Velghe. These people helped me with lots of different things like reviewing my English, reviewing the document structure and content, giving me moral support and helping me with a lot of little questions I had.
 
 \tableofcontents
 
@@ -246,7 +244,7 @@ First of all, the problem statement will be discussed where a quick sketch will 
 \label{subsec:problemstatement}
 At the time of writing, there are already a lot of internet enabled products on the market \citep{gartner2015}. With the new Bluetooth Low Energy specification, Bluetooth is reaching out to connect even more products to the smartphone and ultimately to the internet. These are products like socks\footnote{\url{http://www.sensoriafitness.com/}}, shoes\footnote{\url{https://secure-nikeplus.nike.com/plus/products/basketball}}, fitness bands\footnote{\url{https://www.fitbit.com/}} and more are being added to the list every day. The problem with these products is that in a lot of cases, the products only synchronize with a smartphone. Some manufacturers extend this connectivity by occasionally synchronizing the data the smartphone captures to their own proprietary Cloud, where the data can be analysed by both the company and the consumer. Most of the time, this is where the data cycle stops and it can't be further accessed by other parties, this is known as a closed loop system. In some cases, developers can still access the data with an API that communicates with the Cloud service of the manufacturer, but this doesn't give any access to the raw sensor values and doesn't allow real-time data transfer. Typically these Bluetooth Low Energy devices are built for the purpose of the (single) use case of the manufacturer. AllThingsTalk wants to find out how it can (re)use these existing devices for other use cases.
 
-One of the use cases where low latency data communication through wearables could be useful is in elderly homes. For instance when making a monitoring system to check if elderly people have fallen by tracking the gyroscope and accelerometer of a wearable, it is not acceptable to receive data every 15 minutes because by that time help might be too late when considering a worst case scenario. When building a system like this, it can also be useful to have a central service where all of the raw data is collected instead of containing it in multiple closed loops for every device of a different manufacturer. While a closed system is an approach that could work, it does not give as much flexibility over all of the data compared to an open system and few manufacturers expose this data for further use. An example of a closed system versus open system can be found in figure \ref{fig:networkloops}.
+One of the use cases where low latency data communication through wearables could be useful is in elderly homes. For instance when making a monitoring system to check if elderly people have fallen by tracking the gyroscope and accelerometer of a wearable, it is not acceptable to receive data every 15 minutes because by that time help might be too late when considering a worst-case scenario. When building a system like this, it can also be useful to have a central service where all of the raw data is collected instead of containing it in multiple closed loops for every device of a different manufacturer. While a closed system is an approach that could work, it does not give as much flexibility over all of the data compared to an open system and few manufacturers expose this data for further use. An example of a closed system versus open system can be found in figure \ref{fig:networkloops}.
 
 On top of this, a lot of the Bluetooth Low Energy wearables being manufactured don't use Bluetooth Special Interest Group adopted standards, which makes interoperability with existing applications hard, if not impossible if authentication and encryption are added into the mix.
 
@@ -259,7 +257,7 @@ On top of this, a lot of the Bluetooth Low Energy wearables being manufactured d
 
 \subsection{Research questions}
 \label{subsec:researchquestions}
-There are a couple of questions that can be asked when combining Bluetooth Low Energy and the Internet of Things, and some of those questions alone could have multiple papers dedicated to them. For example, the matter of security will be a never ending debate, and even more concerns arise when talking about security in the Internet of Things. Another issue is privacy, but since this is very much a grey area it is hard to formulate a one-sided conclusion on this matter. Some of these concerns will be addressed further in section \ref{sec:concerns}.
+There are a couple of questions that can be asked when combining Bluetooth Low Energy and the Internet of Things, and some of those questions alone could have multiple papers dedicated to them. For example, the matter of security will be a never-ending debate, and even more concerns arise when talking about security in the Internet of Things. Another issue is privacy, but since this is very much a grey area it is hard to formulate a one-sided conclusion on this matter. Some of these concerns will be addressed further in section \ref{sec:concerns}.
 
 The main goals this thesis is aiming to fulfil are in essence very simple, but there are always some other questions that arise when looking at the big picture. These questions can be categorized as followed, the questions in bold being the main research questions and the ones in plain text being auxiliary questions:
 \begin{itemize}
@@ -301,7 +299,7 @@ This chapter aims to elaborate what approaches and methods were used in the maki
 
 \section{Research and literature study}
 \label{sec:researchlit}
-Before starting the research, the most important question was `what does AllThingsTalk already know?'. Being a company revolving around Internet of Things, it would not be of much use to dedicate a large portion of this paper to it. However, some research had to be done about Internet of Things in order to understand some core concepts and technologies that are used like transfer protocols such as MQTT and AMQP. A more abstract understanding was also needed, being how the Internet of Things works, what it is used for, why it is important... . This information is easily found online and since it is not the main purpose of this thesis, it was not included.
+Before starting the research, the most important question was `what does AllThingsTalk already know?'. Being a company revolving around Internet of Things, it would not be of much use to dedicate a large portion of this paper to it. However, some research had to be done about Internet of Things in order to understand some core concepts and technologies that are used like transfer protocols such as MQTT and AMQP. A more abstract understanding was also needed, being how the Internet of Things works, what it is used for, why it is important... This information is easily found online and since it is not the main purpose of this thesis, it was not included.
 
 That being said, the core subject of the research and literature study is about Bluetooth Low Energy. The research about this technology was done like any other subject would be researched: start at the basics and work up to more advanced cases. Initially, the plan was to rely heavily on the official documentation of Bluetooth \citep{bluetooth2014bluetooth}, but since the complete Bluetooth specification is over 2000 pages in length, a more practical approach was to purchase books that explain Bluetooth Low Energy, two of them being \cite{Townsend2014} and \cite{heydon2012bluetooth} and going back to the documentation when extra information was needed.
 
@@ -309,7 +307,7 @@ There are also training videos to be found on the Bluetooth website as well as v
 
 \section{Proof of Concept}
 \label{sec:poc}
-One of the biggest focuses of the Proof of Concept was to simply try out the technology and putting the theory to use. The actual goals of the Proof of Concept were more to provide the Bluetooth Low Energy layer than to connect to the internet, as AllThingsTalk provides easy-to-use libraries in various programming languages to connect to their platform. Another reason for the Proof of Concept was to prove that a smartphone can be used as a gateway to connect Bluetooth Low Energy wearables to the Cloud and that it can provide an added value in a real life scenario. By accomplishing this, it should provide a clear answer to the main research questions defined in subsection \ref{subsec:researchquestions}.
+One of the biggest focuses of the Proof of Concept was to simply try out the technology and putting the theory to use. The actual goals of the Proof of Concept were more to provide the Bluetooth Low Energy layer than to connect to the internet, as AllThingsTalk provides easy-to-use libraries in various programming languages to connect to their platform. Another reason for the Proof of Concept was to prove that a smartphone can be used as a gateway to connect Bluetooth Low Energy wearables to the Cloud and that it can provide an added value in a real-life scenario. By accomplishing this, it should provide a clear answer to the main research questions defined in subsection \ref{subsec:researchquestions}.
 
 In order to help speed up the learning process and quickly allow me to prototype and try out the technology, various devices were provided by AllThingsTalk which offer a range of Bluetooth Low Energy Profiles, Services and Characteristics (explained in chapter \ref{ch:gatt}). The devices that were used and what things were accomplished with them will be discussed in chapter \ref{ch:android}.
 
@@ -338,7 +336,7 @@ Bluetooth has been around for about 16 years and with the adoption of Bluetooth 
 \label{sec:whatis}
 In essence, Bluetooth Low Energy is an open standard that consumes extremely low power. It has been designed from scratch and has more things not in common than it does with Bluetooth, so the name can be a little bit confusing. Every component in this specification has been designed to consume as little power as possible, that's why this technology can also be called a `coin cell' technology \citep{bluetooth2016training}. It is called a coin cell technology because a Bluetooth Low Energy enabled device can (theoretically, with normal usage) achieve a battery life of around eight months on a coin cell battery. A great example of this are beacons, which can achieve very long battery life if configured correctly. If fitted with a bigger battery, it can last for over two years. More information about the battery usage and how low energy is achieved can be found in section \ref{sec:lowenergy}.
 
-However, one might think: ``if Bluetooth Low Energy is so great, why isn't it replacing other wireless technologies?''. The main reason for this is because it is very slow and has very little range. A couple of other limitations are present, but these will be more closely looked at in subsection \ref{subsec:limitations}. Bluetooth Low Energy's main use is intended for Personal Area Networks with a gateway in range that can relay data to a Cloud service in order to connect various devices together.
+However, one might think: ``if Bluetooth Low Energy is so great, why isn't it replacing other wireless technologies?''. The main reason for this is because it is very slow and has very little range \citep{heydon2012bluetooth}. A couple of other limitations are present, but these will be more closely looked at in subsection \ref{subsec:limitations}. Bluetooth Low Energy's main use is intended for Personal Area Networks with a gateway in range that can relay data to a Cloud service in order to connect various devices together.
 
 \section{Key differences between classic Bluetooth}
 \label{sec:differencesclassic}
@@ -346,7 +344,7 @@ It seems that Bluetooth and Bluetooth Low Energy are worlds apart from one anoth
 
 \subsection{A new technology emerges}
 \label{subsec:newtechnology}
-A lot of authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace other wireless technologies in the slightest. They've also both been built around completely different core principles and have been designed to fulfil these requirements as best as possible.
+Authors are looking to compare Bluetooth with Bluetooth Low Energy, but this is an unfair comparison since the use cases for both of these technologies are completely different. As the name suggests, Bluetooth Low Energy is marketed for low energy devices like wearables and sensors, so it isn't here to replace other wireless technologies in the slightest. They've also both been built around completely different core principles and have been designed to fulfil these requirements as best as possible.
 
 \subsection{Limitations of Bluetooth Low Energy}
 \label{subsec:limitations}
@@ -398,7 +396,7 @@ At the lowest level in the Bluetooth Low Energy stack, closest to the actual ant
 
 \subsection{Physical Layer}
 \label{subsec:controllerPHY}
-The Physical Layer is the layer responsible for actually sending data over the air. As explained in section \ref{sec:channels}, the physical layer uses the 2.4 GHz ISM band to send and receive its data. In order to avoid interference from Wi-Fi or other technologies that use this band, Bluetooth Low Energy uses frequency hopping with the following formula:
+The Physical Layer is the layer responsible for actually sending data over the air. As explained in section \ref{sec:channels}, the physical layer uses the 2.4 GHz ISM band to send and receive its data. In order to avoid interference from Wi-Fi or other technologies that use this band, Bluetooth Low Energy uses frequency hopping with the following formula \citep{heydon2012bluetooth}:
 
 \begin{equation*}
 \text{newChannel = (currentChannel + hopAmount) mod 37}
@@ -437,7 +435,7 @@ There are a couple of different interfaces that are used commonly on different t
 
 \section{Host}
 \label{sec:stackHost}
-Above the Controller resides the Host, which is built on top of the Host side of the Host Controller Interface. The Host contains quite a lot of different layers, protocols and procedures exposed as an API to allow the Application to easily tap into this functionality.
+Above the Controller resides the Host, which is built on top of the Host side of the Host Controller Interface. The Host contains a fair amount of different layers, protocols and procedures exposed as an API to allow the Application to easily tap into this functionality.
 
 \subsection{Host Controller Interface}
 \label{subsec:hostHCI}
@@ -472,7 +470,7 @@ At the highest level of the protocol stack is the Application. The Application i
 \chapter{Generic Access Profile}
 \label{ch:gap}
 \epigraph{``Once a new technology rolls over you, if you’re not part of the steamroller, you’re part of the road.''}{Stewart Brand}
-One of the most basic components in Bluetooth Low Energy is the Generic Access Profile \citep{heydon2012bluetooth}. This profile determines everything from advertising device presence to continuing to a connection. It specifies rules how devices can and must behave in order to interact with one another and imposes some general rules devices have to follow. It also supports some modes and procedures to secure the data link like authentication, bonding, authorization and encryption. In this chapter, some general information about the Generic Access Profile like device roles and data channels will be looked at before describing how advertising, scanning, broadcasting and connections work.
+One of the most basic components in Bluetooth Low Energy is the Generic Access Profile. Because \cite{heydon2012bluetooth} contains in-depth information about this matter, no other significant sources were consulted in the writing of this chapter. This profile determines everything from advertising device presence to continuing to a connection. It specifies rules how devices can and must behave in order to interact with one another and imposes some general rules devices have to follow. It also supports some modes and procedures to secure the data link like authentication, bonding, authorization and encryption. In this chapter, some general information about the Generic Access Profile like device roles and data channels will be looked at before describing how advertising, scanning, broadcasting and connections work.
 
 \newpage{}
 
@@ -748,17 +746,20 @@ Once this procedure is finished, the smartphone is an orphan in the platform and
 
 After adding assets, the only thing left is to send actual data. This is done using the MQTT protocol \citep{waher2015learning}, though HTTP can be used but MQTT is the preferred method. The MQTT protocol is a machine-to-machine protocol optimized for small sensors and mobile devices, which makes it ideal for an Internet of Things infrastructure. It is basically a very simple publisher/subscriber protocol, where a publisher publishes data to a topic and a subscriber can listen to topics to get updates. So sending and receiving data from the platform can simply be done by sending data to the right topic and subscribing to the topic the client wants to get updates from, in this case all topics are subscribed to in order to receive all asset state updates. In order to make this communication easier, the Paho Java Client library\footnote{\url{https://eclipse.org/paho/clients/java/}} was used.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.99\textwidth]{img/android.png}
+    \caption[User Interface of the Android application]{User Interface of the Android application. From left to right: claim procedure, scanning for devices and device Characteristic details.}
+    \label{fig:androidscreens}
+\end{figure}
+
 \subsection{User interface}
 \label{subsec:userinterface}
-This part of the application is the most flexible one and does not need a whole lot of explanation since everybody will use a different user interface. The interface used for this prototype looks very simple and is in fact pretty easy to implement. This because most of the work has gone into the network and Bluetooth layer, and the user interface is just something to route the data through.
+This part of the application is the most flexible one and does not need a whole lot of explanation since everybody will use a different user interface. The interface used for this prototype looks very simple and is in fact pretty easy to implement. This because most of the work has gone into the network and Bluetooth layer, and the user interface is just something to route the data through. The User Interface built for this use case can be seen in figure \ref{fig:androidscreens}.
 
-The first screen is a \texttt{RecyclerView} in a \texttt{SwipeRefreshLayout}. The swipe to refresh layout serves to scan, as it is not that efficient to have the device scanning for connections all the time. It will scan for a set amount of seconds and fill the \texttt{RecyclerView} with any devices it finds, displaying the device name, device address and RSSI (signal strength).
+The first screen after the gateway has been claimed is a \texttt{RecyclerView} in a \texttt{SwipeRefreshLayout}. The \texttt{SwipeRefreshLayout} serves to scan, it will scan for a set amount of seconds and fill the \texttt{RecyclerView} with any devices it finds. This View displays the device name, device address and RSSI (signal strength).
 
 Once a device has been chosen, a new fragment opens with more information about the device. At the top of the screen the device name, device address and RSSI are still displayed. The rest of the screen is filled up using an \texttt{ExpandableListView} which displays all Services in the first level and the Characteristics in the second. The component has been modified so it can expand to three levels, this to accommodate extra information about a Characteristic. Once a Characteristic is expanded, the third level opens which displays the data type, properties (read, write, write no response...) and three buttons. The buttons serve to toggle notifications, read and write data. Once data has been read, additional info will be displayed in this third level such as the hexadecimal value, string value, decimal value and time stamp of the last time the data was updated.
-
-\textbf{TODO, some screenshots...}
-
-\textbf{maybe a schema that shows the data flow? ble -> android -> http server \& mqtt broker?}
 
 \chapter{Discussion}
 \label{ch:discussion}
